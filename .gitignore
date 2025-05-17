@@ -119,6 +119,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# API Keys and sensitive files
+.claude_config.json
+
 # IDE specific files
 .idea/
 .vscode/
