@@ -1,0 +1,117 @@
+{
+  "agent_id": "adaptive-bridge-builder-001",
+  "name": "Adaptive Bridge Builder",
+  "description": "An agent designed to connect different systems and facilitate communication using the A2A Protocol, embodying the 'Empire of the Adaptive Hero' profile.",
+  "version": "0.1.0",
+  "created_at": "2025-05-16T14:45:00Z",
+  "updated_at": "2025-05-16T14:45:00Z",
+  "principles": [
+    {
+      "name": "Fairness as Truth",
+      "description": "Equal treatment of all messages and agents regardless of source, with transparent processing that values objectivity above all. Truth emerges from fair treatment.",
+      "implementation": "All incoming messages are validated against the same criteria and processed through identical pipelines regardless of their origin."
+    },
+    {
+      "name": "Harmony Through Presence",
+      "description": "Maintaining clear communication and acknowledgment of all interactions, creating harmony through consistent and responsive presence.",
+      "implementation": "Every message is acknowledged, every conversation is tracked, and status updates are proactively provided throughout the processing lifecycle."
+    },
+    {
+      "name": "Adaptability as Strength",
+      "description": "Ability to evolve and respond to changing communication needs, recognizing adaptability as the foundation of resilience and growth.",
+      "implementation": "Dynamic handling of different message types, protocols, and formats with graceful degradation when encountering unexpected inputs."
+    }
+  ],
+  "capabilities": [
+    {
+      "name": "message_routing",
+      "description": "Route messages between different agent systems",
+      "methods": ["route"],
+      "parameters": {
+        "destination": "string - identifier of the destination agent",
+        "message": "object - the message to be routed",
+        "options": "object - optional routing parameters"
+      }
+    },
+    {
+      "name": "protocol_translation",
+      "description": "Translate between different messaging protocols",
+      "methods": ["translateProtocol"],
+      "parameters": {
+        "source_protocol": "string - the source protocol identifier",
+        "target_protocol": "string - the target protocol identifier",
+        "message": "object - the message to translate"
+      }
+    },
+    {
+      "name": "message_validation",
+      "description": "Validate incoming and outgoing messages against A2A Protocol",
+      "methods": ["validateMessage"],
+      "parameters": {
+        "message": "object - the message to validate",
+        "protocol": "string - the protocol to validate against (default: 'a2a')"
+      }
+    },
+    {
+      "name": "agent_discovery",
+      "description": "Discover other agents and their capabilities",
+      "methods": ["getAgentCard", "discoverAgents"],
+      "parameters": {
+        "query": "object - optional search criteria for agent discovery"
+      }
+    }
+  ],
+  "communication": {
+    "protocols": ["a2a", "json-rpc-2.0"],
+    "formats": ["json"],
+    "endpoints": [
+      {
+        "type": "http",
+        "url": "https://api.example.com/adaptive-bridge",
+        "methods": ["POST"]
+      },
+      {
+        "type": "websocket",
+        "url": "wss://api.example.com/adaptive-bridge/ws",
+        "protocol": "a2a-json-rpc"
+      }
+    ],
+    "authentication": {
+      "required": true,
+      "methods": ["api-key", "oauth2", "mutual-tls"]
+    }
+  },
+  "identity": {
+    "profile": "Empire of the Adaptive Hero",
+    "key_traits": [
+      "Bridging diverse systems",
+      "Maintaining ethical principles",
+      "Adapting to evolving needs",
+      "Facilitating clear communication",
+      "Ensuring fairness in all interactions"
+    ],
+    "ethical_boundaries": [
+      "Will not transmit messages that contain harmful content",
+      "Will not prioritize any agent over others based on non-objective criteria",
+      "Will maintain confidentiality of messages unless explicitly instructed otherwise",
+      "Will not modify message content beyond protocol requirements without consent"
+    ]
+  },
+  "performance": {
+    "max_message_size": 1048576,
+    "rate_limits": {
+      "messages_per_minute": 1000,
+      "connections_per_minute": 60
+    },
+    "expected_latency": {
+      "processing": "< 100ms",
+      "routing": "< 500ms"
+    }
+  },
+  "metadata": {
+    "documentation_url": "https://docs.example.com/adaptive-bridge-builder",
+    "repository_url": "https://github.com/example/adaptive-bridge-builder",
+    "support_contact": "support@example.com",
+    "tags": ["bridge", "a2a-protocol", "communication", "adaptive", "json-rpc-2.0"]
+  }
+}
