@@ -1,39 +1,53 @@
-# Active Development Context
+# Active Context
 
 ## Current Focus
+The current focus is on building out the Empire Framework's core infrastructure, specifically:
 
-Developing a comprehensive emoji communication system with the following components:
+1. **Empire Framework Component System**: Developing a comprehensive component model with well-defined schemas, validation, and registry for managing Ends, Means, Principles, Identities, Resentments, and Emotions.
 
-1. **EmojiTranslationEngine**: Bidirectional translation between natural language text and emoji sequences
-2. **EmojiGrammarSystem**: Formal grammar rules for structuring emoji sequences with grammatical meaning
-3. **EmojiDialogueManager**: Management of multi-turn emoji-based conversations with context awareness
-4. **EmojiKnowledgeBase**: Comprehensive repository of emoji meanings across domains and cultures
-5. **EmojiSequenceOptimizer**: Optimization of emoji sequences for clarity, conciseness, and effectiveness
+2. **A2A Protocol Integration**: Implementing the Agent-to-Agent (A2A) Protocol for exposing Empire Framework components to external agents, facilitating interoperability in multi-agent systems.
 
-## Recent Decisions
+3. **Principle Engine Fairness Extension**: Developing fairness evaluation capabilities for the Principle Engine to detect bias in agent actions.
 
-- Created a comprehensive EmojiKnowledgeBase component that serves as the foundation for all emoji-related functionality
-- Implemented a fine-grained optimization system for emoji sequences through the EmojiSequenceOptimizer
-- Established multiple optimization profiles (precise, concise, expressive, universal, technical, business, social)
-- Implemented cultural adaptation mechanisms to ensure emoji sequences are appropriate across different cultural contexts
-- Added grouping strategies to improve readability of complex emoji sequences
+4. **Emoji Emotional Analyzer**: Enhancing the emoji emotional analysis capabilities with improved documentation and testing.
 
-## Current Challenges
+## Recent Key Decisions
 
-- The EmojiSequenceOptimizer's dependency on the EmojiKnowledgeBase data means its effectiveness is directly tied to the completeness and accuracy of the knowledge base
-- Need to implement proper integration between all components of the emoji communication system
-- Potential redundancy between EmojiSequenceOptimizer and EmojiCommunicationEndpoint components, as they share similar functionality
-- Need to ensure consistent behavior across different cultural contexts in all emoji-related components
+### Empire Framework Core Components
+- **Component Schema Architecture**: Created a core schema with type-specific extensions to ensure consistency while allowing specialization.
+- **Validation Strategy**: Implemented a robust validation system that can perform both whole-component validation and field-specific validation.
+- **Registry Approach**: Designed the ComponentRegistry to support versioning, advanced querying, and relationship traversal.
+- **Versioning Model**: Adopted semantic versioning (MAJOR.MINOR.PATCH) for all components with automatic patch increments on updates.
 
-## Recent Accomplishments
+### A2A Protocol Integration
+- **Adapter Pattern**: Created A2AAdapter class to handle bidirectional conversion between Empire components and A2A message formats.
+- **Standardized Endpoints**: Implemented four standardized A2A API endpoints (getComponents, getComponentById, getRelatedComponents, getComponentParts).
+- **Granular Access**: Developed component part extraction for fine-grained access to component aspects.
+- **Validation During Conversion**: Added optional validation to ensure component integrity during conversion.
 
-- Completed the implementation of the EmojiSequenceOptimizer by adding missing methods for score calculation, emoji relationship detection, grouping, and domain-specific optimizations
-- Fixed implementation issues in the EmojiCommunicationEndpoint component by adding missing method implementations
-- Created comprehensive unit tests for the EmojiSequenceOptimizer, covering all optimization profiles, grouping strategies, cultural contexts, and edge cases
+### Storage Considerations
+- Designed the registry with a pluggable storage architecture to allow for future implementation of different backends.
+- For now, using in-memory storage with JSON import/export.
 
-## Next Steps
+### Configuration Management
+- Developed a layered configuration strategy with precedence rules: command line > environment variables > configuration files > defaults.
+- Organized components in a clear directory structure under `/resources/`.
 
-1. Implement an integration layer connecting all emoji communication components
-2. Create a comprehensive demo application that showcases the full capabilities of the emoji communication system
-3. Conduct performance testing of the emoji components, particularly focusing on optimization speed for large emoji sequences
-4. Consider refactoring shared functionality between EmojiSequenceOptimizer and EmojiCommunicationEndpoint
+## Unresolved Issues
+- Storage backend implementation remains to be developed.
+- Integration with the existing Principle Engine needs finalization.
+- Need to consider scalability for large numbers of components.
+- Authentication and authorization for A2A endpoints need to be implemented.
+
+## Immediate Next Steps
+- Develop integration tests between validation and registry.
+- Implement a file-based storage backend for persistent storage.
+- Create a component network visualization tool to help understand relationship graphs.
+- Integrate the component system with the Principle Engine.
+- Add authentication and access control to A2A endpoints.
+
+## Active Collaborators
+- Adaptive Bridge Builder
+- Principle Engine
+- Emotional Intelligence System
+- A2A Protocol Handler

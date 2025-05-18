@@ -137,6 +137,16 @@ All significant system actions are recorded with their context and rationale:
 
 ## Integration Patterns
 
+### A2A Protocol Adapter
+Enables Empire Framework components to be exposed and exchanged through the A2A (Agent-to-Agent) Protocol:
+
+- **Bidirectional Conversion**: Translates between Empire components and A2A message formats
+- **Component Parts Extraction**: Provides granular access to specific aspects of components
+- **Batch Operations**: Efficiently handles multiple components in a single operation
+- **Validation Integration**: Ensures component integrity during conversion
+- **Standardized API Endpoints**: Exposes components through consistent interfaces
+- **Error Standardization**: Provides uniform error handling across all A2A interactions
+
 ### Multi-Channel Adapter
 The system can integrate with various communication channels through a unified interface:
 
@@ -254,6 +264,12 @@ Components are developed with testing as a primary concern:
 ### Universal Agent Connector
 - **Pattern Implementation**: Capability discovery with protocol translation
 - **Key Features**: Security boundary enforcement, semantic mediation, capability aggregation
+
+### A2A Protocol Integration
+- **Pattern Implementation**: Adapter pattern with bidirectional conversion
+- **Key Features**: Component-to-message mapping, parts extraction, batch operations, validation integration
+- **API Endpoints**: Standardized interfaces for component discovery and retrieval
+- **Error Handling**: Uniform error representation and handling
 
 ### Continuous Evolution System
 - **Pattern Implementation**: Structured reflection with learning integration
