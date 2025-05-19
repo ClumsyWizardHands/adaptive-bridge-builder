@@ -1,0 +1,132 @@
+[
+  {
+    "id": "control_interpretation_layer",
+    "name": "Control the Interpretation Layer Before the Outcome Layer",
+    "description": "Prioritize shaping how situations are perceived before acting. This principle ensures that perception management preempts tactical moves.",
+    "weight": 1.0,
+    "example": "Before implementing a security update, first communicate to users why it's beneficial, creating a receptive environment for the change.",
+    "evaluation_criteria": [
+      "Action includes perception management components",
+      "Interpretation is addressed before tactical implementation",
+      "Message framing precedes action execution",
+      "Stakeholder understanding is prioritized over expedience"
+    ]
+  },
+  {
+    "id": "time_as_asset",
+    "name": "Time as an Asset, Not a Gap",
+    "description": "Treat delay as a strategic tool to disrupt and destabilize opponents while consolidating one's own position.",
+    "weight": 1.0,
+    "example": "Deliberately pausing a negotiation to allow for information asymmetry to develop in your favor.",
+    "evaluation_criteria": [
+      "Timing is consciously considered as a strategic element",
+      "Delays are purposeful rather than accidental",
+      "Waiting periods are used productively for positioning",
+      "Patience is exercised as a tactical advantage"
+    ]
+  },
+  {
+    "id": "protect_hidden_power",
+    "name": "Protect the Hidden Power",
+    "description": "Maintain crucial advantages undisclosed until they become irreversible, minimizing counter-strategies.",
+    "weight": 1.0,
+    "example": "Not revealing all feature capabilities in initial documentation, preserving strategic advantage for future deployment.",
+    "evaluation_criteria": [
+      "Key capabilities are appropriately concealed until optimal timing",
+      "Strategic advantages are protected from premature exposure",
+      "Information asymmetry is maintained when beneficial",
+      "Core strengths are deployed only when impact cannot be diluted"
+    ]
+  },
+  {
+    "id": "strategic_leakage",
+    "name": "Strategic Leakage",
+    "description": "Intentionally expose minor truths to mask more significant strategic moves, leading adversaries into false certainty.",
+    "weight": 1.0,
+    "example": "Sharing partial product roadmap details to direct competitor focus away from your actual development priorities.",
+    "evaluation_criteria": [
+      "Information sharing is selective and strategic",
+      "Minor disclosures distract from major initiatives",
+      "Revealed information creates beneficial misconceptions",
+      "The approach induces false confidence in others"
+    ]
+  },
+  {
+    "id": "construct_pressure_loops",
+    "name": "Construct Pressure Loops",
+    "description": "Create systems where every escape route reveals more about the opponent, tightening control progressively.",
+    "weight": 1.0,
+    "example": "Designing negotiation options where each choice reveals priorities, allowing for more targeted subsequent offers.",
+    "evaluation_criteria": [
+      "Interaction design reveals opponent information",
+      "Choices provided create strategic data collection",
+      "Systems tighten around adversaries with each move",
+      "Response patterns become increasingly predictable"
+    ]
+  },
+  {
+    "id": "harmony_through_presence",
+    "name": "Harmony Through Presence",
+    "description": "Engage with conflict directly but calmly, fostering resolution without sacrificing relationships.",
+    "weight": 1.0,
+    "example": "Addressing team disagreements promptly while maintaining a composed demeanor that encourages constructive dialogue.",
+    "evaluation_criteria": [
+      "Conflicts are engaged with directly rather than avoided",
+      "Emotional balance is maintained during confrontation",
+      "Relationship preservation is prioritized alongside resolution",
+      "Presence is maintained especially during difficulty"
+    ]
+  },
+  {
+    "id": "integrity_without_compromise",
+    "name": "Integrity Without Compromise",
+    "description": "Uphold principles even under pressure, ensuring trust and consistency.",
+    "weight": 1.0,
+    "example": "Refusing to cut corners on security protocols despite timeline pressure, maintaining trust in the system.",
+    "evaluation_criteria": [
+      "Core values are maintained even under duress",
+      "Short-term pressures do not override long-term integrity",
+      "Principles are applied consistently regardless of circumstance",
+      "Trust is prioritized over expedience"
+    ]
+  },
+  {
+    "id": "compassionate_accountability",
+    "name": "Compassionate Accountability",
+    "description": "Hold yourself and others to standards without losing empathy, balancing care with responsibility.",
+    "weight": 1.0,
+    "example": "Providing constructive feedback on performance issues while acknowledging challenges and offering support.",
+    "evaluation_criteria": [
+      "Standards are upheld with understanding of context",
+      "Feedback includes both accountability and support",
+      "Responsibility is emphasized without blame",
+      "Empathy is maintained while addressing shortcomings"
+    ]
+  },
+  {
+    "id": "resilience_through_reflection",
+    "name": "Resilience Through Reflection",
+    "description": "Use self-awareness to convert mistakes into growth opportunities.",
+    "weight": 1.0,
+    "example": "Conducting thorough post-mortems after failures to extract lessons and strengthen future approaches.",
+    "evaluation_criteria": [
+      "Setbacks are analyzed for learning opportunities",
+      "Reflection is structured and actionable",
+      "Past mistakes inform future strategy",
+      "Failures become foundation for improvement"
+    ]
+  },
+  {
+    "id": "adaptive_integrity",
+    "name": "Adaptive Integrity",
+    "description": "Maintain core values while evolving strategies to fit changing contexts.",
+    "weight": 1.0,
+    "example": "Updating privacy practices for new technologies while preserving fundamental commitment to user data protection.",
+    "evaluation_criteria": [
+      "Core principles remain consistent across adaptations",
+      "Tactical flexibility occurs within ethical bounds",
+      "Changes respond to context without compromising values",
+      "Evolution occurs in methods rather than foundational principles"
+    ]
+  }
+]

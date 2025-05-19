@@ -1,53 +1,58 @@
 # Active Context
 
-## Current Focus
-The current focus is on building out the Empire Framework's core infrastructure, specifically:
+## Current Focus: Principles-Based Agent System Enhancements
 
-1. **Empire Framework Component System**: Developing a comprehensive component model with well-defined schemas, validation, and registry for managing Ends, Means, Principles, Identities, Resentments, and Emotions.
+We have successfully implemented key components of the principles-based agent system and are now focused on enhancing it:
 
-2. **A2A Protocol Integration**: Implementing the Agent-to-Agent (A2A) Protocol for exposing Empire Framework components to external agents, facilitating interoperability in multi-agent systems.
+1. **Implemented Components**:
+   - Structured JSON format for principles
+   - PrincipleEngine as the core evaluation system
+   - PrincipleActionEvaluator for evaluating actions against principles
+   - PrinciplesIntegration for easy integration into agent systems
 
-3. **Principle Engine Fairness Extension**: Developing fairness evaluation capabilities for the Principle Engine to detect bias in agent actions.
+2. **Current Enhancement Work**:
+   - Created EnhancedPrincipleEvaluator with improved scoring mechanisms
+   - Added pattern-based detection for principle violations
+   - Building specialized evaluators for different principle types
+   - Implementing context-aware evaluations
 
-4. **Emoji Emotional Analyzer**: Enhancing the emoji emotional analysis capabilities with improved documentation and testing.
+3. **Testing Progress**:
+   - Created test_principles_integration.py for basic functionality testing
+   - Developed test_enhanced_principle_evaluator.py for comparing standard and enhanced evaluators
 
-## Recent Key Decisions
+## Current Issues
 
-### Empire Framework Core Components
-- **Component Schema Architecture**: Created a core schema with type-specific extensions to ensure consistency while allowing specialization.
-- **Validation Strategy**: Implemented a robust validation system that can perform both whole-component validation and field-specific validation.
-- **Registry Approach**: Designed the ComponentRegistry to support versioning, advanced querying, and relationship traversal.
-- **Versioning Model**: Adopted semantic versioning (MAJOR.MINOR.PATCH) for all components with automatic patch increments on updates.
+1. **Inconsistent Scoring**: Testing revealed that our enhanced evaluator sometimes produces unexpected scores:
+   - More strict on "good" actions that should be approved (expected behavior)
+   - Sometimes more lenient on clear violations depending on context (unexpected behavior)
+   - Scoring is working but needs refinement for consistency
 
-### A2A Protocol Integration
-- **Adapter Pattern**: Created A2AAdapter class to handle bidirectional conversion between Empire components and A2A message formats.
-- **Standardized Endpoints**: Implemented four standardized A2A API endpoints (getComponents, getComponentById, getRelatedComponents, getComponentParts).
-- **Granular Access**: Developed component part extraction for fine-grained access to component aspects.
-- **Validation During Conversion**: Added optional validation to ensure component integrity during conversion.
+2. **Method Implementation Gaps**: Some methods referenced in tests are not fully implemented:
+   - Missing explanation generation methods
+   - Missing alternative suggestion generation methods
+   - Need to complete method implementations to enable thorough testing
 
-### Storage Considerations
-- Designed the registry with a pluggable storage architecture to allow for future implementation of different backends.
-- For now, using in-memory storage with JSON import/export.
+3. **Need for Completion**: The EnhancedPrincipleEvaluator has several incomplete methods:
+   - `_create_alternative_from_recommendation` is referenced but not implemented
+   - Full explanation generation is not working correctly
 
-### Configuration Management
-- Developed a layered configuration strategy with precedence rules: command line > environment variables > configuration files > defaults.
-- Organized components in a clear directory structure under `/resources/`.
+## Next Steps
 
-## Unresolved Issues
-- Storage backend implementation remains to be developed.
-- Integration with the existing Principle Engine needs finalization.
-- Need to consider scalability for large numbers of components.
-- Authentication and authorization for A2A endpoints need to be implemented.
+1. **Fix Enhanced Evaluator**: Complete implementation of all methods needed for testing
+   - Implement explanation generation methods
+   - Complete alternative suggestion system
+   - Fix method signature issues causing test failures
 
-## Immediate Next Steps
-- Develop integration tests between validation and registry.
-- Implement a file-based storage backend for persistent storage.
-- Create a component network visualization tool to help understand relationship graphs.
-- Integrate the component system with the Principle Engine.
-- Add authentication and access control to A2A endpoints.
+2. **Improve Pattern Recognition**: Ensure patterns consistently identify problematic actions
+   - Add more specialized evaluators for different principle types
+   - Fix scoring inconsistencies where clear violations are not properly penalized
 
-## Active Collaborators
-- Adaptive Bridge Builder
-- Principle Engine
-- Emotional Intelligence System
-- A2A Protocol Handler
+3. **Context-Aware Refinements**: Improve how contextual information affects evaluations
+   - Emergency situations should allow some flexibility but maintain core principles
+   - User consent should appropriately affect evaluation but not override clear violations
+   - Create more nuanced handling of effect scope and duration
+
+4. **Comprehensive Testing**: Expand tests to validate all improvements
+   - Finalize test scripts to verify consistent scoring
+   - Create scenario-based tests that mimic real-world usage
+   - Document testing results and improvement metrics
