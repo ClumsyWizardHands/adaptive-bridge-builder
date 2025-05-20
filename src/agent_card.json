@@ -37,7 +37,7 @@
     "endpoints": [
       {
         "type": "http",
-        "url": "https://api.example.com/adaptive-bridge"
+        "url": "http://localhost:8080/process"
       }
     ]
   },
