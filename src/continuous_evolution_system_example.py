@@ -9,7 +9,7 @@ embodying the "Resilience Through Reflection" principle.
 
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional
 
 from continuous_evolution_system import (
@@ -39,7 +39,7 @@ from collaborative_task_handler import Task, TaskStatus, TaskPriority
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ContinuousEvolutionSystemExample")
 
-def run_example():
+def run_example() -> None:
     """Run the example demonstration of ContinuousEvolutionSystem."""
     
     # Initialize needed components
@@ -214,13 +214,13 @@ def run_example():
         capability_id=capability_id,
         name="Customer Feedback Analysis",
         description="Capability to efficiently analyze and extract insights from customer feedback",
-        created_at=datetime.utcnow().isoformat(),
+        created_at=datetime.now(timezone.utc).isoformat(),
         evolution_stages=[
             {
                 "stage": 0,
                 "name": "Initial Implementation",
                 "description": "Basic analysis of customer feedback themes",
-                "implemented_at": datetime.utcnow().isoformat()
+                "implemented_at": datetime.now(timezone.utc).isoformat()
             }
         ],
         current_stage=0,
@@ -239,10 +239,10 @@ def run_example():
     # Step 6: Record a growth milestone
     logger.info("Recording growth milestone...")
     milestone = GrowthMilestone(
-        milestone_id=f"milestone-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+        milestone_id=f"milestone-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
         title="Initial Customer Feedback Analysis Implementation",
         description="Successfully implemented first version of customer feedback analysis orchestration pattern",
-        achieved_at=datetime.utcnow().isoformat(),
+        achieved_at=datetime.now(timezone.utc).isoformat(),
         category="capability",
         impact_score=0.8,
         metrics_before={},
@@ -268,7 +268,7 @@ def run_example():
         "stage": 1,
         "name": "Enhanced Theme Extraction",
         "description": "Improved theme extraction with semantic clustering and sentiment analysis",
-        "implemented_at": datetime.utcnow().isoformat(),
+        "implemented_at": datetime.now(timezone.utc).isoformat(),
         "improvements": [
             "Added semantic clustering for better theme identification",
             "Integrated sentiment analysis for deeper insights",

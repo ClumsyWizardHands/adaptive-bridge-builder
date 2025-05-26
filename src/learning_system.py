@@ -11,7 +11,7 @@ import json
 import logging
 import re
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Tuple, Optional, Set, Union
 from enum import Enum, auto
 from dataclasses import dataclass, field
@@ -80,10 +80,10 @@ class InteractionPattern:
     confidence: float = 0.0
     
     # Last time this pattern was observed
-    last_observed: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    last_observed: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     
     # Date pattern was first observed
-    first_observed: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    first_observed: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     
     # Adaptations that have been applied to this pattern
     adaptations: List[Dict[str, Any]] = field(default_factory=list)
@@ -118,8 +118,8 @@ class InteractionPattern:
             neutral_count=data.get("neutral_count", 0),
             success_rate=data.get("success_rate", 0.5),
             confidence=data.get("confidence", 0.0),
-            last_observed=data.get("last_observed", datetime.utcnow().isoformat()),
-            first_observed=data.get("first_observed", datetime.utcnow().isoformat()),
+            last_observed=data.get("last_observed", datetime.now(timezone.utc).isoformat()),
+            first_observed=data.get("first_observed", datetime.now(timezone.utc).isoformat()),
             adaptations=data.get("adaptations", [])
         )
 
@@ -156,7 +156,7 @@ class LearningMetrics:
     plateau_detection: bool = False  # Whether learning has plateaued
     
     # Last updated timestamp
-    last_updated: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    last_updated: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert metrics to a dictionary."""
@@ -198,13 +198,13 @@ class LearningMetrics:
             balance_score=data.get("balance_score", 0.5),
             learning_curve_slope=data.get("learning_curve_slope", 0.0),
             plateau_detection=data.get("plateau_detection", False),
-            last_updated=data.get("last_updated", datetime.utcnow().isoformat())
+            last_updated=data.get("last_updated", datetime.now(timezone.utc).isoformat())
         )
 
 @dataclass
 class GrowthJournalEntry:
     """A single entry in the growth journal."""
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     entry_type: str = "observation"  # observation, reflection, adaptation, milestone
     dimension: str = ""  # learning dimension affected
     content: str = ""  # main content of the entry
@@ -226,7 +226,7 @@ class GrowthJournalEntry:
     def from_dict(cls, data: Dict[str, Any]) -> 'GrowthJournalEntry':
         """Create a GrowthJournalEntry from a dictionary."""
         return cls(
-            timestamp=data.get("timestamp", datetime.utcnow().isoformat()),
+            timestamp=data.get("timestamp", datetime.now(timezone.utc).isoformat()),
             entry_type=data.get("entry_type", "observation"),
             dimension=data.get("dimension", ""),
             content=data.get("content", ""),
@@ -379,7 +379,7 @@ class LearningSystem:
                     with open(file_path, 'r') as f:
                         entry_data = json.load(f)
                         entry = GrowthJournalEntry.from_dict(entry_data)
-                        self.growth_journal.append(entry)
+                        self.growth_journal = [*self.growth_journal, entry]
                 except Exception as e:
                     logger.error(f"Error loading journal entry {file_path}: {e}")
             
@@ -445,7 +445,7 @@ class LearningSystem:
             
             # Update pattern statistics
             pattern.occurrences += 1
-            pattern.last_observed = datetime.utcnow().isoformat()
+            pattern.last_observed = datetime.now(timezone.utc).isoformat()
             
             # Update outcome counts
             if outcome == OutcomeType.SUCCESSFUL:
@@ -484,8 +484,8 @@ class LearningSystem:
                     0.0 if outcome == OutcomeType.UNSUCCESSFUL else 0.5
                 ),
                 confidence=0.1,  # Low confidence for new patterns
-                last_observed=datetime.utcnow().isoformat(),
-                first_observed=datetime.utcnow().isoformat()
+                last_observed=datetime.now(timezone.utc).isoformat(),
+                first_observed=datetime.now(timezone.utc).isoformat()
             )
             
             # Special handling for partially successful/unsuccessful
@@ -498,7 +498,7 @@ class LearningSystem:
                 pattern.neutral_count = 0.5
                 pattern.success_rate = 0.25  # Between neutral (0.5) and failure (0.0)
             
-            self.interaction_patterns[pattern_id] = pattern
+            self.interaction_patterns = {**self.interaction_patterns, pattern_id: pattern}
         
         # Update pattern contexts for each dimension
         for dimension in dimensions:
@@ -547,7 +547,7 @@ class LearningSystem:
         
         # Create and add the entry
         entry = GrowthJournalEntry(
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             entry_type="observation",
             dimension=dimensions[0] if dimensions else "",  # Primary dimension
             content=content,
@@ -559,7 +559,7 @@ class LearningSystem:
             references=[pattern.pattern_id]
         )
         
-        self.growth_journal.append(entry)
+        self.growth_journal = [*self.growth_journal, entry]
         
         # Save to file if directory is configured
         self._save_growth_journal_entry(entry)
@@ -826,7 +826,7 @@ class LearningSystem:
         
         # Create and add the entry
         entry = GrowthJournalEntry(
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             entry_type="reflection",
             dimension=dimension,
             content=content,
@@ -837,7 +837,7 @@ class LearningSystem:
             references=[]
         )
         
-        self.growth_journal.append(entry)
+        self.growth_journal = [*self.growth_journal, entry]
         
         # Save to file if directory is configured
         self._save_growth_journal_entry(entry)
@@ -875,7 +875,7 @@ class LearningSystem:
         for recent in self.recent_adaptations:
             if recent["factor"] == adaptation["factor"] and recent["to_value"] != adaptation["to_value"]:
                 # Found a recent adaptation that conflicts with this one
-                time_since = datetime.utcnow() - datetime.fromisoformat(recent["timestamp"])
+                time_since = datetime.now(timezone.utc) - datetime.fromisoformat(recent["timestamp"])
                 if time_since.total_seconds() < 24 * 60 * 60:  # Within last 24 hours
                     return {
                         "applied": False,
@@ -917,7 +917,7 @@ class LearningSystem:
         result = {
             "applied": True,
             "adaptation_id": adaptation_id,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "factor": adaptation["factor"],
             "from_value": adaptation["from_value"],
             "to_value": adaptation["to_value"],
@@ -939,7 +939,7 @@ class LearningSystem:
                 })
         
         # Add to recent adaptations to prevent oscillation
-        self.recent_adaptations.append(result)
+        self.recent_adaptations = [*self.recent_adaptations, result]
         if len(self.recent_adaptations) > 20:  # Keep only the most recent 20
             self.recent_adaptations = self.recent_adaptations[-20:]
         
@@ -1003,7 +1003,7 @@ class LearningSystem:
         
         # Create and add the entry
         entry = GrowthJournalEntry(
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             entry_type="adaptation",
             dimension=adaptation.get("dimension", "MULTIPLE"),
             content=content,
@@ -1014,7 +1014,7 @@ class LearningSystem:
             references=adaptation.get("successful_patterns", []) + adaptation.get("unsuccessful_patterns", [])
         )
         
-        self.growth_journal.append(entry)
+        self.growth_journal = [*self.growth_journal, entry]
         
         # Save to file if directory is configured
         self._save_growth_journal_entry(entry)
@@ -1079,7 +1079,7 @@ class LearningSystem:
         )
         
         # Update timestamp
-        self.metrics.last_updated = datetime.utcnow().isoformat()
+        self.metrics.last_updated = datetime.now(timezone.utc).isoformat()
         
         # Save historical metrics for trend analysis
         historical_metric = {
@@ -1089,7 +1089,7 @@ class LearningSystem:
             "adaptation_count": self.metrics.adaptation_count,
             "balance_score": self.metrics.balance_score
         }
-        self.historical_metrics.append(historical_metric)
+        self.historical_metrics = [*self.historical_metrics, historical_metric]
         
         # Limit historical metrics to last 100 entries
         if len(self.historical_metrics) > 100:
@@ -1171,7 +1171,7 @@ class LearningSystem:
         # Filter historical metrics by time period if specified
         metrics = self.historical_metrics
         if time_period and metrics:
-            cutoff_time = datetime.utcnow() - timedelta(days=time_period)
+            cutoff_time = datetime.now(timezone.utc) - timedelta(days=time_period)
             cutoff_str = cutoff_time.isoformat()
             metrics = [m for m in metrics if m["timestamp"] >= cutoff_str]
         
@@ -1264,7 +1264,7 @@ class LearningSystem:
         
         # Create the entry
         entry = GrowthJournalEntry(
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             entry_type="milestone",
             dimension=",".join(d.name for d in dimensions),
             content=content,
@@ -1272,7 +1272,7 @@ class LearningSystem:
             references=related_patterns
         )
         
-        self.growth_journal.append(entry)
+        self.growth_journal = [*self.growth_journal, entry]
         self._save_growth_journal_entry(entry)
         
         return entry.to_dict()

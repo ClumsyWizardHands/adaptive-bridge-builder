@@ -300,7 +300,7 @@ class MultilingualEngine:
         Args:
             profile: The language profile to register
         """
-        self.language_profiles[profile.language] = profile
+        self.language_profiles = {**self.language_profiles, profile.language: profile}
         logger.info(f"Registered profile for language {profile.language}")
     
     def get_language_profile(self, language: Language) -> Optional[LanguageProfile]:
@@ -372,7 +372,7 @@ class MultilingualEngine:
             agent_id: ID of the agent
             language: Detected or specified language
         """
-        self.agent_language_cache[agent_id] = language
+        self.agent_language_cache = {**self.agent_language_cache, agent_id: language}
         logger.debug(f"Updated language for agent {agent_id} to {language}")
     
     def get_agent_language(self, agent_id: str) -> Language:

@@ -8,7 +8,7 @@ its functionality in managing complex, multi-stage projects.
 
 import unittest
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional
 
 from project_orchestrator import (
@@ -33,7 +33,7 @@ logger = logging.getLogger("TestProjectOrchestrator")
 class TestProjectOrchestrator(unittest.TestCase):
     """Test class for ProjectOrchestrator functionality."""
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment before each test."""
         # Create orchestrator engine
         self.orchestrator_engine = OrchestratorEngine(
@@ -51,7 +51,7 @@ class TestProjectOrchestrator(unittest.TestCase):
             storage_dir="test_data/projects"
         )
     
-    def _register_test_agents(self):
+    def _register_test_agents(self) -> None:
         """Register test agents with different capabilities."""
         # Strategy agent
         self.orchestrator_engine.register_agent(
@@ -89,10 +89,10 @@ class TestProjectOrchestrator(unittest.TestCase):
             max_load=2
         )
     
-    def test_create_project(self):
+    def test_create_project(self) -> None:
         """Test creating a project."""
         # Create project
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         start_date = now.strftime("%Y-%m-%d")
         end_date = (now + timedelta(days=30)).strftime("%Y-%m-%d")
         
@@ -118,10 +118,10 @@ class TestProjectOrchestrator(unittest.TestCase):
         self.assertEqual(len(project.stakeholders), 1)
         self.assertEqual(len(project.tags), 2)
     
-    def test_add_milestone(self):
+    def test_add_milestone(self) -> None:
         """Test adding a milestone to a project."""
         # Create project
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         project = self.project_orchestrator.create_project(
             name="Milestone Test Project",
             description="Testing milestone functionality",
@@ -146,10 +146,10 @@ class TestProjectOrchestrator(unittest.TestCase):
         self.assertEqual(milestone.status, MilestoneStatus.NOT_STARTED)
         self.assertIn(milestone.milestone_id, project.milestones)
     
-    def test_create_task(self):
+    def test_create_task(self) -> None:
         """Test creating a task in a milestone."""
         # Create project with milestone
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         project = self.project_orchestrator.create_project(
             name="Task Test Project",
             description="Testing task functionality",
@@ -184,14 +184,14 @@ class TestProjectOrchestrator(unittest.TestCase):
         self.assertEqual(task.metadata.get("milestone_id"), milestone.milestone_id)
         self.assertEqual(task.metadata.get("estimated_duration"), 60)
     
-    def test_resource_management(self):
+    def test_resource_management(self) -> None:
         """Test resource management functionality."""
         # Create project
         project = self.project_orchestrator.create_project(
             name="Resource Test Project",
             description="Testing resource management",
-            start_date=datetime.utcnow().strftime("%Y-%m-%d"),
-            end_date=(datetime.utcnow() + timedelta(days=30)).strftime("%Y-%m-%d")
+            start_date=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+            end_date=(datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%d")
         )
         
         # Register a resource
@@ -216,7 +216,7 @@ class TestProjectOrchestrator(unittest.TestCase):
             project_id=project.project_id,
             name="Resource Test Milestone",
             description="Testing resource allocation",
-            target_date=(datetime.utcnow() + timedelta(days=15)).strftime("%Y-%m-%d")
+            target_date=(datetime.now(timezone.utc) + timedelta(days=15)).strftime("%Y-%m-%d")
         )
         
         task = self.project_orchestrator.create_project_task(
@@ -256,10 +256,10 @@ class TestProjectOrchestrator(unittest.TestCase):
         self.assertEqual(updated_resource.allocated, 0.0)
         self.assertEqual(updated_resource.available_capacity(), 100.0)
     
-    def test_track_milestone_progress(self):
+    def test_track_milestone_progress(self) -> None:
         """Test tracking milestone progress."""
         # Create project with milestone and tasks
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         project = self.project_orchestrator.create_project(
             name="Progress Test Project",
             description="Testing progress tracking",
@@ -329,14 +329,14 @@ class TestProjectOrchestrator(unittest.TestCase):
         # Verify project progress is updated
         self.assertGreater(project.completion_percentage, 0.0)
     
-    def test_status_update(self):
+    def test_status_update(self) -> None:
         """Test creating status updates."""
         # Create project
         project = self.project_orchestrator.create_project(
             name="Status Update Test Project",
             description="Testing status updates",
-            start_date=datetime.utcnow().strftime("%Y-%m-%d"),
-            end_date=(datetime.utcnow() + timedelta(days=30)).strftime("%Y-%m-%d"),
+            start_date=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+            end_date=(datetime.now(timezone.utc) + timedelta(days=30)).strftime("%Y-%m-%d"),
             stakeholders=[
                 {
                     "id": "stakeholder@example.com",

@@ -10,7 +10,7 @@ into a single interface that can be easily incorporated into any agent system.
 import os
 import json
 import logging
-from typing import List, Dict, Any, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from principles_converter import convert_principles
 from principle_engine import PrincipleEngine
@@ -205,11 +205,23 @@ class PrinciplesIntegration:
         logger.info(f"Compliance threshold set to {self.threshold}")
 
 
+
+    async def __aenter__(self):
+        """Enter async context."""
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Exit async context and cleanup."""
+        if hasattr(self, 'cleanup'):
+            await self.cleanup()
+        elif hasattr(self, 'close'):
+            await self.close()
+        return False
 # Example usage as agent middleware
 class PrincipledAgent:
     """Example agent that checks actions against principles."""
     
-    def __init__(self, principles_text: Optional[str] = None, principles_file: Optional[str] = None):
+    def __init__(self, principles_text: Optional[str] = None, principles_file: Optional[str] = None) -> None:
         """Initialize the principled agent."""
         self.principles = PrinciplesIntegration(principles_text, principles_file)
         logger.info("PrincipledAgent initialized")
@@ -225,7 +237,7 @@ class PrincipledAgent:
         Returns:
             Response dictionary
         """
-        def action_handler():
+        def action_handler() -> Dict[str, Any]:
             # This would normally contain the logic to actually perform the action
             return {"status": "completed", "action": action}
         
@@ -236,8 +248,20 @@ class PrincipledAgent:
         return self.principles.get_principles_summary()
 
 
+
+    async def __aenter__(self):
+        """Enter async context."""
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Exit async context and cleanup."""
+        if hasattr(self, 'cleanup'):
+            await self.cleanup()
+        elif hasattr(self, 'close'):
+            await self.close()
+        return False
 # Example function
-def main():
+def main() -> None:
     """Demonstrate the PrinciplesIntegration system."""
     # Example principles
     example_principles = """

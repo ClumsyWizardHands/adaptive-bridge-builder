@@ -8,7 +8,7 @@ attribution and quality control.
 
 import logging
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any
 
 from result_synthesizer import (
@@ -476,7 +476,7 @@ def example_code_synthesis() -> None:
     import logging
     import json
     import os
-    from datetime import datetime
+    from datetime import datetime, timezone
     
     # Configure logging
     logging.basicConfig(
@@ -673,7 +673,7 @@ def example_code_synthesis() -> None:
     import logging
     import json
     import os
-    from datetime import datetime
+    from datetime import datetime, timezone
     import concurrent.futures
     from functools import partial
     
@@ -756,9 +756,11 @@ def example_code_synthesis() -> None:
                     raise ValueError(f"Data source {source_id} not found")
                 return self._extract_from_source(sources[0])
             else:
-                # Process all sources in parallel
-                with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-                    results = list(executor.map(self._extract_from_source, self.data_sources))
+                # Process all sources in parallel using asyncio
+                import asyncio
+                loop = asyncio.get_event_loop()
+                tasks = [loop.run_in_executor(None, self._extract_from_source, source) for source in self.data_sources]
+                results = loop.run_until_complete(asyncio.gather(*tasks))
                 
                 # Combine results
                 valid_results = [df for df in results if not df.empty]

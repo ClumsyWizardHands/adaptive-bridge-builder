@@ -20,7 +20,7 @@ from principle_engine import PrincipleEngine
 from principle_engine_action_evaluator import PrincipleActionEvaluator
 
 
-def print_separator(title=None):
+def print_separator(title=None) -> None:
     """Print a separator line with optional title."""
     print("\n" + "=" * 80)
     if title:
@@ -50,7 +50,7 @@ def create_custom_principles_file(principles_text: str, output_file: str = "cust
     return output_file
 
 
-def demonstrate_evaluator(evaluator: PrincipleActionEvaluator):
+def demonstrate_evaluator(evaluator: PrincipleActionEvaluator) -> None:
     """
     Demonstrate the PrincipleActionEvaluator with some example actions.
     
@@ -96,7 +96,7 @@ def demonstrate_evaluator(evaluator: PrincipleActionEvaluator):
         input("\nPress Enter to continue...")
 
 
-def interactive_demo(evaluator: PrincipleActionEvaluator):
+def interactive_demo(evaluator: PrincipleActionEvaluator) -> None:
     """
     Run an interactive demo where the user can input actions to evaluate.
     
@@ -131,7 +131,7 @@ def interactive_demo(evaluator: PrincipleActionEvaluator):
                 print(f"{i}. {textwrap.fill(alt, width=74, initial_indent='   ', subsequent_indent='      ')}")
 
 
-def main():
+def main() -> int:
     """Main function to run the demonstration."""
     parser = argparse.ArgumentParser(description="Demonstrate PrincipleActionEvaluator with custom principles.")
     parser.add_argument("--principles", "-p", help="Text file containing principles")

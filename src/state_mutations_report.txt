@@ -1,0 +1,713 @@
+State Mutations Report
+==================================================
+
+Total files analyzed: 190
+Files with mutations: 84
+Total mutations found: 526
+Files fixed: 84
+Total fixes applied: 417
+
+Mutations by type:
+  subscript_assign: 248
+  method_call: 113
+  attribute_reassign: 70
+  aug_assign: 48
+  delete: 47
+
+
+Detailed fixes:
+--------------------------------------------------
+
+C:\Users\every\Desktop\Alex Familiar\src\a2a_task_handler.py:1104 (delete)
+  Original: del self.active_contexts[context_key]
+  Fixed:    self.active_contexts = {k: v for k, v in self.active_contexts.items() if k != context_key}
+
+C:\Users\every\Desktop\Alex Familiar\src\a2a_task_handler.py:545 (subscript_assign)
+  Original: self.active_contexts[context_key] = context
+  Fixed:    self.active_contexts = {**self.active_contexts, context_key: context}
+
+C:\Users\every\Desktop\Alex Familiar\src\a2a_task_handler.py:339 (subscript_assign)
+  Original: self.tasks[task_id] = {
+  Fixed:    self.tasks = {**self.tasks, task_id: {}
+
+C:\Users\every\Desktop\Alex Familiar\src\a2a_task_handler.py:119 (method_call)
+  Original: self.topics.append(topic)
+  Fixed:    self.topics = [*self.topics, topic]
+
+C:\Users\every\Desktop\Alex Familiar\src\a2a_task_handler.py:112 (method_call)
+  Original: self.intent_history.append(intent)
+  Fixed:    self.intent_history = [*self.intent_history, intent]
+
+C:\Users\every\Desktop\Alex Familiar\src\a2a_task_handler.py:111 (method_call)
+  Original: self.messages.append(message)
+  Fixed:    self.messages = [*self.messages, message]
+
+C:\Users\every\Desktop\Alex Familiar\src\adaptive_bridge_builder.py:160 (subscript_assign)
+  Original: self.active_conversations[conversation_id] = {
+  Fixed:    self.active_conversations = {**self.active_conversations, conversation_id: {}
+
+C:\Users\every\Desktop\Alex Familiar\src\adaptive_bridge_builder.py:137 (aug_assign)
+  Original: self.message_counter += 1
+  Fixed:    self.message_counter = self.message_counter + 1
+
+C:\Users\every\Desktop\Alex Familiar\src\add_type_annotations.py:69 (method_call)
+  Original: self.changes.append((line_num, old_line, new_line))
+  Fixed:    self.changes = [*self.changes, (line_num, old_line, new_line]
+
+C:\Users\every\Desktop\Alex Familiar\src\add_type_annotations.py:39 (method_call)
+  Original: self.changes.append((line_num, old_line, new_line))
+  Fixed:    self.changes = [*self.changes, (line_num, old_line, new_line]
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:1021 (delete)
+  Original: del self.compatibility_cache[key]
+  Fixed:    self.compatibility_cache = {k: v for k, v in self.compatibility_cache.items() if k != key}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:910 (subscript_assign)
+  Original: self.compatibility_cache[cache_key] = (is_compatible, compatibility_level, details)
+  Fixed:    self.compatibility_cache = {**self.compatibility_cache, cache_key: (is_compatible, compatibility_level, details)}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:762 (delete)
+  Original: del self.compatibility_cache[key]
+  Fixed:    self.compatibility_cache = {k: v for k, v in self.compatibility_cache.items() if k != key}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:748 (delete)
+  Original: del self.agents[agent_id]
+  Fixed:    self.agents = {k: v for k, v in self.agents.items() if k != agent_id}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:672 (subscript_assign)
+  Original: self.agents[agent_id] = agent_card
+  Fixed:    self.agents = {**self.agents, agent_id: agent_card}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:654 (subscript_assign)
+  Original: self.agents[agent_id] = agent_card
+  Fixed:    self.agents = {**self.agents, agent_id: agent_card}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:520 (subscript_assign)
+  Original: self.card_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+  Fixed:    self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:503 (subscript_assign)
+  Original: self.card_data["communication"] = {}
+  Fixed:    self.card_data = {**self.card_data, "communication": {}}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:440 (subscript_assign)
+  Original: self.card_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+  Fixed:    self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:433 (subscript_assign)
+  Original: self.card_data["principles"] = []
+  Fixed:    self.card_data = {**self.card_data, "principles": []}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:429 (subscript_assign)
+  Original: self.card_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+  Fixed:    self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:395 (subscript_assign)
+  Original: self.card_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+  Fixed:    self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:386 (subscript_assign)
+  Original: self.card_data["capabilities"] = [
+  Fixed:    self.card_data = {**self.card_data, "capabilities": [}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:369 (subscript_assign)
+  Original: self.card_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+  Fixed:    self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:363 (subscript_assign)
+  Original: self.card_data["capabilities"] = []
+  Fixed:    self.card_data = {**self.card_data, "capabilities": []}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:357 (subscript_assign)
+  Original: self.card_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+  Fixed:    self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:246 (subscript_assign)
+  Original: self.card_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+  Fixed:    self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:243 (subscript_assign)
+  Original: self.card_data["version"] = str(new_ver)
+  Fixed:    self.card_data = {**self.card_data, "version": str(new_ver)}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:232 (subscript_assign)
+  Original: self.card_data["version"] = new_version
+  Fixed:    self.card_data = {**self.card_data, "version": new_version}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:189 (subscript_assign)
+  Original: self.card_data["communication"] = {
+  Fixed:    self.card_data = {**self.card_data, "communication": {}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:183 (subscript_assign)
+  Original: self.card_data["capabilities"] = []
+  Fixed:    self.card_data = {**self.card_data, "capabilities": []}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:179 (subscript_assign)
+  Original: self.card_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+  Fixed:    self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:177 (subscript_assign)
+  Original: self.card_data["created_at"] = datetime.now(timezone.utc).isoformat()
+  Fixed:    self.card_data = {**self.card_data, "created_at": datetime.now(timezone.utc).isoformat()}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_card.py:150 (subscript_assign)
+  Original: self.card_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+  Fixed:    self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_registry.py:1199 (subscript_assign)
+  Original: self.opportunity_scores[agent_id] = 1.0
+  Fixed:    self.opportunity_scores = {**self.opportunity_scores, agent_id: 1.0}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_registry.py:1197 (subscript_assign)
+  Original: self.opportunity_scores[agent_id] = total_opportunity_score / num_task_types
+  Fixed:    self.opportunity_scores = {**self.opportunity_scores, agent_id: total_opportunity_score / num_task_types}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_registry.py:818 (subscript_assign)
+  Original: self.capabilities[capability_name] = {}
+  Fixed:    self.capabilities = {**self.capabilities, capability_name: {}}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_registry.py:231 (subscript_assign)
+  Original: self.opportunity_scores[agent_id] = 1.0
+  Fixed:    self.opportunity_scores = {**self.opportunity_scores, agent_id: 1.0}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_registry.py:230 (subscript_assign)
+  Original: self.task_distribution[agent_id] = {task_type: 0 for task_type in TaskType}
+  Fixed:    self.task_distribution = {**self.task_distribution, agent_id: {task_type: 0 for task_type in TaskType}}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_registry.py:229 (subscript_assign)
+  Original: self.performance[agent_id] = AgentPerformance()
+  Fixed:    self.performance = {**self.performance, agent_id: AgentPerformance()}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_registry.py:228 (subscript_assign)
+  Original: self.roles_by_agent[agent_id] = roles or []
+  Fixed:    self.roles_by_agent = {**self.roles_by_agent, agent_id: roles or []}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_registry.py:227 (subscript_assign)
+  Original: self.capabilities_by_agent[agent_id] = {}
+  Fixed:    self.capabilities_by_agent = {**self.capabilities_by_agent, agent_id: {}}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_registry.py:217 (subscript_assign)
+  Original: self.agents[agent_id] = {
+  Fixed:    self.agents = {**self.agents, agent_id: {}
+
+C:\Users\every\Desktop\Alex Familiar\src\agent_registry_llm_integration.py:132 (subscript_assign)
+  Original: self.llm_adapter_map[adapter.provider_name] = agent_id
+  Fixed:    self.llm_adapter_map = {**self.llm_adapter_map, adapter.provider_name: agent_id}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_channel_adapter.py:650 (subscript_assign)
+  Original: self.message_status_cache[message_id] = status
+  Fixed:    self.message_status_cache = {**self.message_status_cache, message_id: status}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_channel_adapter.py:533 (subscript_assign)
+  Original: self.message_status_cache[message.message_id] = DeliveryStatus.FAILED
+  Fixed:    self.message_status_cache = {**self.message_status_cache, message.message_id: DeliveryStatus.FAILED}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_channel_adapter.py:528 (subscript_assign)
+  Original: self.message_status_cache[message.message_id] = DeliveryStatus.FAILED
+  Fixed:    self.message_status_cache = {**self.message_status_cache, message.message_id: DeliveryStatus.FAILED}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_channel_adapter.py:518 (subscript_assign)
+  Original: self.message_status_cache[message.message_id] = status
+  Fixed:    self.message_status_cache = {**self.message_status_cache, message.message_id: status}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_channel_adapter.py:512 (subscript_assign)
+  Original: self.message_status_cache[message.message_id] = DeliveryStatus.SENT
+  Fixed:    self.message_status_cache = {**self.message_status_cache, message.message_id: DeliveryStatus.SENT}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_channel_adapter.py:199 (subscript_assign)
+  Original: self.entity_endpoints[entity_id] = {}
+  Fixed:    self.entity_endpoints = {**self.entity_endpoints, entity_id: {}}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:1333 (delete)
+  Original: del self.circuit_breakers[api_name]
+  Fixed:    self.circuit_breakers = {k: v for k, v in self.circuit_breakers.items() if k != api_name}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:1330 (delete)
+  Original: del self.cache_managers[api_name]
+  Fixed:    self.cache_managers = {k: v for k, v in self.cache_managers.items() if k != api_name}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:1327 (delete)
+  Original: del self.rate_limiters[api_name]
+  Fixed:    self.rate_limiters = {k: v for k, v in self.rate_limiters.items() if k != api_name}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:1323 (delete)
+  Original: del self.apis[api_name]
+  Fixed:    self.apis = {k: v for k, v in self.apis.items() if k != api_name}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:1291 (subscript_assign)
+  Original: self.circuit_breakers[api_config.name] = {}
+  Fixed:    self.circuit_breakers = {**self.circuit_breakers, api_config.name: {}}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:1288 (subscript_assign)
+  Original: self.cache_managers[api_config.name] = CacheManager(api_config.global_cache_config)
+  Fixed:    self.cache_managers = {**self.cache_managers, api_config.name: CacheManager(api_config.global_cache_config)}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:1284 (subscript_assign)
+  Original: self.rate_limiters[api_config.name] = RateLimiter(api_config.global_rate_limit)
+  Fixed:    self.rate_limiters = {**self.rate_limiters, api_config.name: RateLimiter(api_config.global_rate_limit)}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:1280 (subscript_assign)
+  Original: self.apis[api_config.name] = api_config
+  Fixed:    self.apis = {**self.apis, api_config.name: api_config}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:790 (subscript_assign)
+  Original: self.custom_transformers[name] = transformer_func
+  Fixed:    self.custom_transformers = {**self.custom_transformers, name: transformer_func}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:594 (aug_assign)
+  Original: self.failure_count += 1
+  Fixed:    self.failure_count = self.failure_count + 1
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:583 (aug_assign)
+  Original: self.success_count += 1
+  Fixed:    self.success_count = self.success_count + 1
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:510 (method_call)
+  Original: self.cache.clear()
+  Fixed:    self.cache = {}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:507 (delete)
+  Original: del self.cache[key]
+  Fixed:    self.cache = {k: v for k, v in self.cache.items() if k != key}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:503 (aug_assign)
+  Original: self.cache_size -= size
+  Fixed:    self.cache_size = self.cache_size - size
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:497 (delete)
+  Original: del self.cache[cache_key]
+  Fixed:    self.cache = {k: v for k, v in self.cache.items() if k != cache_key}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:496 (aug_assign)
+  Original: self.cache_size -= size
+  Fixed:    self.cache_size = self.cache_size - size
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:478 (aug_assign)
+  Original: self.cache_size += data_size
+  Fixed:    self.cache_size = self.cache_size + data_size
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:471 (subscript_assign)
+  Original: self.cache[cache_key] = (
+  Fixed:    self.cache = {**self.cache, cache_key: (}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:433 (aug_assign)
+  Original: self.misses += 1
+  Fixed:    self.misses = self.misses + 1
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:429 (aug_assign)
+  Original: self.hits += 1
+  Fixed:    self.hits = self.hits + 1
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:425 (aug_assign)
+  Original: self.misses += 1
+  Fixed:    self.misses = self.misses + 1
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:414 (aug_assign)
+  Original: self.misses += 1
+  Fixed:    self.misses = self.misses + 1
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:396 (delete)
+  Original: del self.cache[key]
+  Fixed:    self.cache = {k: v for k, v in self.cache.items() if k != key}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:395 (aug_assign)
+  Original: self.cache_size -= size
+  Fixed:    self.cache_size = self.cache_size - size
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:380 (delete)
+  Original: del self.cache[key]
+  Fixed:    self.cache = {k: v for k, v in self.cache.items() if k != key}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:379 (aug_assign)
+  Original: self.cache_size -= size
+  Fixed:    self.cache_size = self.cache_size - size
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:296 (method_call)
+  Original: self.last_refill.clear()
+  Fixed:    self.last_refill = {}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:295 (method_call)
+  Original: self.tokens.clear()
+  Fixed:    self.tokens = {}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:292 (delete)
+  Original: del self.last_refill[key]
+  Fixed:    self.last_refill = {k: v for k, v in self.last_refill.items() if k != key}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:291 (delete)
+  Original: del self.tokens[key]
+  Fixed:    self.tokens = {k: v for k, v in self.tokens.items() if k != key}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:287 (delete)
+  Original: del self.last_refill[key]
+  Fixed:    self.last_refill = {k: v for k, v in self.last_refill.items() if k != key}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:286 (delete)
+  Original: del self.tokens[key]
+  Fixed:    self.tokens = {k: v for k, v in self.tokens.items() if k != key}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:282 (delete)
+  Original: del self.last_refill[key]
+  Fixed:    self.last_refill = {k: v for k, v in self.last_refill.items() if k != key}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:281 (delete)
+  Original: del self.tokens[key]
+  Fixed:    self.tokens = {k: v for k, v in self.tokens.items() if k != key}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:259 (subscript_assign)
+  Original: self.last_refill[key] = now
+  Fixed:    self.last_refill = {**self.last_refill, key: now}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:255 (subscript_assign)
+  Original: self.tokens[key] = min(
+  Fixed:    self.tokens = {**self.tokens, key: min(}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:249 (subscript_assign)
+  Original: self.last_refill[key] = now
+  Fixed:    self.last_refill = {**self.last_refill, key: now}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system.py:248 (subscript_assign)
+  Original: self.tokens[key] = self.config.burst_size
+  Fixed:    self.tokens = {**self.tokens, key: self.config.burst_size}
+
+C:\Users\every\Desktop\Alex Familiar\src\api_gateway_system_calendar.py:947 (subscript_assign)
+  Original: self.event_cache[cache_key] = events
+  Fixed:    self.event_cache = {**self.event_cache, cache_key: events}
+
+C:\Users\every\Desktop\Alex Familiar\src\async_best_practices_example.py:319 (method_call)
+  Original: self.results.append(f"processed_{item}")
+  Fixed:    self.results = [*self.results, f"processed_{item}"]
+
+C:\Users\every\Desktop\Alex Familiar\src\async_best_practices_example.py:66 (method_call)
+  Original: self._background_tasks.append(task1)
+  Fixed:    self._background_tasks = [*self._background_tasks, task1]
+
+C:\Users\every\Desktop\Alex Familiar\src\async_best_practices_example.py:50 (subscript_assign)
+  Original: self._data[key] = value
+  Fixed:    self._data = {**self._data, key: value}
+
+C:\Users\every\Desktop\Alex Familiar\src\async_best_practices_example.py:34 (subscript_assign)
+  Original: self._data[key] = value
+  Fixed:    self._data = {**self._data, key: value}
+
+C:\Users\every\Desktop\Alex Familiar\src\audit_exports_imports.py:41 (subscript_assign)
+  Original: self.imports[rel_path] = {}
+  Fixed:    self.imports = {**self.imports, rel_path: {}}
+
+C:\Users\every\Desktop\Alex Familiar\src\audit_exports_imports.py:39 (subscript_assign)
+  Original: self.exports[rel_path] = {"names": set(), "default": None}
+  Fixed:    self.exports = {**self.exports, rel_path: {"names": set(), "default": None}}
+
+C:\Users\every\Desktop\Alex Familiar\src\audit_imports.py:275 (method_call)
+  Original: self.issues.extend(style_issues)
+  Fixed:    self.issues = [*self.issues, *style_issues]
+
+C:\Users\every\Desktop\Alex Familiar\src\audit_imports.py:261 (subscript_assign)
+  Original: self.imports[module_name] = project_imports
+  Fixed:    self.imports = {**self.imports, module_name: project_imports}
+
+C:\Users\every\Desktop\Alex Familiar\src\audit_imports.py:256 (subscript_assign)
+  Original: self.module_paths[module_name] = file_path
+  Fixed:    self.module_paths = {**self.module_paths, module_name: file_path}
+
+C:\Users\every\Desktop\Alex Familiar\src\audit_imports.py:175 (method_call)
+  Original: self.circular_dependencies.append(normalized_cycle)
+  Fixed:    self.circular_dependencies = [*self.circular_dependencies, normalized_cycle]
+
+C:\Users\every\Desktop\Alex Familiar\src\bridge_to_claude.py:128 (aug_assign)
+  Original: self.message_count += 1
+  Fixed:    self.message_count = self.message_count + 1
+
+C:\Users\every\Desktop\Alex Familiar\src\bridge_to_claude.py:106 (aug_assign)
+  Original: self.message_count += 1
+  Fixed:    self.message_count = self.message_count + 1
+
+C:\Users\every\Desktop\Alex Familiar\src\bridge_to_claude.py:83 (aug_assign)
+  Original: self.message_count += 1
+  Fixed:    self.message_count = self.message_count + 1
+
+C:\Users\every\Desktop\Alex Familiar\src\bridge_to_claude.py:64 (aug_assign)
+  Original: self.message_count += 1
+  Fixed:    self.message_count = self.message_count + 1
+
+C:\Users\every\Desktop\Alex Familiar\src\chat_channel_adapter.py:606 (subscript_assign)
+  Original: self.message_status[message.message_id] = DeliveryStatus.FAILED
+  Fixed:    self.message_status = {**self.message_status, message.message_id: DeliveryStatus.FAILED}
+
+C:\Users\every\Desktop\Alex Familiar\src\chat_channel_adapter.py:601 (subscript_assign)
+  Original: self.message_status[message.message_id] = DeliveryStatus.FAILED
+  Fixed:    self.message_status = {**self.message_status, message.message_id: DeliveryStatus.FAILED}
+
+C:\Users\every\Desktop\Alex Familiar\src\chat_channel_adapter.py:598 (subscript_assign)
+  Original: self.message_status[message.message_id] = DeliveryStatus.SENT
+  Fixed:    self.message_status = {**self.message_status, message.message_id: DeliveryStatus.SENT}
+
+C:\Users\every\Desktop\Alex Familiar\src\collaborative_task_handler.py:884 (subscript_assign)
+  Original: self.agent_capabilities[agent_id] = capabilities
+  Fixed:    self.agent_capabilities = {**self.agent_capabilities, agent_id: capabilities}
+
+C:\Users\every\Desktop\Alex Familiar\src\collaborative_task_handler.py:852 (subscript_assign)
+  Original: self.completion_handlers[task_id] = handler
+  Fixed:    self.completion_handlers = {**self.completion_handlers, task_id: handler}
+
+C:\Users\every\Desktop\Alex Familiar\src\collaborative_task_handler.py:497 (subscript_assign)
+  Original: self.dependency_graph[dep_id] = set()
+  Fixed:    self.dependency_graph = {**self.dependency_graph, dep_id: set()}
+
+C:\Users\every\Desktop\Alex Familiar\src\collaborative_task_handler.py:491 (subscript_assign)
+  Original: self.tasks[task_id] = task
+  Fixed:    self.tasks = {**self.tasks, task_id: task}
+
+C:\Users\every\Desktop\Alex Familiar\src\collaborative_task_handler.py:269 (method_call)
+  Original: self.messages.append(message)
+  Fixed:    self.messages = [*self.messages, message]
+
+C:\Users\every\Desktop\Alex Familiar\src\collaborative_task_handler.py:248 (subscript_assign)
+  Original: self.subtasks[subtask.task_id] = subtask
+  Fixed:    self.subtasks = {**self.subtasks, subtask.task_id: subtask}
+
+C:\Users\every\Desktop\Alex Familiar\src\collaborative_task_handler.py:219 (method_call)
+  Original: self.errors.append(error)
+  Fixed:    self.errors = [*self.errors, error]
+
+C:\Users\every\Desktop\Alex Familiar\src\collaborative_task_handler.py:179 (subscript_assign)
+  Original: self.results[agent_id] = {
+  Fixed:    self.results = {**self.results, agent_id: {}
+
+C:\Users\every\Desktop\Alex Familiar\src\collaborative_task_handler.py:131 (method_call)
+  Original: self.assigned_agents.append(agent_id)
+  Fixed:    self.assigned_agents = [*self.assigned_agents, agent_id]
+
+C:\Users\every\Desktop\Alex Familiar\src\communication_adapter.py:231 (subscript_assign)
+  Original: self.agent_profiles[profile.agent_id] = profile
+  Fixed:    self.agent_profiles = {**self.agent_profiles, profile.agent_id: profile}
+
+C:\Users\every\Desktop\Alex Familiar\src\communication_channel_manager.py:1048 (subscript_assign)
+  Original: self.message_store[message_id] = message
+  Fixed:    self.message_store = {**self.message_store, message_id: message}
+
+C:\Users\every\Desktop\Alex Familiar\src\communication_channel_manager.py:975 (subscript_assign)
+  Original: self.message_store[message.message_id] = message
+  Fixed:    self.message_store = {**self.message_store, message.message_id: message}
+
+C:\Users\every\Desktop\Alex Familiar\src\communication_channel_manager.py:919 (subscript_assign)
+  Original: self.message_store[message.message_id] = message
+  Fixed:    self.message_store = {**self.message_store, message.message_id: message}
+
+C:\Users\every\Desktop\Alex Familiar\src\communication_channel_manager.py:725 (subscript_assign)
+  Original: self.channel_communication_styles[channel_type] = style
+  Fixed:    self.channel_communication_styles = {**self.channel_communication_styles, channel_type: style}
+
+C:\Users\every\Desktop\Alex Familiar\src\communication_channel_manager.py:676 (subscript_assign)
+  Original: self.entity_channels[entity_id] = {}
+  Fixed:    self.entity_channels = {**self.entity_channels, entity_id: {}}
+
+C:\Users\every\Desktop\Alex Familiar\src\communication_channel_manager.py:631 (subscript_assign)
+  Original: self.channel_adapters[adapter.channel_id] = adapter
+  Fixed:    self.channel_adapters = {**self.channel_adapters, adapter.channel_id: adapter}
+
+C:\Users\every\Desktop\Alex Familiar\src\communication_channel_manager.py:491 (subscript_assign)
+  Original: self.security_providers[channel_type] = provider
+  Fixed:    self.security_providers = {**self.security_providers, channel_type: provider}
+
+C:\Users\every\Desktop\Alex Familiar\src\communication_channel_manager.py:249 (method_call)
+  Original: self.attachments.append(attachment)
+  Fixed:    self.attachments = [*self.attachments, attachment]
+
+C:\Users\every\Desktop\Alex Familiar\src\communication_style_analyzer.py:401 (subscript_assign)
+  Original: self.style_cache[agent_id] = (style, datetime.now(timezone.utc))
+  Fixed:    self.style_cache = {**self.style_cache, agent_id: (style, datetime.now(timezone.utc))}
+
+C:\Users\every\Desktop\Alex Familiar\src\communication_style_analyzer.py:101 (method_call)
+  Original: self.messages.append(message)
+  Fixed:    self.messages = [*self.messages, message]
+
+C:\Users\every\Desktop\Alex Familiar\src\conflict_engagement.py:173 (method_call)
+  Original: self.alternative_actions.append(action)
+  Fixed:    self.alternative_actions = [*self.alternative_actions, action]
+
+C:\Users\every\Desktop\Alex Familiar\src\conflict_engagement.py:167 (method_call)
+  Original: self.primary_actions.append(action)
+  Fixed:    self.primary_actions = [*self.primary_actions, action]
+
+C:\Users\every\Desktop\Alex Familiar\src\conflict_resolver.py:939 (subscript_assign)
+  Original: self.active_conflicts[conflict.conflict_id] = conflict
+  Fixed:    self.active_conflicts = {**self.active_conflicts, conflict.conflict_id: conflict}
+
+C:\Users\every\Desktop\Alex Familiar\src\conflict_resolver.py:499 (method_call)
+  Original: self.resolution_plan.append(step)
+  Fixed:    self.resolution_plan = [*self.resolution_plan, step]
+
+C:\Users\every\Desktop\Alex Familiar\src\conflict_resolver.py:486 (aug_assign)
+  Original: self.resolution_notes += f"\n[{datetime.now(timezone.utc).isoformat()}] {notes}"
+  Fixed:    self.resolution_notes = self.resolution_notes + f"\n[{datetime.now(timezone.utc).isoformat()}] {notes}"
+
+C:\Users\every\Desktop\Alex Familiar\src\conflict_resolver.py:466 (aug_assign)
+  Original: self.resolution_notes += f"\n[{self.updated_at}] {notes}"
+  Fixed:    self.resolution_notes = self.resolution_notes + f"\n[{self.updated_at}] {notes}"
+
+C:\Users\every\Desktop\Alex Familiar\src\conflict_resolver.py:275 (aug_assign)
+  Original: self.notes += f"\n{notes}"
+  Fixed:    self.notes = self.notes + f"\n{notes}"
+
+C:\Users\every\Desktop\Alex Familiar\src\continuous_evolution_system.py:558 (subscript_assign)
+  Original: self.orchestration_patterns[pattern_id] = pattern
+  Fixed:    self.orchestration_patterns = {**self.orchestration_patterns, pattern_id: pattern}
+
+C:\Users\every\Desktop\Alex Familiar\src\continuous_evolution_system.py:341 (method_call)
+  Original: self.growth_milestones.append(GrowthMilestone.from_dict(milestone_data))
+  Fixed:    self.growth_milestones = [*self.growth_milestones, GrowthMilestone.from_dict(milestone_data]
+
+C:\Users\every\Desktop\Alex Familiar\src\continuous_evolution_system.py:333 (subscript_assign)
+  Original: self.capabilities[capability_id] = CapabilityEvolution.from_dict(capability_data)
+  Fixed:    self.capabilities = {**self.capabilities, capability_id: CapabilityEvolution.from_dict(capability_data)}
+
+C:\Users\every\Desktop\Alex Familiar\src\continuous_evolution_system.py:325 (subscript_assign)
+  Original: self.orchestration_patterns[pattern_id] = OrchestrationPattern.from_dict(pattern_data)
+  Fixed:    self.orchestration_patterns = {**self.orchestration_patterns, pattern_id: OrchestrationPattern.from_dict(pattern_data)}
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager.py:467 (subscript_assign)
+  Original: self.entity_index[entity_id] = []
+  Fixed:    self.entity_index = {**self.entity_index, entity_id: []}
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager.py:460 (subscript_assign)
+  Original: self.message_index[message_id] = link_id
+  Fixed:    self.message_index = {**self.message_index, message_id: link_id}
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager.py:452 (subscript_assign)
+  Original: self.session_index[session_id] = []
+  Fixed:    self.session_index = {**self.session_index, session_id: []}
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager.py:408 (subscript_assign)
+  Original: self.message_index[message_id] = link_id
+  Fixed:    self.message_index = {**self.message_index, message_id: link_id}
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager.py:403 (subscript_assign)
+  Original: self.session_index[session_id] = []
+  Fixed:    self.session_index = {**self.session_index, session_id: []}
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager.py:397 (subscript_assign)
+  Original: self.entity_index[entity_id] = []
+  Fixed:    self.entity_index = {**self.entity_index, entity_id: []}
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager.py:392 (subscript_assign)
+  Original: self.topic_index[primary_topic] = []
+  Fixed:    self.topic_index = {**self.topic_index, primary_topic: []}
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager.py:388 (subscript_assign)
+  Original: self.context_links[link_id] = context_link
+  Fixed:    self.context_links = {**self.context_links, link_id: context_link}
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager.py:275 (subscript_assign)
+  Original: self.identity_links[primary_id] = IdentityLink(
+  Fixed:    self.identity_links = {**self.identity_links, primary_id: IdentityLink(}
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager.py:163 (method_call)
+  Original: self.entity_ids.append(entity_id)
+  Fixed:    self.entity_ids = [*self.entity_ids, entity_id]
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager.py:157 (method_call)
+  Original: self.message_ids.append(message_id)
+  Fixed:    self.message_ids = [*self.message_ids, message_id]
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager.py:151 (method_call)
+  Original: self.session_ids.append(session_id)
+  Fixed:    self.session_ids = [*self.session_ids, session_id]
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager.py:100 (subscript_assign)
+  Original: self.channel_identities[channel_type] = identity
+  Fixed:    self.channel_identities = {**self.channel_identities, channel_type: identity}
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager_example.py:105 (method_call)
+  Original: self.messages.append(message)
+  Fixed:    self.messages = [*self.messages, message]
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager_example.py:59 (subscript_assign)
+  Original: self.sessions[session_id] = session
+  Fixed:    self.sessions = {**self.sessions, session_id: session}
+
+C:\Users\every\Desktop\Alex Familiar\src\cross_modal_context_manager_example.py:50 (method_call)
+  Original: self.messages.append(message)
+  Fixed:    self.messages = [*self.messages, message]
+
+C:\Users\every\Desktop\Alex Familiar\src\domain_specific_emoji_sets.py:46 (method_call)
+  Original: self.common_sequences.append(sequence)
+  Fixed:    self.common_sequences = [*self.common_sequences, sequence]
+
+C:\Users\every\Desktop\Alex Familiar\src\domain_specific_emoji_sets.py:42 (subscript_assign)
+  Original: self.emoji_mappings[mapping.emoji] = mapping
+  Fixed:    self.emoji_mappings = {**self.emoji_mappings, mapping.emoji: mapping}
+
+C:\Users\every\Desktop\Alex Familiar\src\email_channel_adapter.py:287 (subscript_assign)
+  Original: self.sent_messages[message.message_id] = {
+  Fixed:    self.sent_messages = {**self.sent_messages, message.message_id: {}
+
+C:\Users\every\Desktop\Alex Familiar\src\email_channel_adapter.py:155 (subscript_assign)
+  Original: self.entity_to_email[entity_id] = email_address
+  Fixed:    self.entity_to_email = {**self.entity_to_email, entity_id: email_address}
+
+C:\Users\every\Desktop\Alex Familiar\src\email_channel_adapter.py:154 (subscript_assign)
+  Original: self.email_to_entity[email_address] = entity_id
+  Fixed:    self.email_to_entity = {**self.email_to_entity, email_address: entity_id}
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_communication_endpoint.py:670 (method_call)
+  Original: self.fallback_handlers.append(handler)
+  Fixed:    self.fallback_handlers = [*self.fallback_handlers, handler]
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_communication_endpoint.py:658 (subscript_assign)
+  Original: self.auth_handlers[auth_method] = handler
+  Fixed:    self.auth_handlers = {**self.auth_handlers, auth_method: handler}
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_communication_endpoint.py:509 (delete)
+  Original: del self.active_dialogues[session_id]
+  Fixed:    self.active_dialogues = {k: v for k, v in self.active_dialogues.items() if k != session_id}
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_communication_endpoint.py:388 (subscript_assign)
+  Original: self.active_dialogues[session_id] = {
+  Fixed:    self.active_dialogues = {**self.active_dialogues, session_id: {}
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_dialogue_manager.py:305 (delete)
+  Original: del self.active_contexts[dialogue_id]
+  Fixed:    self.active_contexts = {k: v for k, v in self.active_contexts.items() if k != dialogue_id}
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_dialogue_manager.py:302 (subscript_assign)
+  Original: self.conversation_archive[dialogue_id] = context
+  Fixed:    self.conversation_archive = {**self.conversation_archive, dialogue_id: context}
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_dialogue_manager.py:272 (subscript_assign)
+  Original: self.active_contexts[dialogue_id] = context
+  Fixed:    self.active_contexts = {**self.active_contexts, dialogue_id: context}
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_dialogue_manager.py:178 (method_call)
+  Original: self.ambiguity_history.append(clarification)
+  Fixed:    self.ambiguity_history = [*self.ambiguity_history, clarification]
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_dialogue_manager.py:140 (subscript_assign)
+  Original: self.referenced_entities[entity_id] = entity_data
+  Fixed:    self.referenced_entities = {**self.referenced_entities, entity_id: entity_data}
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_dialogue_manager.py:135 (method_call)
+  Original: self.topic_history.append(topic)
+  Fixed:    self.topic_history = [*self.topic_history, topic]
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_dialogue_manager.py:133 (method_call)
+  Original: self.current_topics.append(topic)
+  Fixed:    self.current_topics = [*self.current_topics, topic]
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_dialogue_manager.py:120 (method_call)
+  Original: self.active_context_window.append(message)
+  Fixed:    self.active_context_window = [*self.active_context_window, message]
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_dialogue_manager.py:119 (method_call)
+  Original: self.conversation_history.append(message)
+  Fixed:    self.conversation_history = [*self.conversation_history, message]
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_emotional_analyzer.py:443 (method_call)
+  Original: self.emotion_history.append(emotion_record)
+  Fixed:    self.emotion_history = [*self.emotion_history, emotion_record]
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_emotional_analyzer.py:434 (method_call)
+  Original: self.conversation_history.append(message_record)
+  Fixed:    self.conversation_history = [*self.conversation_history, message_record]
+
+C:\Users\every\Desktop\Alex Familiar\src\emoji_emotional_analyzer.py:180 (subscript_assign)

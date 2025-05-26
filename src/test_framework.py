@@ -275,7 +275,7 @@ class TestSuite:
 class TestFramework:
     """Main test framework coordinator."""
     
-    def __init__(self, output_dir: Optional[str] = None):
+    def __init__(self, output_dir: Optional[str] = None) -> None:
         self.suites: List[TestSuite] = []
         self.output_dir = output_dir or os.path.join(os.getcwd(), "test_results")
         os.makedirs(self.output_dir, exist_ok=True)

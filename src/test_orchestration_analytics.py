@@ -8,7 +8,7 @@ measures principle alignment, and creates visualizations.
 
 import unittest
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, patch
 
 from orchestration_analytics import (
@@ -23,7 +23,7 @@ from principle_engine import PrincipleEngine, Principle
 class TestOrchestrationAnalytics(unittest.TestCase):
     """Test cases for the OrchestrationAnalytics system."""
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment before each test."""
         # Create mock components
         self.orchestrator_engine = MagicMock(spec=OrchestratorEngine)
@@ -45,7 +45,7 @@ class TestOrchestrationAnalytics(unittest.TestCase):
             principle_engine=self.principle_engine
         )
     
-    def test_register_metric(self):
+    def test_register_metric(self) -> None:
         """Test that metrics can be registered correctly."""
         # Register a metric
         metric_id = self.analytics.register_metric(
@@ -65,7 +65,7 @@ class TestOrchestrationAnalytics(unittest.TestCase):
         self.assertEqual(self.analytics.metric_definitions[metric_id].unit, "ops/sec")
         self.assertEqual(self.analytics.metric_definitions[metric_id].type, MetricType.PERFORMANCE)
     
-    def test_record_and_retrieve_metric(self):
+    def test_record_and_retrieve_metric(self) -> None:
         """Test that metrics can be recorded and retrieved correctly."""
         # Register a metric
         metric_id = self.analytics.register_metric(
@@ -78,7 +78,7 @@ class TestOrchestrationAnalytics(unittest.TestCase):
         )
         
         # Record values
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         self.analytics.record_metric(metric_id, 10.0, now.isoformat())
         self.analytics.record_metric(metric_id, 20.0, (now + timedelta(minutes=5)).isoformat())
         self.analytics.record_metric(metric_id, 30.0, (now + timedelta(minutes=10)).isoformat())
@@ -94,7 +94,7 @@ class TestOrchestrationAnalytics(unittest.TestCase):
         # Verify the average was calculated correctly
         self.assertEqual(value, 20.0)  # (10 + 20 + 30) / 3 = 20.0
     
-    def test_analyze_agent_capacity_bottlenecks(self):
+    def test_analyze_agent_capacity_bottlenecks(self) -> None:
         """Test that agent capacity bottlenecks are correctly identified."""
         # Set up an agent profile with high utilization
         self.orchestrator_engine.agent_profiles = {
@@ -118,7 +118,7 @@ class TestOrchestrationAnalytics(unittest.TestCase):
         self.assertEqual(bottlenecks[0].affected_items["agents"], ["agent-001"])
         self.assertGreaterEqual(bottlenecks[0].severity, 0.9)  # Should be at least 90%
     
-    def test_analyze_resource_contention_bottlenecks(self):
+    def test_analyze_resource_contention_bottlenecks(self) -> None:
         """Test that resource contention bottlenecks are correctly identified."""
         # Set up a project with a highly utilized resource
         resource = MagicMock(spec=Resource)
@@ -141,7 +141,7 @@ class TestOrchestrationAnalytics(unittest.TestCase):
         self.assertEqual(resource_bottleneck.affected_items["resources"], ["resource-001"])
         self.assertGreaterEqual(resource_bottleneck.severity, 0.9)  # Should be at least 90%
     
-    def test_measure_principle_alignment(self):
+    def test_measure_principle_alignment(self) -> None:
         """Test measurement of principle alignment."""
         # Set up a principle
         principle = MagicMock(spec=Principle)
@@ -174,7 +174,7 @@ class TestOrchestrationAnalytics(unittest.TestCase):
         self.assertIn("principle-001", alignment)
         self.assertGreaterEqual(alignment["principle-001"].alignment_score, 0.5)
     
-    def test_visualization_creation(self):
+    def test_visualization_creation(self) -> None:
         """Test creation of visualizations."""
         # Create a visualization
         visualization = self.analytics.create_visualization(
@@ -182,8 +182,8 @@ class TestOrchestrationAnalytics(unittest.TestCase):
             title="Test Timeline",
             description="A test timeline visualization",
             time_range=(
-                (datetime.utcnow() - timedelta(hours=1)).isoformat(),
-                datetime.utcnow().isoformat()
+                (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat(),
+                datetime.now(timezone.utc).isoformat()
             ),
             data_sources={"tasks": True, "agents": ["agent-001"]},
             filters={"task_types": [TaskType.EXECUTION.name]},
@@ -195,7 +195,7 @@ class TestOrchestrationAnalytics(unittest.TestCase):
         self.assertEqual(visualization.visualization_type, VisualizationType.TIMELINE)
         self.assertEqual(visualization.render_format, "json")
     
-    def test_recommendation_generation(self):
+    def test_recommendation_generation(self) -> None:
         """Test generation of optimization recommendations."""
         # Set up a bottleneck
         bottleneck = self.analytics._create_test_bottleneck()
@@ -207,7 +207,7 @@ class TestOrchestrationAnalytics(unittest.TestCase):
         self.assertGreaterEqual(len(recommendations), 1)
         self.assertIn(bottleneck.bottleneck_id, recommendations[0].related_bottlenecks)
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up after tests."""
         pass
 

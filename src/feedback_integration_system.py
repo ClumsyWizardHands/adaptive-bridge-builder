@@ -10,7 +10,7 @@ equitably while balancing potentially conflicting stakeholder needs.
 import json
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Tuple, Optional, Set, Union, Callable
 from enum import Enum, auto
 from dataclasses import dataclass, field
@@ -724,9 +724,9 @@ class FeedbackIntegrationSystem:
         )
         
         # Add templates to the system
-        self.solicitation_templates[post_orchestration_template.template_id] = post_orchestration_template
-        self.solicitation_templates[system_evaluation_template.template_id] = system_evaluation_template
-        self.solicitation_templates[interactive_feedback_template.template_id] = interactive_feedback_template
+        self.solicitation_templates = {**self.solicitation_templates, post_orchestration_template.template_id: post_orchestration_template}
+        self.solicitation_templates = {**self.solicitation_templates, system_evaluation_template.template_id: system_evaluation_template}
+        self.solicitation_templates = {**self.solicitation_templates, interactive_feedback_template.template_id: interactive_feedback_template}
     
     def _load_feedback_data(self) -> None:
         """Load feedback data from storage."""
@@ -737,7 +737,7 @@ class FeedbackIntegrationSystem:
                 with open(feedback_items_path, "r") as f:
                     items_data = json.load(f)
                     for item_id, item_data in items_data.items():
-                        self.feedback_items[item_id] = FeedbackItem.from_dict(item_data)
+                        self.feedback_items = {**self.feedback_items, item_id: FeedbackItem.from_dict(item_data)}
             
             # Load feedback collections
             collections_path = os.path.join(self.feedback_storage_dir, "feedback_collections.json")
@@ -745,7 +745,7 @@ class FeedbackIntegrationSystem:
                 with open(collections_path, "r") as f:
                     collections_data = json.load(f)
                     for collection_id, collection_data in collections_data.items():
-                        self.feedback_collections[collection_id] = FeedbackCollection.from_dict(collection_data)
+                        self.feedback_collections = {**self.feedback_collections, collection_id: FeedbackCollection.from_dict(collection_data)}
             
             # Load solicitation templates
             templates_path = os.path.join(self.feedback_storage_dir, "solicitation_templates.json")
@@ -754,7 +754,7 @@ class FeedbackIntegrationSystem:
                     templates_data = json.load(f)
                     for template_id, template_data in templates_data.items():
                         if template_id not in self.solicitation_templates:  # Don't overwrite defaults
-                            self.solicitation_templates[template_id] = FeedbackSolicitationTemplate.from_dict(template_data)
+                            self.solicitation_templates = {**self.solicitation_templates, template_id: FeedbackSolicitationTemplate.from_dict(template_data)}
             
             # Load solicitation campaigns
             campaigns_path = os.path.join(self.feedback_storage_dir, "solicitation_campaigns.json")
@@ -762,7 +762,7 @@ class FeedbackIntegrationSystem:
                 with open(campaigns_path, "r") as f:
                     campaigns_data = json.load(f)
                     for campaign_id, campaign_data in campaigns_data.items():
-                        self.solicitation_campaigns[campaign_id] = FeedbackSolicitationCampaign.from_dict(campaign_data)
+                        self.solicitation_campaigns = {**self.solicitation_campaigns, campaign_id: FeedbackSolicitationCampaign.from_dict(campaign_data)}
             
             # Load stakeholder profiles
             profiles_path = os.path.join(self.feedback_storage_dir, "stakeholder_profiles.json")
@@ -770,7 +770,7 @@ class FeedbackIntegrationSystem:
                 with open(profiles_path, "r") as f:
                     profiles_data = json.load(f)
                     for stakeholder_id, profile_data in profiles_data.items():
-                        self.stakeholder_profiles[stakeholder_id] = StakeholderProfile.from_dict(profile_data)
+                        self.stakeholder_profiles = {**self.stakeholder_profiles, stakeholder_id: StakeholderProfile.from_dict(profile_data)}
                         
             logger.info(f"Loaded feedback data: {len(self.feedback_items)} items, " +
                       f"{len(self.feedback_collections)} collections, " +

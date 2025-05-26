@@ -28,7 +28,7 @@ class FormalityLevel(Enum):
     CASUAL = 2
     VERY_CASUAL = 1
     
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name.replace('_', ' ').title()
 
 class DetailLevel(Enum):
@@ -39,7 +39,7 @@ class DetailLevel(Enum):
     CONCISE = 2
     VERY_CONCISE = 1
     
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name.replace('_', ' ').title()
 
 class DirectnessLevel(Enum):
@@ -50,7 +50,7 @@ class DirectnessLevel(Enum):
     INDIRECT = 2
     VERY_INDIRECT = 1
     
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name.replace('_', ' ').title()
 
 class EmotionalTone(Enum):
@@ -61,7 +61,7 @@ class EmotionalTone(Enum):
     NEGATIVE = 2
     VERY_NEGATIVE = 1
     
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name.replace('_', ' ').title()
 
 class ResponseSpeed(Enum):
@@ -72,7 +72,7 @@ class ResponseSpeed(Enum):
     RELAXED = 2
     EXTENDED = 1
     
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name.replace('_', ' ').title()
 
 @dataclass

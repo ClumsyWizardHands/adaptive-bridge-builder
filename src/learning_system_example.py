@@ -12,7 +12,7 @@ This example demonstrates how to use the LearningSystem to:
 
 import json
 from typing import Dict, Any, List
-from datetime import datetime
+from datetime import datetime, timezone
 from principle_engine import PrincipleEngine
 from emotional_intelligence import EmotionalIntelligence
 from learning_system import (
@@ -23,7 +23,7 @@ from learning_system import (
     GrowthJournalEntry
 )
 
-def print_divider(title: str = None):
+def print_divider(title: str = None) -> None:
     """Print a divider with an optional title."""
     width = 80
     if title:
@@ -32,7 +32,7 @@ def print_divider(title: str = None):
         print(f"\n{'=' * width}")
 
 
-def main():
+def main() -> None:
     """Demonstrate the LearningSystem functionality."""
     print_divider("LEARNING SYSTEM DEMONSTRATION")
     

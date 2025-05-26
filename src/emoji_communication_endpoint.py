@@ -1,3 +1,4 @@
+import emoji
 """
 EmojiCommunicationEndpoint Component for Adaptive Bridge Builder Agent
 
@@ -384,7 +385,7 @@ class EmojiCommunicationEndpoint:
             session_metadata["optimization_profile"] = optimization_profile.value
         
         # Store session information
-        self.active_dialogues[session_id] = {
+        self.active_dialogues = {**self.active_dialogues, session_id: {}
             "domain": domain,
             "cultural_context": cultural_context,
             "optimization_profile": optimization_profile,
@@ -505,7 +506,7 @@ class EmojiCommunicationEndpoint:
             True if session was successfully closed, False otherwise
         """
         if session_id in self.active_dialogues:
-            del self.active_dialogues[session_id]
+            self.active_dialogues = {k: v for k, v in self.active_dialogues.items() if k != session_id}
             return True
         return False
     
@@ -654,7 +655,7 @@ class EmojiCommunicationEndpoint:
             auth_method: The authentication method
             handler: The handler function for this method
         """
-        self.auth_handlers[auth_method] = handler
+        self.auth_handlers = {**self.auth_handlers, auth_method: handler}
     
     def register_fallback_handler(
         self,
@@ -666,7 +667,7 @@ class EmojiCommunicationEndpoint:
         Args:
             handler: The fallback handler function
         """
-        self.fallback_handlers.append(handler)
+        self.fallback_handlers = [*self.fallback_handlers, handler]
     
     def _validate_request(self, request: EmojiRequest) -> bool:
         """

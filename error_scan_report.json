@@ -1,0 +1,638 @@
+{
+  "syntax_errors": [
+    {
+      "file": "src\\email_channel_adapter.py",
+      "line": 287,
+      "error": "invalid syntax. Perhaps you forgot a comma?"
+    },
+    {
+      "file": "src\\emoji_communication_endpoint.py",
+      "line": 388,
+      "error": "invalid syntax. Perhaps you forgot a comma?"
+    },
+    {
+      "file": "src\\emoji_emotional_analyzer_enhanced_demo.py",
+      "line": 97,
+      "error": "'[' was never closed"
+    },
+    {
+      "file": "src\\emoji_translation_engine.py",
+      "line": 977,
+      "error": "invalid syntax"
+    },
+    {
+      "file": "src\\empire_agent_card_extensions.py",
+      "line": 38,
+      "error": "invalid syntax. Perhaps you forgot a comma?"
+    },
+    {
+      "file": "src\\llm_selector.py",
+      "line": 156,
+      "error": "invalid syntax. Perhaps you forgot a comma?"
+    },
+    {
+      "file": "src\\principle_decision_points_example.py",
+      "line": 93,
+      "error": "invalid syntax. Perhaps you forgot a comma?"
+    },
+    {
+      "file": "src\\principle_engine_llm.py",
+      "line": 350,
+      "error": "invalid syntax. Perhaps you forgot a comma?"
+    },
+    {
+      "file": "src\\project_orchestrator.py",
+      "line": 633,
+      "error": "invalid syntax. Perhaps you forgot a comma?"
+    },
+    {
+      "file": "src\\session_manager.py",
+      "line": 169,
+      "error": "invalid syntax"
+    },
+    {
+      "file": "src\\empire_framework\\adk\\empire_adk_adapter.py",
+      "line": 129,
+      "error": "invalid syntax. Perhaps you forgot a comma?"
+    },
+    {
+      "file": "src\\empire_framework\\registry\\component_registry.py",
+      "line": 315,
+      "error": "invalid syntax. Perhaps you forgot a comma?"
+    }
+  ],
+  "import_errors": [
+    {
+      "file": "src\\fix_async_await_race_conditions.py",
+      "line": 84,
+      "module": "astor",
+      "error": "Module 'astor' not found"
+    },
+    {
+      "file": "src\\mistral_llm_adapter.py",
+      "line": 113,
+      "module": "llama_cpp",
+      "error": "Module 'llama_cpp' not found"
+    },
+    {
+      "file": "src\\api\\integration_assistant\\app.py",
+      "line": 18,
+      "module": "models",
+      "error": "Module 'models' not found"
+    },
+    {
+      "file": "src\\api\\integration_assistant\\app.py",
+      "line": 29,
+      "module": "websocket_manager",
+      "error": "Module 'websocket_manager' not found"
+    },
+    {
+      "file": "src\\api\\integration_assistant\\app.py",
+      "line": 30,
+      "module": "code_generator",
+      "error": "Module 'code_generator' not found"
+    },
+    {
+      "file": "src\\api\\integration_assistant\\code_generator.py",
+      "line": 9,
+      "module": "models",
+      "error": "Module 'models' not found"
+    },
+    {
+      "file": "src\\api\\integration_assistant\\websocket_manager.py",
+      "line": 13,
+      "module": "models",
+      "error": "Module 'models' not found"
+    },
+    {
+      "file": "src\\api\\integration_assistant\\__init__.py",
+      "line": 8,
+      "module": "app",
+      "error": "Module 'app' not found"
+    },
+    {
+      "file": "src\\api\\integration_assistant\\__init__.py",
+      "line": 9,
+      "module": "models",
+      "error": "Module 'models' not found"
+    },
+    {
+      "file": "src\\api\\integration_assistant\\__init__.py",
+      "line": 15,
+      "module": "websocket_manager",
+      "error": "Module 'websocket_manager' not found"
+    },
+    {
+      "file": "src\\empire_framework\\a2a\\component_task_handler.py",
+      "line": 20,
+      "module": "message_structures",
+      "error": "Module 'message_structures' not found"
+    },
+    {
+      "file": "src\\empire_framework\\a2a\\component_task_handler.py",
+      "line": 27,
+      "module": "registry.component_registry",
+      "error": "Module 'registry.component_registry' not found"
+    },
+    {
+      "file": "src\\empire_framework\\a2a\\component_task_handler.py",
+      "line": 28,
+      "module": "validation.schema_validator",
+      "error": "Module 'validation.schema_validator' not found"
+    },
+    {
+      "file": "src\\empire_framework\\a2a\\streaming_adapter.py",
+      "line": 17,
+      "module": "a2a_adapter",
+      "error": "Module 'a2a_adapter' not found"
+    },
+    {
+      "file": "src\\empire_framework\\adk\\example_usage.py",
+      "line": 14,
+      "module": "empire_adk_adapter",
+      "error": "Module 'empire_adk_adapter' not found"
+    },
+    {
+      "file": "src\\empire_framework\\registry\\test_component_registry.py",
+      "line": 22,
+      "module": "component_registry",
+      "error": "Module 'component_registry' not found"
+    },
+    {
+      "file": "src\\empire_framework\\registry\\test_component_registry.py",
+      "line": 31,
+      "module": "validation.schema_validator",
+      "error": "Module 'validation.schema_validator' not found"
+    },
+    {
+      "file": "src\\empire_framework\\registry\\test_component_registry.py",
+      "line": 32,
+      "module": "validation.validator_example",
+      "error": "Module 'validation.validator_example' not found"
+    },
+    {
+      "file": "src\\empire_framework\\registry\\__init__.py",
+      "line": 8,
+      "module": "component_registry",
+      "error": "Module 'component_registry' not found"
+    },
+    {
+      "file": "src\\empire_framework\\storage\\test_versioned_component_store.py",
+      "line": 13,
+      "module": "versioned_component_store",
+      "error": "Module 'versioned_component_store' not found"
+    },
+    {
+      "file": "src\\empire_framework\\storage\\__init__.py",
+      "line": 8,
+      "module": "versioned_component_store",
+      "error": "Module 'versioned_component_store' not found"
+    },
+    {
+      "file": "src\\empire_framework\\validation\\test_schema_validator.py",
+      "line": 22,
+      "module": "schema_validator",
+      "error": "Module 'schema_validator' not found"
+    },
+    {
+      "file": "src\\empire_framework\\validation\\test_schema_validator.py",
+      "line": 37,
+      "module": "validator_example",
+      "error": "Module 'validator_example' not found"
+    },
+    {
+      "file": "src\\empire_framework\\validation\\validator_example.py",
+      "line": 20,
+      "module": "schema_validator",
+      "error": "Module 'schema_validator' not found"
+    },
+    {
+      "file": "src\\empire_framework\\validation\\__init__.py",
+      "line": 8,
+      "module": "schema_validator",
+      "error": "Module 'schema_validator' not found"
+    }
+  ],
+  "undefined_vars": [],
+  "type_errors": [],
+  "indentation_errors": [],
+  "other_errors": [],
+  "total_errors": 37,
+  "files_with_errors": {
+    "src\\email_channel_adapter.py": [
+      {
+        "type": "syntax",
+        "line": 287,
+        "details": {
+          "file": "src\\email_channel_adapter.py",
+          "line": 287,
+          "error": "invalid syntax. Perhaps you forgot a comma?"
+        }
+      }
+    ],
+    "src\\emoji_communication_endpoint.py": [
+      {
+        "type": "syntax",
+        "line": 388,
+        "details": {
+          "file": "src\\emoji_communication_endpoint.py",
+          "line": 388,
+          "error": "invalid syntax. Perhaps you forgot a comma?"
+        }
+      }
+    ],
+    "src\\emoji_emotional_analyzer_enhanced_demo.py": [
+      {
+        "type": "syntax",
+        "line": 97,
+        "details": {
+          "file": "src\\emoji_emotional_analyzer_enhanced_demo.py",
+          "line": 97,
+          "error": "'[' was never closed"
+        }
+      }
+    ],
+    "src\\emoji_translation_engine.py": [
+      {
+        "type": "syntax",
+        "line": 977,
+        "details": {
+          "file": "src\\emoji_translation_engine.py",
+          "line": 977,
+          "error": "invalid syntax"
+        }
+      }
+    ],
+    "src\\empire_agent_card_extensions.py": [
+      {
+        "type": "syntax",
+        "line": 38,
+        "details": {
+          "file": "src\\empire_agent_card_extensions.py",
+          "line": 38,
+          "error": "invalid syntax. Perhaps you forgot a comma?"
+        }
+      }
+    ],
+    "src\\llm_selector.py": [
+      {
+        "type": "syntax",
+        "line": 156,
+        "details": {
+          "file": "src\\llm_selector.py",
+          "line": 156,
+          "error": "invalid syntax. Perhaps you forgot a comma?"
+        }
+      }
+    ],
+    "src\\principle_decision_points_example.py": [
+      {
+        "type": "syntax",
+        "line": 93,
+        "details": {
+          "file": "src\\principle_decision_points_example.py",
+          "line": 93,
+          "error": "invalid syntax. Perhaps you forgot a comma?"
+        }
+      }
+    ],
+    "src\\principle_engine_llm.py": [
+      {
+        "type": "syntax",
+        "line": 350,
+        "details": {
+          "file": "src\\principle_engine_llm.py",
+          "line": 350,
+          "error": "invalid syntax. Perhaps you forgot a comma?"
+        }
+      }
+    ],
+    "src\\project_orchestrator.py": [
+      {
+        "type": "syntax",
+        "line": 633,
+        "details": {
+          "file": "src\\project_orchestrator.py",
+          "line": 633,
+          "error": "invalid syntax. Perhaps you forgot a comma?"
+        }
+      }
+    ],
+    "src\\session_manager.py": [
+      {
+        "type": "syntax",
+        "line": 169,
+        "details": {
+          "file": "src\\session_manager.py",
+          "line": 169,
+          "error": "invalid syntax"
+        }
+      }
+    ],
+    "src\\empire_framework\\adk\\empire_adk_adapter.py": [
+      {
+        "type": "syntax",
+        "line": 129,
+        "details": {
+          "file": "src\\empire_framework\\adk\\empire_adk_adapter.py",
+          "line": 129,
+          "error": "invalid syntax. Perhaps you forgot a comma?"
+        }
+      }
+    ],
+    "src\\empire_framework\\registry\\component_registry.py": [
+      {
+        "type": "syntax",
+        "line": 315,
+        "details": {
+          "file": "src\\empire_framework\\registry\\component_registry.py",
+          "line": 315,
+          "error": "invalid syntax. Perhaps you forgot a comma?"
+        }
+      }
+    ],
+    "src\\fix_async_await_race_conditions.py": [
+      {
+        "type": "import",
+        "line": 84,
+        "details": {
+          "file": "src\\fix_async_await_race_conditions.py",
+          "line": 84,
+          "module": "astor",
+          "error": "Module 'astor' not found"
+        }
+      }
+    ],
+    "src\\mistral_llm_adapter.py": [
+      {
+        "type": "import",
+        "line": 113,
+        "details": {
+          "file": "src\\mistral_llm_adapter.py",
+          "line": 113,
+          "module": "llama_cpp",
+          "error": "Module 'llama_cpp' not found"
+        }
+      }
+    ],
+    "src\\api\\integration_assistant\\app.py": [
+      {
+        "type": "import",
+        "line": 18,
+        "details": {
+          "file": "src\\api\\integration_assistant\\app.py",
+          "line": 18,
+          "module": "models",
+          "error": "Module 'models' not found"
+        }
+      },
+      {
+        "type": "import",
+        "line": 29,
+        "details": {
+          "file": "src\\api\\integration_assistant\\app.py",
+          "line": 29,
+          "module": "websocket_manager",
+          "error": "Module 'websocket_manager' not found"
+        }
+      },
+      {
+        "type": "import",
+        "line": 30,
+        "details": {
+          "file": "src\\api\\integration_assistant\\app.py",
+          "line": 30,
+          "module": "code_generator",
+          "error": "Module 'code_generator' not found"
+        }
+      }
+    ],
+    "src\\api\\integration_assistant\\code_generator.py": [
+      {
+        "type": "import",
+        "line": 9,
+        "details": {
+          "file": "src\\api\\integration_assistant\\code_generator.py",
+          "line": 9,
+          "module": "models",
+          "error": "Module 'models' not found"
+        }
+      }
+    ],
+    "src\\api\\integration_assistant\\websocket_manager.py": [
+      {
+        "type": "import",
+        "line": 13,
+        "details": {
+          "file": "src\\api\\integration_assistant\\websocket_manager.py",
+          "line": 13,
+          "module": "models",
+          "error": "Module 'models' not found"
+        }
+      }
+    ],
+    "src\\api\\integration_assistant\\__init__.py": [
+      {
+        "type": "import",
+        "line": 8,
+        "details": {
+          "file": "src\\api\\integration_assistant\\__init__.py",
+          "line": 8,
+          "module": "app",
+          "error": "Module 'app' not found"
+        }
+      },
+      {
+        "type": "import",
+        "line": 9,
+        "details": {
+          "file": "src\\api\\integration_assistant\\__init__.py",
+          "line": 9,
+          "module": "models",
+          "error": "Module 'models' not found"
+        }
+      },
+      {
+        "type": "import",
+        "line": 15,
+        "details": {
+          "file": "src\\api\\integration_assistant\\__init__.py",
+          "line": 15,
+          "module": "websocket_manager",
+          "error": "Module 'websocket_manager' not found"
+        }
+      }
+    ],
+    "src\\empire_framework\\a2a\\component_task_handler.py": [
+      {
+        "type": "import",
+        "line": 20,
+        "details": {
+          "file": "src\\empire_framework\\a2a\\component_task_handler.py",
+          "line": 20,
+          "module": "message_structures",
+          "error": "Module 'message_structures' not found"
+        }
+      },
+      {
+        "type": "import",
+        "line": 27,
+        "details": {
+          "file": "src\\empire_framework\\a2a\\component_task_handler.py",
+          "line": 27,
+          "module": "registry.component_registry",
+          "error": "Module 'registry.component_registry' not found"
+        }
+      },
+      {
+        "type": "import",
+        "line": 28,
+        "details": {
+          "file": "src\\empire_framework\\a2a\\component_task_handler.py",
+          "line": 28,
+          "module": "validation.schema_validator",
+          "error": "Module 'validation.schema_validator' not found"
+        }
+      }
+    ],
+    "src\\empire_framework\\a2a\\streaming_adapter.py": [
+      {
+        "type": "import",
+        "line": 17,
+        "details": {
+          "file": "src\\empire_framework\\a2a\\streaming_adapter.py",
+          "line": 17,
+          "module": "a2a_adapter",
+          "error": "Module 'a2a_adapter' not found"
+        }
+      }
+    ],
+    "src\\empire_framework\\adk\\example_usage.py": [
+      {
+        "type": "import",
+        "line": 14,
+        "details": {
+          "file": "src\\empire_framework\\adk\\example_usage.py",
+          "line": 14,
+          "module": "empire_adk_adapter",
+          "error": "Module 'empire_adk_adapter' not found"
+        }
+      }
+    ],
+    "src\\empire_framework\\registry\\test_component_registry.py": [
+      {
+        "type": "import",
+        "line": 22,
+        "details": {
+          "file": "src\\empire_framework\\registry\\test_component_registry.py",
+          "line": 22,
+          "module": "component_registry",
+          "error": "Module 'component_registry' not found"
+        }
+      },
+      {
+        "type": "import",
+        "line": 31,
+        "details": {
+          "file": "src\\empire_framework\\registry\\test_component_registry.py",
+          "line": 31,
+          "module": "validation.schema_validator",
+          "error": "Module 'validation.schema_validator' not found"
+        }
+      },
+      {
+        "type": "import",
+        "line": 32,
+        "details": {
+          "file": "src\\empire_framework\\registry\\test_component_registry.py",
+          "line": 32,
+          "module": "validation.validator_example",
+          "error": "Module 'validation.validator_example' not found"
+        }
+      }
+    ],
+    "src\\empire_framework\\registry\\__init__.py": [
+      {
+        "type": "import",
+        "line": 8,
+        "details": {
+          "file": "src\\empire_framework\\registry\\__init__.py",
+          "line": 8,
+          "module": "component_registry",
+          "error": "Module 'component_registry' not found"
+        }
+      }
+    ],
+    "src\\empire_framework\\storage\\test_versioned_component_store.py": [
+      {
+        "type": "import",
+        "line": 13,
+        "details": {
+          "file": "src\\empire_framework\\storage\\test_versioned_component_store.py",
+          "line": 13,
+          "module": "versioned_component_store",
+          "error": "Module 'versioned_component_store' not found"
+        }
+      }
+    ],
+    "src\\empire_framework\\storage\\__init__.py": [
+      {
+        "type": "import",
+        "line": 8,
+        "details": {
+          "file": "src\\empire_framework\\storage\\__init__.py",
+          "line": 8,
+          "module": "versioned_component_store",
+          "error": "Module 'versioned_component_store' not found"
+        }
+      }
+    ],
+    "src\\empire_framework\\validation\\test_schema_validator.py": [
+      {
+        "type": "import",
+        "line": 22,
+        "details": {
+          "file": "src\\empire_framework\\validation\\test_schema_validator.py",
+          "line": 22,
+          "module": "schema_validator",
+          "error": "Module 'schema_validator' not found"
+        }
+      },
+      {
+        "type": "import",
+        "line": 37,
+        "details": {
+          "file": "src\\empire_framework\\validation\\test_schema_validator.py",
+          "line": 37,
+          "module": "validator_example",
+          "error": "Module 'validator_example' not found"
+        }
+      }
+    ],
+    "src\\empire_framework\\validation\\validator_example.py": [
+      {
+        "type": "import",
+        "line": 20,
+        "details": {
+          "file": "src\\empire_framework\\validation\\validator_example.py",
+          "line": 20,
+          "module": "schema_validator",
+          "error": "Module 'schema_validator' not found"
+        }
+      }
+    ],
+    "src\\empire_framework\\validation\\__init__.py": [
+      {
+        "type": "import",
+        "line": 8,
+        "details": {
+          "file": "src\\empire_framework\\validation\\__init__.py",
+          "line": 8,
+          "module": "schema_validator",
+          "error": "Module 'schema_validator' not found"
+        }
+      }
+    ]
+  },
+  "total_files_with_errors": 28
+}

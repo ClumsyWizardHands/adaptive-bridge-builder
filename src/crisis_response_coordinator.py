@@ -17,7 +17,7 @@ import json
 import uuid
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Set, Tuple, Union, Callable
 from enum import Enum, auto
 import threading
@@ -598,12 +598,12 @@ class Crisis:
     def add_timeline_event(self, event_type: str, description: str, details: Optional[Dict[str, Any]] = None) -> None:
         """Add an event to the crisis timeline."""
         self.timeline.append({
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "event_type": event_type,
             "description": description,
             "details": details or {}
         })
-        self.updated_at = datetime.utcnow().isoformat()
+        self.updated_at = datetime.now(timezone.utc).isoformat()
 
 
 class CrisisResponseCoordinator:
@@ -731,4 +731,4 @@ class CrisisResponseCoordinator:
             Newly registered InformationSource
         """
         source_id = f"source-{str(uuid.uuid4())}"
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()

@@ -9,6 +9,7 @@ management for human interactions, and embody the "Trust as the Foundation of Le
 import abc
 import base64
 import datetime
+from datetime import timezone
 import enum
 import hashlib
 import json
@@ -161,7 +162,7 @@ class SensitiveDataHandler:
     and secure transformation of sensitive information.
     """
     
-    def __init__(self, security_manager: 'SecurityPrivacyManager'):
+    def __init__(self, security_manager: 'SecurityPrivacyManager') -> None:
         """Initialize the SensitiveDataHandler."""
         self.security_manager = security_manager
         self.redaction_patterns = {
@@ -319,7 +320,7 @@ class ConsentManager:
     consent for various data processing purposes.
     """
     
-    def __init__(self, security_manager: 'SecurityPrivacyManager'):
+    def __init__(self, security_manager: 'SecurityPrivacyManager') -> None:
         """Initialize the ConsentManager."""
         self.security_manager = security_manager
         self._consent_records: Dict[str, ConsentRecord] = {}
@@ -347,7 +348,7 @@ class ConsentManager:
             expiry=expiry
         )
         
-        self._consent_records[consent_id] = record
+        self._consent_records = {**self._consent_records, consent_id: record}
         
         # Log the consent request
         self.security_manager.log_audit_event(
@@ -487,7 +488,7 @@ class EncryptionService:
     for securing sensitive data.
     """
     
-    def __init__(self, security_manager: 'SecurityPrivacyManager'):
+    def __init__(self, security_manager: 'SecurityPrivacyManager') -> None:
         """Initialize the EncryptionService."""
         self.security_manager = security_manager
         self._encryption_keys: Dict[str, EncryptionKey] = {}
@@ -512,7 +513,7 @@ class EncryptionService:
             allowed_agents=set()  # System key not shared by default
         )
         
-        self._encryption_keys[key_id] = key
+        self._encryption_keys = {**self._encryption_keys, key_id: key}
         self.system_key_id = key_id
     
     def generate_key_pair(self, owner_id: str) -> str:
@@ -536,7 +537,7 @@ class EncryptionService:
             allowed_agents={owner_id}  # Initially only the owner can use it
         )
         
-        self._encryption_keys[key_id] = key
+        self._encryption_keys = {**self._encryption_keys, key_id: key}
         
         # Log key generation
         self.security_manager.log_audit_event(
@@ -689,7 +690,7 @@ class AccessControlService:
     makes decisions about whether to allow, deny, or modify access.
     """
     
-    def __init__(self, security_manager: 'SecurityPrivacyManager'):
+    def __init__(self, security_manager: 'SecurityPrivacyManager') -> None:
         """Initialize the AccessControlService."""
         self.security_manager = security_manager
         self._access_policies: Dict[str, AccessPolicy] = {}
@@ -701,7 +702,7 @@ class AccessControlService:
         
         Returns the policy ID.
         """
-        self._access_policies[policy.id] = policy
+        self._access_policies = {**self._access_policies, policy.id: policy}
         
         # Log policy creation
         self.security_manager.log_audit_event(
@@ -725,7 +726,7 @@ class AccessControlService:
         if policy_id not in self._access_policies:
             raise ValueError(f"Policy not found: {policy_id}")
             
-        self._resource_policies[resource_id] = policy_id
+        self._resource_policies = {**self._resource_policies, resource_id: policy_id}
         
         # Log policy assignment
         self.security_manager.log_audit_event(
@@ -834,7 +835,7 @@ class AuditLog:
     analyzing audit events.
     """
     
-    def __init__(self, security_manager: 'SecurityPrivacyManager'):
+    def __init__(self, security_manager: 'SecurityPrivacyManager') -> None:
         """Initialize the AuditLog."""
         self.security_manager = security_manager
         self._audit_events: Dict[str, AuditEvent] = {}
@@ -847,7 +848,7 @@ class AuditLog:
         Returns the event ID.
         """
         # Store the event
-        self._audit_events[event.id] = event
+        self._audit_events = {**self._audit_events, event.id: event}
         
         # Log to the Python logger
         log_message = f"AUDIT: {event.event_type} by {event.actor_type}:{event.actor_id}"
@@ -1194,7 +1195,7 @@ class SecurityPrivacyManager:
         # For the example, we'll just use these defaults
         
         # Cache the result
-        self._accessible_fields_cache[cache_key] = fields
+        self._accessible_fields_cache = {**self._accessible_fields_cache, cache_key: fields}
         
         return fields
     

@@ -155,7 +155,7 @@ def interactive_mode() -> str:
     return '\n'.join(lines)
 
 
-def main():
+def main() -> int:
     """Main function to run the converter."""
     parser = argparse.ArgumentParser(description="Convert plain text principles to structured JSON format.")
     parser.add_argument("--input", "-i", help="Input text file containing principles")

@@ -1,3 +1,4 @@
+import emoji
 """
 Example demonstrating the EmojiSequenceOptimizer component functionality.
 
@@ -21,7 +22,7 @@ from emoji_knowledge_base import (
 )
 
 
-def demonstrate_optimization_profiles():
+def demonstrate_optimization_profiles() -> None:
     """Show how different optimization profiles affect emoji sequences."""
     print("\n=== Optimization Profiles ===\n")
     
@@ -75,7 +76,7 @@ def demonstrate_optimization_profiles():
         print()
 
 
-def demonstrate_domain_specific_optimization():
+def demonstrate_domain_specific_optimization() -> None:
     """Show how domain context affects emoji sequence optimization."""
     print("\n=== Domain-Specific Optimization ===\n")
     
@@ -144,7 +145,7 @@ def demonstrate_domain_specific_optimization():
     print()
 
 
-def demonstrate_cultural_adaptations():
+def demonstrate_cultural_adaptations() -> None:
     """Show how cultural context affects emoji sequence optimization."""
     print("\n=== Cultural Adaptations ===\n")
     
@@ -186,7 +187,7 @@ def demonstrate_cultural_adaptations():
         print()
 
 
-def demonstrate_grouping_strategies():
+def demonstrate_grouping_strategies() -> None:
     """Show how different grouping strategies affect readability."""
     print("\n=== Grouping Strategies ===\n")
     
@@ -222,7 +223,7 @@ def demonstrate_grouping_strategies():
         print()
 
 
-def demonstrate_conciseness_vs_expressiveness():
+def demonstrate_conciseness_vs_expressiveness() -> None:
     """Compare concise vs expressive optimization for the same message."""
     print("\n=== Conciseness vs Expressiveness ===\n")
     
@@ -258,7 +259,7 @@ def demonstrate_conciseness_vs_expressiveness():
         print()
 
 
-def demonstrate_custom_optimization_profile():
+def demonstrate_custom_optimization_profile() -> None:
     """Show how to create and use a custom optimization profile."""
     print("\n=== Custom Optimization Profile ===\n")
     
@@ -332,7 +333,7 @@ def demonstrate_custom_optimization_profile():
     print()
 
 
-def demonstrate_sequence_analysis():
+def demonstrate_sequence_analysis() -> None:
     """Show how to analyze emoji sequences without optimizing them."""
     print("\n=== Emoji Sequence Analysis ===\n")
     
@@ -368,7 +369,7 @@ def demonstrate_sequence_analysis():
         print()
 
 
-def demonstrate_real_world_examples():
+def demonstrate_real_world_examples() -> None:
     """Show optimization of realistic emoji messages in different contexts."""
     print("\n=== Real-World Examples ===\n")
     
@@ -439,7 +440,7 @@ def demonstrate_real_world_examples():
     print()
 
 
-def main():
+def main() -> None:
     """Run all emoji sequence optimizer demonstrations."""
     print("="*80)
     print("              EmojiSequenceOptimizer Demonstrations")

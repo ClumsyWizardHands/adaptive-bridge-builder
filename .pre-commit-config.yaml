@@ -1,0 +1,115 @@
+# Pre-commit hooks configuration
+# See https://pre-commit.com for more information
+
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: check-json
+    -   id: check-added-large-files
+    -   id: debug-statements
+    -   id: check-merge-conflict
+
+-   repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+    -   id: isort
+        args: ["--profile", "black", "--filter-files"]
+
+-   repo: https://github.com/psf/black
+    rev: 23.3.0
+    hooks:
+    -   id: black
+        language_version: python3
+
+-   repo: https://github.com/pycqa/flake8
+    rev: 6.0.0
+    hooks:
+    -   id: flake8
+        additional_dependencies: [
+            'flake8-docstrings==1.7.0',
+            'flake8-comprehensions==3.13.0',
+            'flake8-bugbear==23.5.9',
+        ]
+        exclude: ^(venv/|docs/|tests/fixtures/)
+
+-   repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+    -   id: python-check-blanket-noqa
+    -   id: python-use-type-annotations
+
+-   repo: https://github.com/pycqa/bandit
+    rev: 1.7.5
+    hooks:
+    -   id: bandit
+        args: ['-c', 'pyproject.toml']
+        exclude: ^(tests/|venv/)
+
+-   repo: local
+    hooks:
+    # Custom hook for validating Empire Framework schema files
+    -   id: validate-empire-schemas
+        name: Validate Empire Framework schemas
+        entry: python -c "import json, jsonschema, sys; jsonschema.validate(json.load(open(sys.argv[1])), json.loads('{\"$schema\": \"http://json-schema.org/draft-07/schema#\"}'))"
+        language: system
+        files: ^resources/empire_framework_schemas/.*\.json$
+        types: [json]
+
+    # Custom hook for checking Empire Framework principles files
+    -   id: check-principle-files
+        name: Check Empire Framework principle files
+        entry: python -c "import json, jsonschema, sys; schema = json.load(open('resources/empire_framework_schemas/principle_schema.json')); jsonschema.validate(json.load(open(sys.argv[1])), schema)"
+        language: system
+        files: ^resources/principles/.*\.json$
+        types: [json]
+
+    # Custom hook for validating memory bank markdown files
+    -   id: check-memory-bank-files
+        name: Check Memory Bank markdown files
+        entry: python -c "import sys, re; content = open(sys.argv[1]).read(); headings = re.findall(r'^#+\s+(.+)$', content, re.MULTILINE); assert headings, f'No headings found in {sys.argv[1]}'"
+        language: system
+        files: ^memory-bank/.*\.md$
+        types: [markdown]
+
+# Specific file type configurations
+exclude: |
+    (?x)^(
+        venv/.*|
+        \.venv/.*|
+        \.git/.*|
+        \.mypy_cache/.*|
+        \.pytest_cache/.*|
+        \.coverage|
+        htmlcov/.*|
+        dist/.*|
+        build/.*|
+        docs/_build/.*
+    )$
+
+# Additional configuration for Empire Framework files
+# These settings are used by the pre-commit hooks above
+ci:
+    autofix_commit_msg: 'chore: auto fixes from pre-commit hooks'
+    autoupdate_commit_msg: 'chore: update pre-commit hooks'
+    autoupdate_schedule: weekly
+
+# Path-specific configuration
+# This ensures that Empire Framework files are properly handled
+files:
+    # Ensure all Python files that interact with the Empire Framework are type-checked
+    src/.*_engine\.py: &empire-python-files
+        type-check: true
+        strict-types: true
+    src/empire_.*\.py: *empire-python-files
+    
+    # Ensure all schema files are validated
+    resources/empire_framework_schemas/.*\.json:
+        schema-validation: true
+    
+    # Ensure all memory bank files have proper structure
+    memory-bank/.*\.md:
+        structure-validation: true

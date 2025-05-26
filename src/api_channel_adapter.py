@@ -14,7 +14,7 @@ import time
 import uuid
 import aiohttp
 from enum import Enum
-from typing import Dict, List, Any, Optional, Union, Tuple, Callable
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from urllib.parse import urljoin
 
 from communication_channel_manager import (
@@ -138,13 +138,13 @@ class ApiChannelAdapter(ChannelAdapter):
         
         logger.info(f"ApiChannelAdapter initialized for {config.base_url}")
     
-    async def __aenter__(self):
+    async def __aenter__(self) -> Any:
         """Async context manager entry."""
         if self.is_session_owner and self.client_session is None:
             self.client_session = aiohttp.ClientSession()
         return self
     
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> Any:
         """Async context manager exit."""
         if self.is_session_owner and self.client_session is not None:
             await self.client_session.close()
@@ -196,7 +196,7 @@ class ApiChannelAdapter(ChannelAdapter):
             endpoint_url: URL of the endpoint
         """
         if entity_id not in self.entity_endpoints:
-            self.entity_endpoints[entity_id] = {}
+            self.entity_endpoints = {**self.entity_endpoints, entity_id: {}}
             
         self.entity_endpoints[entity_id][endpoint_name] = endpoint_url
         logger.debug(f"Registered {endpoint_name} endpoint for entity {entity_id}: {endpoint_url}")
@@ -509,13 +509,13 @@ class ApiChannelAdapter(ChannelAdapter):
             # Process response
             if 200 <= status_code < 300:
                 # Success
-                self.message_status_cache[message.message_id] = DeliveryStatus.SENT
+                self.message_status_cache = {**self.message_status_cache, message.message_id: DeliveryStatus.SENT}
                 
                 # Check if response includes a status field
                 if isinstance(response_data, dict) and "status" in response_data:
                     try:
                         status = DeliveryStatus(response_data["status"])
-                        self.message_status_cache[message.message_id] = status
+                        self.message_status_cache = {**self.message_status_cache, message.message_id: status}
                         return status
                     except ValueError:
                         # Invalid status value, ignore
@@ -525,12 +525,12 @@ class ApiChannelAdapter(ChannelAdapter):
             else:
                 # Error
                 logger.error(f"Failed to send message: HTTP {status_code}, response: {response_data}")
-                self.message_status_cache[message.message_id] = DeliveryStatus.FAILED
+                self.message_status_cache = {**self.message_status_cache, message.message_id: DeliveryStatus.FAILED}
                 return DeliveryStatus.FAILED
                 
         except Exception as e:
             logger.error(f"Error sending message: {str(e)}")
-            self.message_status_cache[message.message_id] = DeliveryStatus.FAILED
+            self.message_status_cache = {**self.message_status_cache, message.message_id: DeliveryStatus.FAILED}
             return DeliveryStatus.FAILED
     
     async def receive_message(self, raw_message: Any) -> ChannelMessage:
@@ -647,7 +647,7 @@ class ApiChannelAdapter(ChannelAdapter):
                 if isinstance(response_data, dict) and "status" in response_data:
                     try:
                         status = DeliveryStatus(response_data["status"])
-                        self.message_status_cache[message_id] = status
+                        self.message_status_cache = {**self.message_status_cache, message_id: status}
                         return status
                     except ValueError:
                         logger.warning(f"Invalid status value: {response_data['status']}")

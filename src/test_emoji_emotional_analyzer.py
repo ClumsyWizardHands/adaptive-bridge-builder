@@ -1,4 +1,7 @@
 import unittest
+
+# Use relative import from src package
+import emoji
 from emoji_emotional_analyzer import (
     EmojiEmotionalAnalyzer,
     EmotionCategory,
@@ -10,11 +13,11 @@ from emoji_emotional_analyzer import (
 class TestEmojiEmotionalAnalyzer(unittest.TestCase):
     """Test cases for the EmojiEmotionalAnalyzer."""
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Setup for each test case."""
         self.analyzer = EmojiEmotionalAnalyzer()
     
-    def test_emotion_detection(self):
+    def test_emotion_detection(self) -> None:
         """Test detecting emotions in emoji sequences."""
         # Test simple joy emotion
         emotion = self.analyzer.detect_emotion("😀")
@@ -39,7 +42,7 @@ class TestEmojiEmotionalAnalyzer(unittest.TestCase):
         emotion = self.analyzer.detect_emotion("")
         self.assertEqual(emotion.primary_emotion, EmotionCategory.NEUTRAL)
     
-    def test_emotional_mapping(self):
+    def test_emotional_mapping(self) -> None:
         """Test mapping emoji to emotional state probabilities."""
         # Test mixed emotions
         emotion_map = self.analyzer.map_to_emotional_states("😊😔")
@@ -51,7 +54,7 @@ class TestEmojiEmotionalAnalyzer(unittest.TestCase):
         self.assertIn(EmotionCategory.JOY, emotion_map)
         self.assertIn(EmotionCategory.EXCITEMENT, emotion_map)  # Related to joy
     
-    def test_emotional_shift_detection(self):
+    def test_emotional_shift_detection(self) -> None:
         """Test detecting emotional shifts in conversation."""
         # Setup a conversation with a shift
         self.analyzer.track_conversation("😊")  # User happy
@@ -70,7 +73,7 @@ class TestEmojiEmotionalAnalyzer(unittest.TestCase):
         shift = self.analyzer.detect_emotional_shift()
         self.assertIsNone(shift)  # No significant shift
     
-    def test_response_generation(self):
+    def test_response_generation(self) -> None:
         """Test generating emotionally appropriate responses."""
         # Test response to sadness
         response = self.analyzer.generate_response("😭")
@@ -94,7 +97,7 @@ class TestEmojiEmotionalAnalyzer(unittest.TestCase):
         self.assertIsNotNone(response.emoji_sequence)
         self.assertIn("ENCOURAGING", response.emotional_intent)
     
-    def test_cultural_adaptation(self):
+    def test_cultural_adaptation(self) -> None:
         """Test cultural adaptation in responses."""
         # First get Western response to joy
         response = self.analyzer.generate_response("😄")

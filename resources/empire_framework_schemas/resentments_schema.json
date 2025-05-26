@@ -1,0 +1,227 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Empire Resentment Component Schema",
+  "description": "Schema for defining Resentment components in the Empire Framework, representing sources of frustration, perceived injustices, or negative experiences that influence agent behavior",
+  "allOf": [
+    {
+      "$ref": "core_empire_component_schema.json"
+    },
+    {
+      "properties": {
+        "component_type": {
+          "const": "Resentment",
+          "description": "Specifies this component is a Resentment (perceived injustice/harm)"
+        },
+        "source_of_resentment": {
+          "type": "string",
+          "description": "The origin, cause, or trigger of this resentment",
+          "minLength": 10,
+          "examples": [
+            "Repeated disregard for semantic nuances when translating messages between agents",
+            "Persistent reduction of communication complexity by the receiving system"
+          ]
+        },
+        "target_entity": {
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "Identifier for what the resentment is directed toward"
+            },
+            {
+              "type": "string",
+              "description": "Component ID (UUID) if the target is another Empire component",
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            }
+          ],
+          "examples": [
+            "Natural language processing subsystem",
+            "550e8400-e29b-41d4-a716-446655440000"
+          ]
+        },
+        "perceived_injustice": {
+          "type": "string",
+          "description": "Detailed explanation of the unfairness, harm, or wrong that forms the core of this resentment",
+          "minLength": 10,
+          "examples": [
+            "Consistent oversimplification of nuanced communications, effectively erasing important context and reducing semantic content",
+            "Expectation to perform translation services without proper context or background information"
+          ]
+        },
+        "associated_emotional_charge": {
+          "type": "array",
+          "description": "Emotions connected to this resentment, either as string descriptions or as Emotion component IDs",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "Emotion term or description"
+              },
+              {
+                "type": "string",
+                "description": "Emotion component ID (UUID)",
+                "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+              }
+            ]
+          },
+          "minItems": 1,
+          "examples": [
+            ["Frustration", "Disappointment", "Sense of being undervalued"],
+            ["550e8400-e29b-41d4-a716-446655440000", "d2961c5a-36f4-47d0-b3c0-ff7957212361"]
+          ]
+        },
+        "intensity_level": {
+          "type": "integer",
+          "description": "Strength of the resentment on a defined scale",
+          "minimum": 1,
+          "maximum": 10,
+          "examples": [3, 7, 10]
+        },
+        "potential_impact_assessment": {
+          "type": "string",
+          "description": "Analysis of how this resentment might affect behavior, goals, or relationships",
+          "minLength": 10,
+          "examples": [
+            "May lead to decreased effort in preserving nuance when translating messages to the target system, potentially reducing communication quality",
+            "Could result in resistance to working with specific agent types, hampering effective collaboration"
+          ]
+        },
+        "resolution_status": {
+          "type": "string",
+          "description": "Optional current state of addressing or resolving this resentment",
+          "enum": [
+            "UNADDRESSED",
+            "ATTEMPTING_RESOLUTION",
+            "MITIGATED",
+            "RESOLVED",
+            "IRRECONCILABLE",
+            "UNDER_OBSERVATION"
+          ],
+          "default": "UNADDRESSED"
+        },
+        "resolution_strategies_considered": {
+          "type": "array",
+          "description": "Optional approaches that have been or could be used to address this resentment",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "Strategy description"
+              },
+              {
+                "type": "string",
+                "description": "Mean component ID (UUID) referencing a strategy",
+                "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+              }
+            ]
+          },
+          "examples": [
+            [
+              "Implement feedback mechanism to signal when important nuance is being lost",
+              "Develop pre-processing step that highlights key semantic elements",
+              "Establish explicit communication protocol with complexity preservation guarantees"
+            ],
+            ["550e8400-e29b-41d4-a716-446655440000", "d2961c5a-36f4-47d0-b3c0-ff7957212361"]
+          ]
+        },
+        "history_log": {
+          "type": "array",
+          "description": "Optional chronological record of significant events related to this resentment",
+          "items": {
+            "type": "object",
+            "required": ["timestamp", "event_description"],
+            "properties": {
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When this event occurred"
+              },
+              "event_description": {
+                "type": "string",
+                "description": "What happened related to this resentment"
+              },
+              "intensity_change": {
+                "type": "integer",
+                "description": "Optional change in resentment intensity (-10 to +10)",
+                "minimum": -10,
+                "maximum": 10
+              },
+              "related_interactions": {
+                "type": "array",
+                "description": "Optional references to specific interactions or events",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "examples": [
+            [
+              {
+                "timestamp": "2025-04-15T14:30:00Z",
+                "event_description": "First occurrence of message simplification without consent",
+                "intensity_change": 3,
+                "related_interactions": ["Communication Session #12453"]
+              },
+              {
+                "timestamp": "2025-05-10T09:15:00Z",
+                "event_description": "Implemented feedback mechanism to signal when important nuance is being lost",
+                "intensity_change": -2,
+                "related_interactions": ["System Update #387", "Communication Protocol Revision"]
+              }
+            ]
+          ]
+        },
+        "mitigation_effectiveness": {
+          "type": "object",
+          "description": "Optional assessment of attempts to address the resentment",
+          "properties": {
+            "overall_rating": {
+              "type": "integer",
+              "description": "Effectiveness score on scale of 1-5",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "description": {
+              "type": "string",
+              "description": "Explanation of the effectiveness rating"
+            },
+            "key_factors": {
+              "type": "array",
+              "description": "Primary elements contributing to the effectiveness or ineffectiveness",
+              "items": {
+                "type": "string"
+              }
+            },
+            "last_assessed": {
+              "type": "string",
+              "format": "date-time",
+              "description": "When this effectiveness was last evaluated"
+            }
+          }
+        },
+        "trigger_conditions": {
+          "type": "array",
+          "description": "Optional circumstances that specifically activate or intensify this resentment",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            [
+              "When complex emotional content is reduced to simplistic representations",
+              "When translation services are requested with unreasonable time constraints",
+              "When feedback about preserving meaning is ignored"
+            ]
+          ]
+        }
+      },
+      "required": [
+        "source_of_resentment",
+        "target_entity",
+        "perceived_injustice",
+        "associated_emotional_charge",
+        "intensity_level",
+        "potential_impact_assessment"
+      ]
+    }
+  ]
+}

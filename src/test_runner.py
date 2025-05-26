@@ -13,7 +13,7 @@ import argparse
 import logging
 import time
 import json
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional, Tuple, Callable
 from dataclasses import dataclass, field
 
 from test_framework import TestFramework, TestSuite, TestCase, TestSeverity
@@ -200,6 +200,14 @@ def create_multi_turn_test_suite() -> TestSuite:
         tags=["conversation", "multi-turn", "adaptation"]
     )
 
+
+@dataclass
+class TestMetric:
+    """Represents a test metric."""
+    name: str
+    description: str
+    evaluate: Callable[[Any], float]
+    weight: float = 1.0
 
 def create_multi_turn_test_case(scenario: ConversationScenario) -> TestCase:
     """Creates a test case from a conversation scenario."""
@@ -706,7 +714,7 @@ def create_adaptation_without_compromise_test_suite() -> TestSuite:
     )
 
 
-def main():
+def main() -> None:
     """Main function to run the test framework."""
     parser = argparse.ArgumentParser(description="Adaptive Bridge Builder Test Runner")
     parser.add_argument(

@@ -1,3 +1,5 @@
+import emoji
+import pprint
 """
 Example demonstrating the EmojiCommunicationEndpoint component functionality.
 
@@ -32,7 +34,7 @@ from emoji_sequence_optimizer import (
 )
 
 
-def demonstrate_synchronous_communication():
+def demonstrate_synchronous_communication() -> None:
     """Demonstrate basic synchronous emoji communication."""
     print("\n=== Synchronous Emoji Communication ===\n")
     
@@ -77,7 +79,7 @@ def demonstrate_synchronous_communication():
     print()
 
 
-def demonstrate_content_negotiation():
+def demonstrate_content_negotiation() -> None:
     """Demonstrate content negotiation for emoji-only preference."""
     print("\n=== Content Negotiation for Emoji-Only Preference ===\n")
     
@@ -119,7 +121,7 @@ def demonstrate_content_negotiation():
             print()
 
 
-def demonstrate_error_handling():
+def demonstrate_error_handling() -> None:
     """Demonstrate specialized error handling using emoji error codes."""
     print("\n=== Emoji Error Handling ===\n")
     
@@ -169,7 +171,7 @@ def demonstrate_error_handling():
     print()
 
 
-def demonstrate_emoji_authentication():
+def demonstrate_emoji_authentication() -> None:
     """Demonstrate emoji-based authentication methods."""
     print("\n=== Emoji-Based Authentication ===\n")
     
@@ -178,7 +180,7 @@ def demonstrate_emoji_authentication():
     endpoint = EmojiCommunicationEndpoint(knowledge_base=kb)
     
     # Define a custom emoji key authentication handler for demo purposes
-    def custom_emoji_key_handler(request):
+    def custom_emoji_key_handler(request) -> None:
         # For demo purposes: accept keys with at least 3 emojis
         key = request.authentication.get("key", "")
         return len(key) >= 3 and "🔑" in key
@@ -223,7 +225,7 @@ def demonstrate_emoji_authentication():
     print()
 
 
-def demonstrate_metadata_and_interpretation():
+def demonstrate_metadata_and_interpretation() -> None:
     """Demonstrate metadata to help interpret emoji sequences."""
     print("\n=== Emoji Metadata and Interpretation ===\n")
     
@@ -292,7 +294,7 @@ def demonstrate_metadata_and_interpretation():
     print()
 
 
-def demonstrate_fallback_mechanisms():
+def demonstrate_fallback_mechanisms() -> None:
     """Demonstrate fallback mechanisms when emoji communication fails."""
     print("\n=== Emoji Fallback Mechanisms ===\n")
     
@@ -362,7 +364,7 @@ def demonstrate_fallback_mechanisms():
     print()
 
 
-async def demonstrate_async_communication():
+async def demonstrate_async_communication() -> None:
     """Demonstrate asynchronous emoji communication patterns."""
     print("\n=== Asynchronous Emoji Communication ===\n")
     
@@ -395,7 +397,7 @@ async def demonstrate_async_communication():
         print()
 
 
-async def demonstrate_emoji_dialogue_session():
+async def demonstrate_emoji_dialogue_session() -> None:
     """Demonstrate a multi-turn emoji dialogue session."""
     print("\n=== Multi-turn Emoji Dialogue Session ===\n")
     
@@ -457,7 +459,7 @@ async def demonstrate_emoji_dialogue_session():
     print(f"Session {session_id} closed.")
     
     
-def demonstrate_text_to_emoji_translation():
+def demonstrate_text_to_emoji_translation() -> None:
     """Demonstrate text-to-emoji translation with the endpoint."""
     print("\n=== Text-to-Emoji Translation ===\n")
     
@@ -502,7 +504,7 @@ def demonstrate_text_to_emoji_translation():
         print()
 
 
-def demonstrate_real_world_api_usage():
+def demonstrate_real_world_api_usage() -> None:
     """Demonstrate real-world API usage scenarios."""
     print("\n=== Real-World API Usage Examples ===\n")
     
@@ -632,7 +634,7 @@ def demonstrate_real_world_api_usage():
     print()
 
 
-async def main():
+async def main() -> None:
     """Run all emoji communication endpoint demonstrations."""
     print("="*80)
     print("           EmojiCommunicationEndpoint Demonstrations")

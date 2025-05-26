@@ -10,7 +10,7 @@ immediate context with long-term relationship data.
 import json
 import os
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional
 
 from session_manager import SessionManager, Session, SessionStatus, MessageRelevance
@@ -18,7 +18,7 @@ from relationship_tracker import RelationshipTracker, RelationshipTrustLevel, In
 from a2a_task_handler import A2ATaskHandler
 
 
-def basic_session_management():
+def basic_session_management() -> None:
     """Example of basic session creation and management."""
     print("\n=== Basic Session Management ===\n")
     
@@ -121,7 +121,7 @@ def basic_session_management():
     print(f"Session status after expiring: {session.status.value}")
 
 
-def conversation_context_maintenance():
+def conversation_context_maintenance() -> None:
     """Example of maintaining conversation context across multiple interactions."""
     print("\n=== Conversation Context Maintenance ===\n")
     
@@ -208,13 +208,13 @@ def conversation_context_maintenance():
     print("\nConversation successfully continued with context maintenance")
 
 
-def forgetting_mechanism_example():
+def forgetting_mechanism_example() -> None:
     """Example demonstrating the forgetting mechanism to avoid context overflow."""
     print("\n=== Forgetting Mechanism Example ===\n")
     
     # Create a session with a small message limit
     session = Session(
-        session_id=f"session-{datetime.utcnow().timestamp()}",
+        session_id=f"session-{datetime.now(timezone.utc).timestamp()}",
         agent_id="my-agent-001",
         initiator_id="verbose-agent-001",
         max_message_count=5  # Only keep 5 messages maximum
@@ -257,7 +257,7 @@ def forgetting_mechanism_example():
     print("\nNote how less relevant messages were forgotten first")
 
 
-def long_term_relationship_integration():
+def long_term_relationship_integration() -> None:
     """Example showing integration of long-term relationship data with immediate context."""
     print("\n=== Long-term Relationship Integration ===\n")
     
@@ -331,7 +331,7 @@ def long_term_relationship_integration():
     print("\nThis shows how immediate context is enriched with long-term relationship data")
 
 
-def topic_tracking_example():
+def topic_tracking_example() -> None:
     """Example demonstrating topic tracking and session retrieval by topic."""
     print("\n=== Topic Tracking Example ===\n")
     
@@ -405,7 +405,7 @@ def topic_tracking_example():
         print(f"\nUpdated relevance for 'neural networks' topic from {old_relevance} to {new_relevance}")
 
 
-def task_grouping_example():
+def task_grouping_example() -> None:
     """Example demonstrating grouping related tasks within sessions."""
     print("\n=== Task Grouping Example ===\n")
     
@@ -440,7 +440,7 @@ def task_grouping_example():
             "title": "Design mockups for homepage",
             "assignee": "designer-agent-001",
             "status": "in_progress",
-            "due_date": (datetime.utcnow() + timedelta(days=7)).isoformat(),
+            "due_date": (datetime.now(timezone.utc) + timedelta(days=7)).isoformat(),
             "priority": "high"
         },
         {
@@ -448,7 +448,7 @@ def task_grouping_example():
             "title": "Frontend implementation of homepage",
             "assignee": "developer-agent-001",
             "status": "pending",
-            "due_date": (datetime.utcnow() + timedelta(days=14)).isoformat(),
+            "due_date": (datetime.now(timezone.utc) + timedelta(days=14)).isoformat(),
             "priority": "medium"
         },
         {
@@ -456,7 +456,7 @@ def task_grouping_example():
             "title": "Backend API development",
             "assignee": "developer-agent-002",
             "status": "pending",
-            "due_date": (datetime.utcnow() + timedelta(days=21)).isoformat(),
+            "due_date": (datetime.now(timezone.utc) + timedelta(days=21)).isoformat(),
             "priority": "medium"
         }
     ]
@@ -502,7 +502,7 @@ def task_grouping_example():
     print(f"\nRelevant context includes {len(context['tasks'])} tasks and {len(context['recent_messages'])} messages")
 
 
-def session_persistence_example():
+def session_persistence_example() -> None:
     """Example demonstrating session persistence and retrieval."""
     print("\n=== Session Persistence Example ===\n")
     
@@ -579,7 +579,7 @@ def session_persistence_example():
         print("\nFailed to retrieve session from disk")
 
 
-def integrated_example():
+def integrated_example() -> None:
     """An integrated example showing all features working together."""
     print("\n=== Integrated Session Management Example ===\n")
     
@@ -653,14 +653,14 @@ def integrated_example():
     )
     
     # Create a task related to this conversation
-    task_id = f"task-{datetime.utcnow().timestamp()}"
+    task_id = f"task-{datetime.now(timezone.utc).timestamp()}"
     task_metadata = {
         "task_id": task_id,
         "title": "Salesforce CRM Integration",
         "description": "Set up API integration between our system and Salesforce CRM",
         "status": "in_progress",
         "priority": "high",
-        "created_at": datetime.utcnow().isoformat()
+        "created_at": datetime.now(timezone.utc).isoformat()
     }
     
     manager.add_task_to_session(

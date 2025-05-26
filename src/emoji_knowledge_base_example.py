@@ -1,3 +1,4 @@
+import emoji
 """
 Example demonstrating the EmojiKnowledgeBase component functionality.
 
@@ -5,7 +6,7 @@ This file provides concrete examples of using the EmojiKnowledgeBase
 for domain-specific emoji mappings, cultural variations, and complex concepts.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from emoji_knowledge_base import (
     EmojiKnowledgeBase,
     EmojiDomain,
@@ -16,7 +17,7 @@ from emoji_knowledge_base import (
 )
 
 
-def demonstrate_concept_mapping():
+def demonstrate_concept_mapping() -> None:
     """Demonstrate concept-to-emoji mapping across different domains and cultures."""
     print("\n=== Concept-to-Emoji Mapping ===\n")
     
@@ -62,7 +63,7 @@ def demonstrate_concept_mapping():
         print()
 
 
-def demonstrate_cultural_variations():
+def demonstrate_cultural_variations() -> None:
     """Demonstrate cultural variations in emoji interpretation."""
     print("\n=== Cultural Variations in Emoji Interpretation ===\n")
     
@@ -132,7 +133,7 @@ def demonstrate_cultural_variations():
         
         print()
 
-def demonstrate_domain_specific_meanings():
+def demonstrate_domain_specific_meanings() -> None:
     """Demonstrate domain-specific emoji meanings."""
     print("\n=== Domain-Specific Emoji Meanings ===\n")
     
@@ -202,7 +203,7 @@ def demonstrate_domain_specific_meanings():
         
         print()
 
-def demonstrate_combination_patterns():
+def demonstrate_combination_patterns() -> None:
     """Demonstrate emoji combination patterns for complex concepts."""
     print("\n=== Emoji Combination Patterns ===\n")
     
@@ -280,7 +281,7 @@ def demonstrate_combination_patterns():
         
         print()
 
-def demonstrate_searching_and_querying():
+def demonstrate_searching_and_querying() -> None:
     """Demonstrate searching and querying the knowledge base."""
     print("\n=== Searching and Querying the Knowledge Base ===\n")
     
@@ -365,7 +366,7 @@ def demonstrate_searching_and_querying():
             print("  No concepts found")
         print()
 
-def demonstrate_emoji_by_sentiment_and_familiarity():
+def demonstrate_emoji_by_sentiment_and_familiarity() -> None:
     """Demonstrate retrieving emojis by sentiment and familiarity."""
     print("\n=== Emojis by Sentiment and Familiarity ===\n")
     
@@ -476,7 +477,7 @@ def demonstrate_emoji_by_sentiment_and_familiarity():
             print("  No emojis found")
         print()
 
-def demonstrate_version_tracking():
+def demonstrate_version_tracking() -> None:
     """Demonstrate version tracking in the knowledge base."""
     print("\n=== Version Tracking ===\n")
     
@@ -585,7 +586,7 @@ def demonstrate_version_tracking():
     print(f"  Current Version: {kb.current_version}")
 
 
-def main():
+def main() -> None:
     """Run all emoji knowledge base demonstrations."""
     print("="*80)
     print("                EmojiKnowledgeBase Demonstrations")

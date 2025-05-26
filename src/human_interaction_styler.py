@@ -14,7 +14,7 @@ import os
 from typing import Dict, Any, List, Tuple, Optional, Set
 from enum import Enum, auto
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 import copy
 
 from principle_engine import PrincipleEngine
@@ -52,7 +52,7 @@ class CulturalContext(Enum):
     POLYCHRONIC = auto()       # Flexible time, relationship-focused
     MONOCHRONIC = auto()       # Structured time, task-focused
     
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name.replace('_', ' ').title()
 
 class CommunicationChannel(Enum):
@@ -65,7 +65,7 @@ class CommunicationChannel(Enum):
     SOCIAL_MEDIA = auto()
     API = auto()
     
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name.replace('_', ' ').title()
 
 @dataclass
@@ -107,7 +107,7 @@ class HumanProfile:
     
     # Profile metadata
     confidence_level: float = 0.1  # 0.0 (uncertain profile) to 1.0 (certain profile)
-    last_updated: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    last_updated: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     interaction_count: int = 0
     
     # Adaptive features
@@ -269,7 +269,7 @@ class HumanInteractionStyler:
                 with open(file_path, 'r') as f:
                     profile_data = json.load(f)
                     profile = HumanProfile.from_dict(profile_data)
-                    self.human_profiles[profile.human_id] = profile
+                    self.human_profiles = {**self.human_profiles, profile.human_id: profile}
                     logger.info(f"Loaded profile for human: {profile.human_id}")
             except Exception as e:
                 logger.error(f"Error loading profile from {file_path}: {e}")
@@ -300,7 +300,7 @@ class HumanInteractionStyler:
             return self.human_profiles[human_id]
         
         profile = HumanProfile(human_id=human_id, name=name)
-        self.human_profiles[human_id] = profile
+        self.human_profiles = {**self.human_profiles, human_id: profile}
         logger.info(f"Created new profile for human: {human_id}")
         return profile
     
@@ -353,7 +353,7 @@ class HumanInteractionStyler:
         
         # Update interaction count and metadata
         profile.interaction_count += 1
-        profile.last_updated = datetime.utcnow().isoformat()
+        profile.last_updated = datetime.now(timezone.utc).isoformat()
         profile.confidence_level = min(0.95, profile.confidence_level + 0.01)
         
         # Save the updated profile
@@ -500,8 +500,20 @@ class HumanInteractionStyler:
         
         return response
 
+
+    async def __aenter__(self):
+        """Enter async context."""
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Exit async context and cleanup."""
+        if hasattr(self, 'cleanup'):
+            await self.cleanup()
+        elif hasattr(self, 'close'):
+            await self.close()
+        return False
 # Example usage
-def main():
+def main() -> None:
     """Example usage of HumanInteractionStyler."""
     # Initialize the styler
     styler = HumanInteractionStyler()

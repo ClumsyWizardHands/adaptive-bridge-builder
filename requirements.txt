@@ -4,6 +4,10 @@ requests>=2.25.0
 tqdm>=4.62.0
 argparse>=1.4.0
 
+# LangChain dependencies
+langchain>=0.1.0
+langchain-core>=0.1.0
+
 # Optional dependencies (commented out to avoid build issues)
 # llama-cpp-python>=0.2.0  # Preferred backend for Mistral models
 # ctransformers>=0.2.0   # Alternative backend for Mistral models
@@ -13,6 +17,22 @@ argparse>=1.4.0
 
 # For HTTP server
 flask>=2.0.0
+fastapi>=0.100.0
+websockets>=10.0
 
 # For testing
 colorama>=0.4.4
+
+# Added by fix_all_import_issues.py
+ctransformers>=0.2.27
+dicttoxml>=1.7.16
+emoji>=2.8.0
+google-generativeai>=0.3.0
+llama-cpp-python>=0.2.20
+markdown>=3.4.0
+reportlab>=4.0.0
+pandas-stubs>=2.0.0
+types-requests>=2.31.0
+xmltodict>=0.13.0
+
+astor>=0.8.1

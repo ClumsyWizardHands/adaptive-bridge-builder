@@ -11,7 +11,7 @@ adapts communication styles, and maintains conversation context.
 import json
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional, Tuple, Union
 import re
 import traceback
@@ -94,7 +94,7 @@ class MessageContext:
         self.agent_id = agent_id
         self.metadata = metadata or {}
         self.messages: List[Dict[str, Any]] = []
-        self.last_updated = datetime.utcnow().isoformat()
+        self.last_updated = datetime.now(timezone.utc).isoformat()
         self.topics: List[str] = []
         self.intent_history: List[str] = []
         self.status = "active"
@@ -108,15 +108,15 @@ class MessageContext:
             message: The message to add.
             intent: The intent of the message.
         """
-        self.messages.append(message)
-        self.intent_history.append(intent)
-        self.last_updated = datetime.utcnow().isoformat()
+        self.messages = [*self.messages, message]
+        self.intent_history = [*self.intent_history, intent]
+        self.last_updated = datetime.now(timezone.utc).isoformat()
         
         # Update topics if available in message
         if "topics" in message:
             for topic in message["topics"]:
                 if topic not in self.topics:
-                    self.topics.append(topic)
+                    self.topics = [*self.topics, topic]
     
     def get_recent_messages(self, count: int = 5) -> List[Dict[str, Any]]:
         """
@@ -171,7 +171,7 @@ class MessageContext:
             metadata=data.get("metadata", {})
         )
         context.messages = data.get("messages", [])
-        context.last_updated = data.get("last_updated", datetime.utcnow().isoformat())
+        context.last_updated = data.get("last_updated", datetime.now(timezone.utc).isoformat())
         context.topics = data.get("topics", [])
         context.intent_history = data.get("intent_history", [])
         context.status = data.get("status", "active")
@@ -336,13 +336,13 @@ class A2ATaskHandler:
         task_id = message.get("id") or f"task-{uuid.uuid4().hex}"
         
         # Set up task tracking
-        self.tasks[task_id] = {
+        self.tasks = {**self.tasks, task_id: {
             "status": TaskStatus.RECEIVED,
-            "received_at": datetime.utcnow().isoformat(),
+            "received_at": datetime.now(timezone.utc).isoformat(),
             "agent_id": agent_id,
             "conversation_id": conversation_id,
             "metadata": metadata or {}
-        }
+        }}
         
         # Create standardized message structure if needed
         if "jsonrpc" not in message:
@@ -445,7 +445,7 @@ class A2ATaskHandler:
             
             # Update task status
             self.tasks[task_id]["status"] = TaskStatus.COMPLETED
-            self.tasks[task_id]["completed_at"] = datetime.utcnow().isoformat()
+            self.tasks[task_id]["completed_at"] = datetime.now(timezone.utc).isoformat()
             
             # Log successful completion
             logger.info(f"Task {task_id} from {agent_id} completed successfully. "
@@ -542,7 +542,7 @@ class A2ATaskHandler:
             agent_id=agent_id,
             metadata=metadata
         )
-        self.active_contexts[context_key] = context
+        self.active_contexts = {**self.active_contexts, context_key: context}
         
         return context
     
@@ -788,7 +788,7 @@ class A2ATaskHandler:
         
         # Add task metadata to result
         result["task_id"] = task_id
-        result["processed_at"] = datetime.utcnow().isoformat()
+        result["processed_at"] = datetime.now(timezone.utc).isoformat()
         
         # Add context information
         result["conversation_id"] = context.conversation_id
@@ -816,3 +816,291 @@ class A2ATaskHandler:
             "result": result,
             "id": task_id
         }
+        
+        return response
+    
+    def _handle_query(
+        self,
+        content: Any,
+        content_type: str,
+        agent_id: str,
+        context: MessageContext
+    ) -> Dict[str, Any]:
+        """
+        Handle a query intent.
+        
+        Args:
+            content: The query content.
+            content_type: Type of the content.
+            agent_id: ID of the agent making the query.
+            context: Conversation context.
+            
+        Returns:
+            Response to the query.
+        """
+        # Prepare response based on content type
+        if content_type == ContentType.TEXT and isinstance(content, str):
+            # Simple text query response
+            return {
+                "status": "success",
+                "message": f"Query received: {content[:100]}...",
+                "query_type": "text",
+                "agent_id": agent_id,
+                "response": "This is a placeholder response. Implement domain-specific logic here."
+            }
+        elif content_type == ContentType.JSON:
+            # Structured query response
+            return {
+                "status": "success",
+                "message": "Structured query processed",
+                "query_type": "json",
+                "agent_id": agent_id,
+                "query_data": content,
+                "response": "Structured response placeholder"
+            }
+        else:
+            # Unknown content type
+            return {
+                "status": "partial",
+                "message": f"Query with {content_type} content received",
+                "query_type": content_type,
+                "agent_id": agent_id,
+                "note": "Content type handling not fully implemented"
+            }
+    
+    def _handle_instruction(
+        self,
+        content: Any,
+        content_type: str,
+        agent_id: str,
+        context: MessageContext
+    ) -> Dict[str, Any]:
+        """
+        Handle an instruction intent.
+        
+        Args:
+            content: The instruction content.
+            content_type: Type of the content.
+            agent_id: ID of the agent giving the instruction.
+            context: Conversation context.
+            
+        Returns:
+            Response to the instruction.
+        """
+        return {
+            "status": "acknowledged",
+            "message": "Instruction received and will be processed",
+            "instruction_type": content_type,
+            "agent_id": agent_id,
+            "execution_status": "pending",
+            "estimated_completion": "TBD"
+        }
+    
+    def _handle_request(
+        self,
+        content: Any,
+        content_type: str,
+        agent_id: str,
+        context: MessageContext
+    ) -> Dict[str, Any]:
+        """
+        Handle a request intent.
+        
+        Args:
+            content: The request content.
+            content_type: Type of the content.
+            agent_id: ID of the agent making the request.
+            context: Conversation context.
+            
+        Returns:
+            Response to the request.
+        """
+        return {
+            "status": "accepted",
+            "message": "Request has been received",
+            "request_type": content_type,
+            "agent_id": agent_id,
+            "processing_status": "initiated",
+            "request_id": f"req-{uuid.uuid4().hex[:8]}"
+        }
+    
+    def _handle_information(
+        self,
+        content: Any,
+        content_type: str,
+        agent_id: str,
+        context: MessageContext
+    ) -> Dict[str, Any]:
+        """
+        Handle an information intent.
+        
+        Args:
+            content: The information content.
+            content_type: Type of the content.
+            agent_id: ID of the agent providing information.
+            context: Conversation context.
+            
+        Returns:
+            Acknowledgment of the information.
+        """
+        return {
+            "status": "received",
+            "message": "Information has been recorded",
+            "info_type": content_type,
+            "agent_id": agent_id,
+            "stored": True,
+            "reference_id": f"info-{uuid.uuid4().hex[:8]}"
+        }
+    
+    def _handle_clarification(
+        self,
+        content: Any,
+        content_type: str,
+        agent_id: str,
+        context: MessageContext
+    ) -> Dict[str, Any]:
+        """
+        Handle a clarification intent.
+        
+        Args:
+            content: The clarification content.
+            content_type: Type of the content.
+            agent_id: ID of the agent seeking/providing clarification.
+            context: Conversation context.
+            
+        Returns:
+            Response to the clarification.
+        """
+        # Check if this is seeking or providing clarification
+        seeking = False
+        if isinstance(content, str):
+            seeking_patterns = ["did you mean", "are you saying", "confused about", "unclear"]
+            seeking = any(pattern in content.lower() for pattern in seeking_patterns)
+        
+        if seeking:
+            return {
+                "status": "clarifying",
+                "message": "I'll provide clarification",
+                "clarification_type": "response",
+                "agent_id": agent_id,
+                "clarification": "Here's a clearer explanation..."
+            }
+        else:
+            return {
+                "status": "understood",
+                "message": "Thank you for the clarification",
+                "clarification_type": "received",
+                "agent_id": agent_id,
+                "updated_understanding": True
+            }
+    
+    def _handle_generic(
+        self,
+        content: Any,
+        content_type: str,
+        intent: str,
+        agent_id: str,
+        context: MessageContext
+    ) -> Dict[str, Any]:
+        """
+        Handle generic intents not covered by specific handlers.
+        
+        Args:
+            content: The message content.
+            content_type: Type of the content.
+            intent: The detected intent.
+            agent_id: ID of the agent.
+            context: Conversation context.
+            
+        Returns:
+            Generic response.
+        """
+        return {
+            "status": "processed",
+            "message": f"{intent.capitalize()} message processed",
+            "intent": intent,
+            "content_type": content_type,
+            "agent_id": agent_id,
+            "action_taken": "logged and acknowledged"
+        }
+    
+    def _create_error_response(
+        self,
+        task_id: str,
+        error_message: str,
+        error_code: int = -32603
+    ) -> Dict[str, Any]:
+        """
+        Create a JSON-RPC error response.
+        
+        Args:
+            task_id: ID of the task that failed.
+            error_message: Error message to include.
+            error_code: JSON-RPC error code.
+            
+        Returns:
+            Error response in JSON-RPC format.
+        """
+        return {
+            "jsonrpc": "2.0",
+            "error": {
+                "code": error_code,
+                "message": error_message,
+                "data": {
+                    "task_id": task_id,
+                    "timestamp": datetime.now(timezone.utc).isoformat()
+                }
+            },
+            "id": task_id
+        }
+    
+    def get_task_status(self, task_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get the status of a task.
+        
+        Args:
+            task_id: ID of the task.
+            
+        Returns:
+            Task status information or None if not found.
+        """
+        return self.tasks.get(task_id)
+    
+    def get_active_conversations(self) -> List[Dict[str, Any]]:
+        """
+        Get list of active conversations.
+        
+        Returns:
+            List of active conversation summaries.
+        """
+        conversations = []
+        for context_key, context in self.active_contexts.items():
+            conversations.append({
+                "conversation_id": context.conversation_id,
+                "agent_id": context.agent_id,
+                "message_count": len(context.messages),
+                "last_updated": context.last_updated,
+                "status": context.status,
+                "topics": context.topics
+            })
+        return conversations
+    
+    def close_conversation(self, agent_id: str, conversation_id: str) -> bool:
+        """
+        Close a conversation.
+        
+        Args:
+            agent_id: ID of the agent.
+            conversation_id: ID of the conversation.
+            
+        Returns:
+            True if conversation was closed, False if not found.
+        """
+        context_key = f"{agent_id}:{conversation_id}"
+        if context_key in self.active_contexts:
+            self.active_contexts[context_key].status = "closed"
+            # Optionally save to disk before removing from memory
+            # self._save_context(self.active_contexts[context_key])
+            self.active_contexts = {k: v for k, v in self.active_contexts.items() if k != context_key}
+            return True
+        return False

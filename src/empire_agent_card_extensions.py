@@ -1,3 +1,4 @@
+import markdown
 """
 Empire Agent Card Extensions
 
@@ -23,18 +24,18 @@ class EmpireAgentCard(AgentCard):
     4. Custom metadata fields for Empire components
     """
     
-    def __init__(self, card_path=None, card_data=None):
+    def __init__(self, card_path=None, card_data=None) -> None:
         """Initialize the Empire Agent Card."""
         super().__init__(card_path=card_path, card_data=card_data)
         
         # Initialize Empire extensions if not present
         self._initialize_empire_extensions()
     
-    def _initialize_empire_extensions(self):
+    def _initialize_empire_extensions(self) -> None:
         """Initialize Empire-specific extensions to the agent card."""
         # Ensure empire_extensions section exists
         if "empire_extensions" not in self.card_data:
-            self.card_data["empire_extensions"] = {
+            self.card_data = {**self.card_data, "empire_extensions": {}
                 "version": "1.0.0",
                 "profile_type": "Empire of the Adaptive Hero",
                 "enhanced_principles": [],
@@ -157,7 +158,7 @@ class EmpireAgentCard(AgentCard):
         components_section["principles"] = principles
         components_section["growth"] = growth
     
-    def add_relationship_pattern(self, pattern: Dict[str, Any]):
+    def add_relationship_pattern(self, pattern: Dict[str, Any]) -> None:
         """
         Add a relationship adaptation pattern.
         
@@ -166,7 +167,7 @@ class EmpireAgentCard(AgentCard):
         """
         self.card_data["empire_extensions"]["relationship_building"]["adaptation_patterns"].append(pattern)
     
-    def add_conflict_strategy(self, strategy: Dict[str, Any]):
+    def add_conflict_strategy(self, strategy: Dict[str, Any]) -> None:
         """
         Add a conflict resolution strategy.
         
@@ -176,7 +177,7 @@ class EmpireAgentCard(AgentCard):
         self.card_data["empire_extensions"]["conflict_resolution"]["strategies"].append(strategy)
 
 
-def create_example_empire_agent_card():
+def create_example_empire_agent_card() -> None:
     """
     Create an example agent card with Empire-specific extensions.
     
@@ -726,7 +727,7 @@ def create_example_empire_agent_card():
     return card
 
 
-def save_example_card_json():
+def save_example_card_json() -> None:
     """
     Create and save an example Empire Agent Card.
     

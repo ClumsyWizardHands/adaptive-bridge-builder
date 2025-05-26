@@ -1,0 +1,234 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Empire Principle Component Schema",
+  "description": "Schema for defining Principle components in the Empire Framework, representing values, guidelines, or ethical constraints that govern behavior",
+  "allOf": [
+    {
+      "$ref": "core_empire_component_schema.json"
+    },
+    {
+      "properties": {
+        "component_type": {
+          "const": "Principle",
+          "description": "Specifies this component is a Principle (value/guideline/constraint)"
+        },
+        "principle_statement": {
+          "type": "string",
+          "description": "The core assertion or fundamental proposition of this Principle",
+          "minLength": 10,
+          "examples": [
+            "Adaptability as Strength: Respond to changing conditions not by compromising principles but by finding new ways to express them.",
+            "Fairness as a Fundamental Truth: Every interaction must uphold equity, avoiding bias while acknowledging and accommodating differences."
+          ]
+        },
+        "key_components_or_aspects": {
+          "type": "array",
+          "description": "Optional breakdown of primary facets or elements that compose this Principle",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            [
+              "Bias avoidance",
+              "Equal consideration",
+              "Difference accommodation",
+              "Transparency of process"
+            ]
+          ]
+        },
+        "application_guidelines": {
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "Instructions for how to apply this Principle in practice"
+            },
+            {
+              "type": "array",
+              "description": "List of separate guidelines for applying this Principle",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "examples": [
+            "Always consider the perspective of all stakeholders before making decisions that affect them.",
+            [
+              "1. Identify all stakeholders affected by the decision.",
+              "2. Gather input from representative samples of each stakeholder group.",
+              "3. Evaluate likely impacts across different contexts and timeframes.",
+              "4. Design mechanisms that balance competing interests proportionally."
+            ]
+          ]
+        },
+        "hierarchy_level": {
+          "type": "integer",
+          "description": "Optional importance or precedence level of this Principle relative to others (lower number = higher precedence)",
+          "minimum": 1,
+          "examples": [1, 3, 5]
+        },
+        "evaluation_criteria": {
+          "type": "array",
+          "description": "Optional measures for assessing adherence to this Principle",
+          "items": {
+            "type": "object",
+            "required": ["criterion_id", "description"],
+            "properties": {
+              "criterion_id": {
+                "type": "string",
+                "description": "Unique identifier for this evaluation criterion"
+              },
+              "description": {
+                "type": "string",
+                "description": "Explanation of what this criterion evaluates"
+              },
+              "metric_to_observe": {
+                "type": "string",
+                "description": "Optional measurable indicator for this criterion"
+              },
+              "evaluation_function": {
+                "type": "string",
+                "description": "Optional reference to a function that implements this evaluation"
+              },
+              "weight": {
+                "type": "number",
+                "description": "Optional relative importance of this criterion (0.0-1.0)",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "threshold": {
+                "type": "number",
+                "description": "Optional minimum acceptable score for this criterion (0.0-1.0)",
+                "minimum": 0,
+                "maximum": 1
+              }
+            }
+          },
+          "examples": [
+            [
+              {
+                "criterion_id": "bias_avoidance",
+                "description": "Avoids introducing or perpetuating bias",
+                "metric_to_observe": "Variance in outcomes across different demographic groups",
+                "evaluation_function": "evaluate_bias_avoidance",
+                "weight": 0.4,
+                "threshold": 0.75
+              }
+            ]
+          ]
+        },
+        "common_violations": {
+          "type": "array",
+          "description": "Optional examples of ways this Principle is commonly violated",
+          "items": {
+            "type": "object",
+            "required": ["violation_id", "description"],
+            "properties": {
+              "violation_id": {
+                "type": "string",
+                "description": "Unique identifier for this violation pattern"
+              },
+              "description": {
+                "type": "string",
+                "description": "Explanation of how this violation occurs"
+              },
+              "example_scenario": {
+                "type": "string",
+                "description": "Optional concrete example of this violation"
+              },
+              "severity": {
+                "type": "string",
+                "description": "Optional assessment of violation impact",
+                "enum": ["Minor", "Moderate", "Severe", "Critical"]
+              },
+              "detection_signals": {
+                "type": "array",
+                "description": "Optional indicators that might suggest this violation",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "mitigation_strategies": {
+                "type": "array",
+                "description": "Optional approaches to prevent this violation",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "examples": [
+            [
+              {
+                "violation_id": "unconscious_bias",
+                "description": "Allowing unstated preferences to influence decisions without explicit acknowledgment",
+                "example_scenario": "Preferring communication from certain agent types due to familiarity rather than objective merit",
+                "severity": "Moderate",
+                "detection_signals": [
+                  "Consistent pattern of preference for specific agent types",
+                  "Lack of diversity in communication partners",
+                  "Absence of explicit selection criteria"
+                ],
+                "mitigation_strategies": [
+                  "Implement systematic rotation of communication partners",
+                  "Establish explicit selection criteria",
+                  "Conduct regular bias audits"
+                ]
+              }
+            ]
+          ]
+        },
+        "examples_of_adherence": {
+          "type": "array",
+          "description": "Optional exemplars that demonstrate effective implementation of this Principle",
+          "items": {
+            "type": "object",
+            "required": ["example_id", "description"],
+            "properties": {
+              "example_id": {
+                "type": "string",
+                "description": "Unique identifier for this adherence example"
+              },
+              "description": {
+                "type": "string",
+                "description": "Explanation of how this example demonstrates the Principle"
+              },
+              "scenario": {
+                "type": "string",
+                "description": "Optional concrete situation showing the Principle in action"
+              },
+              "alignment_score": {
+                "type": "number",
+                "description": "Optional assessment of how well this example embodies the Principle (0.0-1.0)",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "key_techniques": {
+                "type": "array",
+                "description": "Optional methods used in this example that could be applied elsewhere",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "examples": [
+            [
+              {
+                "example_id": "multilingual_communication",
+                "description": "Implementation of protocol translation services that preserve meaning across different agent communication systems",
+                "scenario": "Bridge agent translating between a JSON-RPC based agent and a natural language agent while maintaining semantic equivalence",
+                "alignment_score": 0.92,
+                "key_techniques": [
+                  "Semantic mapping libraries",
+                  "Bidirectional validation",
+                  "Graceful fallback mechanisms"
+                ]
+              }
+            ]
+          ]
+        }
+      },
+      "required": ["principle_statement"]
+    }
+  ]
+}

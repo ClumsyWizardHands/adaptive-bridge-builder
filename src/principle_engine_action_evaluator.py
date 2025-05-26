@@ -11,7 +11,7 @@ import json
 import logging
 import textwrap
 from typing import Dict, Any, List, Tuple, Optional, Union
-from datetime import datetime
+from datetime import datetime, timezone
 
 from principle_engine import PrincipleEngine
 
@@ -31,7 +31,7 @@ class PrincipleActionEvaluator:
     determine principle violations, suggest alternatives, and manage interactions.
     """
     
-    def __init__(self, principle_engine: Optional[PrincipleEngine] = None, principles_file: Optional[str] = None):
+    def __init__(self, principle_engine: Optional[PrincipleEngine] = None, principles_file: Optional[str] = None) -> None:
         """
         Initialize the PrincipleActionEvaluator.
         
@@ -58,7 +58,7 @@ class PrincipleActionEvaluator:
         """
         context = context or {}
         evaluation = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "action": action,
             "context": context,
             "principle_scores": {},
@@ -107,7 +107,7 @@ class PrincipleActionEvaluator:
             evaluation["overall_score"] = total_weighted_score / total_weight
         
         # Add to history
-        self.evaluation_history.append(evaluation)
+        self.evaluation_history = [*self.evaluation_history, evaluation]
         
         # Log the evaluation
         logger.info(f"Action evaluated with overall score: {evaluation['overall_score']:.2f}")
@@ -427,6 +427,18 @@ class PrincipleActionEvaluator:
         return "\n".join(summary)
 
 
+
+    async def __aenter__(self):
+        """Enter async context."""
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Exit async context and cleanup."""
+        if hasattr(self, 'cleanup'):
+            await self.cleanup()
+        elif hasattr(self, 'close'):
+            await self.close()
+        return False
 # Example usage
 if __name__ == "__main__":
     # Create a PrincipleActionEvaluator with default principles

@@ -18,7 +18,7 @@ from empire_framework.registry.component_registry import ComponentRegistry
 class TestA2AIntegration(unittest.TestCase):
     """Test suite for Empire Framework A2A integration."""
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment."""
         # Create a new adapter and handlers
         self.adapter = A2AAdapter(validation_enabled=True)
@@ -32,7 +32,7 @@ class TestA2AIntegration(unittest.TestCase):
         # Create handlers with our test registry
         self.handlers = EmpireA2AHandlers(registry=self.registry)
     
-    def _add_test_components_to_registry(self):
+    def _add_test_components_to_registry(self) -> None:
         """Add test components to the registry for testing."""
         # Principle component
         principle = {
@@ -91,7 +91,7 @@ class TestA2AIntegration(unittest.TestCase):
         self.registry.add_relationship("means-001", "principle-001", "implements", 0.8)
         self.registry.add_relationship("ends-001", "means-001", "requires", 0.9)
     
-    def test_component_to_a2a_message_conversion(self):
+    def test_component_to_a2a_message_conversion(self) -> None:
         """Test conversion of Empire component to A2A message."""
         # Get a test component
         component = self.registry.get_component("principle-001")
@@ -107,7 +107,7 @@ class TestA2AIntegration(unittest.TestCase):
         self.assertEqual(a2a_message["content"]["component_data"]["name"], "Fairness as Truth")
         self.assertEqual(a2a_message["metadata"]["source"], "empire_framework")
     
-    def test_a2a_message_to_component_conversion(self):
+    def test_a2a_message_to_component_conversion(self) -> None:
         """Test conversion of A2A message back to Empire component."""
         # Create a test A2A message
         a2a_message = {
@@ -138,7 +138,7 @@ class TestA2AIntegration(unittest.TestCase):
         self.assertEqual(component["description"], "A test principle for conversion testing")
         self.assertEqual(component["version"], "1.0")
     
-    def test_component_parts_conversion(self):
+    def test_component_parts_conversion(self) -> None:
         """Test conversion of component to A2A parts and back."""
         # Get a test component
         component = self.registry.get_component("means-001")
@@ -160,7 +160,7 @@ class TestA2AIntegration(unittest.TestCase):
         self.assertEqual(reconstructed["name"], component["name"])
         self.assertEqual(reconstructed["capabilities"], component["capabilities"])
     
-    def test_get_components_handler(self):
+    def test_get_components_handler(self) -> None:
         """Test the getComponents handler."""
         # Create a test request
         request = {
@@ -181,7 +181,7 @@ class TestA2AIntegration(unittest.TestCase):
         self.assertEqual(response["content"]["component_count"], 1)
         self.assertEqual(response["content"]["components"][0]["component_id"], "principle-001")
     
-    def test_get_component_by_id_handler(self):
+    def test_get_component_by_id_handler(self) -> None:
         """Test the getComponentById handler."""
         # Create a test request
         request = {
@@ -200,7 +200,7 @@ class TestA2AIntegration(unittest.TestCase):
         self.assertEqual(response["content"]["component_id"], "ends-001")
         self.assertEqual(response["content"]["component_data"]["goal"], "Seamless agent interoperability")
     
-    def test_get_related_components_handler(self):
+    def test_get_related_components_handler(self) -> None:
         """Test the getRelatedComponents handler."""
         # Create a test request
         request = {
@@ -226,7 +226,7 @@ class TestA2AIntegration(unittest.TestCase):
                 break
         self.assertTrue(found_principle, "Related principle component not found")
     
-    def test_get_component_parts_handler(self):
+    def test_get_component_parts_handler(self) -> None:
         """Test the getComponentParts handler."""
         # Create a test request
         request = {
@@ -248,7 +248,7 @@ class TestA2AIntegration(unittest.TestCase):
         self.assertTrue("principle" in response["content"]["parts"])
         self.assertEqual(response["content"]["parts"]["principle"]["name"], "Fairness as Truth")
     
-    def test_error_handling(self):
+    def test_error_handling(self) -> None:
         """Test error handling in the A2A handlers."""
         # Test missing component
         request = {
@@ -280,7 +280,7 @@ class TestA2AIntegration(unittest.TestCase):
         self.assertEqual(response["content"]["error"]["code"], -32601)
         self.assertTrue("available_methods" in response["content"]["error"]["data"])
     
-    def test_components_batch_conversion(self):
+    def test_components_batch_conversion(self) -> None:
         """Test batch conversion of components to A2A message and back."""
         # Get multiple components
         components = [

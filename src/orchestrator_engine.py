@@ -14,8 +14,8 @@ import uuid
 import time
 import logging
 import heapq
-from datetime import datetime, timedelta
-from typing import Dict, List, Any, Optional, Set, Tuple, Union, Callable, NamedTuple
+from datetime import datetime, timedelta, timezone
+from typing import Any, Callable, Dict, List, NamedTuple, Optional, Set, Tuple, Union
 from enum import Enum, auto
 import threading
 import copy
@@ -119,7 +119,7 @@ class AgentProfile:
     last_active: Optional[str] = None
     metadata: Dict[str, Any] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> Any:
         if self.task_history is None:
             self.task_history = []
         if self.success_rate is None:
@@ -209,7 +209,7 @@ class DecomposedTask:
         self.strategy = strategy
         self.subtasks: Dict[str, Task] = {}  # task_id -> Task
         self.subtask_outputs: Dict[str, Any] = {}  # task_id -> output
-        self.created_at = datetime.utcnow().isoformat()
+        self.created_at = datetime.now(timezone.utc).isoformat()
         self.updated_at = self.created_at
         self.status = TaskStatus.CREATED
         self.progress = 0.0
@@ -231,18 +231,18 @@ class DecomposedTask:
             subtask: The subtask to add
             dependencies: List of (task_id, dependency_type) tuples
         """
-        self.subtasks[subtask.task_id] = subtask
+        self.subtasks = {**self.subtasks, subtask.task_id: subtask}
         
         # Update dependency graph
         if dependencies:
-            self.dependency_graph[subtask.task_id] = dependencies.copy()
+            self.dependency_graph = {**self.dependency_graph, subtask.task_id: dependencies.copy()}
             
             # Also update the Task object's dependencies list
             subtask.dependencies = [dep_id for dep_id, _ in dependencies]
         else:
-            self.dependency_graph[subtask.task_id] = []
+            self.dependency_graph = {**self.dependency_graph, subtask.task_id: []}
             
-        self.updated_at = datetime.utcnow().isoformat()
+        self.updated_at = datetime.now(timezone.utc).isoformat()
     
     def update_progress(self) -> float:
         """
@@ -275,7 +275,7 @@ class DecomposedTask:
                 for subtask in self.subtasks.values()):
             self.status = TaskStatus.IN_PROGRESS
             
-        self.updated_at = datetime.utcnow().isoformat()
+        self.updated_at = datetime.now(timezone.utc).isoformat()
         return self.progress
     
     def get_ready_subtasks(self) -> List[Task]:
@@ -391,7 +391,7 @@ class DecomposedTask:
         temp_mark: Set[str] = set()
         order: List[str] = []
         
-        def visit(task_id):
+        def visit(task_id) -> None:
             if task_id in visited:
                 return
             if task_id in temp_mark:
@@ -618,7 +618,7 @@ class OrchestratorEngine:
         self.error_patterns: Dict[str, Dict[str, Any]] = {}
         
         # For the Harmony Through Presence principle
-        self.last_status_update = datetime.utcnow()
+        self.last_status_update = datetime.now(timezone.utc)
         self.status_update_frequency = timedelta(seconds=30)
         self.harmony_metrics = {
             "workload_distribution": 0.0,  # 0.0 (imbalanced) to 1.0 (perfectly balanced)
@@ -659,7 +659,7 @@ class OrchestratorEngine:
                 max_load=max_load,
                 metadata=metadata or {}
             )
-            self.agent_profiles[agent_id] = profile
+            self.agent_profiles = {**self.agent_profiles, agent_id: profile}
             
             # Update task coordinator agent capabilities
             self.task_coordinator.update_agent_capabilities(agent_id, capabilities)
@@ -710,7 +710,7 @@ class OrchestratorEngine:
                 for task_type, time_value in response_time.items():
                     profile.response_time[task_type] = time_value
                     
-            profile.last_active = datetime.utcnow().isoformat()
+            profile.last_active = datetime.now(timezone.utc).isoformat()
             
             return True
     

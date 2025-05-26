@@ -14,7 +14,7 @@ import json
 import logging
 import uuid
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Set, Tuple, Union, Callable
 from enum import Enum, auto
 import threading
@@ -214,21 +214,21 @@ class AgentRegistry:
                 return False
             
             # Create agent entry
-            self.agents[agent_id] = {
+            self.agents = {**self.agents, agent_id: {
                 "agent_id": agent_id,
-                "registered_at": datetime.utcnow().isoformat(),
-                "last_updated": datetime.utcnow().isoformat(),
+                "registered_at": datetime.now(timezone.utc).isoformat(),
+                "last_updated": datetime.now(timezone.utc).isoformat(),
                 "agent_card": agent_card.to_dict() if agent_card else None,
                 "agent_profile": agent_profile.__dict__ if agent_profile else None,
                 "roles": [role.value for role in (roles or [])]
-            }
+            }}
             
             # Initialize capability and performance records
-            self.capabilities_by_agent[agent_id] = {}
-            self.roles_by_agent[agent_id] = roles or []
-            self.performance[agent_id] = AgentPerformance()
-            self.task_distribution[agent_id] = {task_type: 0 for task_type in TaskType}
-            self.opportunity_scores[agent_id] = 1.0
+            self.capabilities_by_agent = {**self.capabilities_by_agent, agent_id: {}}
+            self.roles_by_agent = {**self.roles_by_agent, agent_id: roles or []}
+            self.performance = {**self.performance, agent_id: AgentPerformance()}
+            self.task_distribution = {**self.task_distribution, agent_id: {task_type: 0 for task_type in TaskType}}
+            self.opportunity_scores = {**self.opportunity_scores, agent_id: 1.0}
             
             # Process agent card if provided
             if agent_card:
@@ -735,7 +735,7 @@ class AgentRegistry:
                     task_types=task_types,
                     parameters=parameters,
                     examples=[],
-                    last_verified=datetime.utcnow(),
+                    last_verified=datetime.now(timezone.utc),
                     verification_method=DiscoveryMethod.AGENT_CARD.value
                 )
                 
@@ -763,7 +763,7 @@ class AgentRegistry:
                     task_types=task_types,
                     parameters=parameters,
                     examples=[],
-                    last_verified=datetime.utcnow(),
+                    last_verified=datetime.now(timezone.utc),
                     verification_method=DiscoveryMethod.AGENT_CARD.value
                 )
                 
@@ -815,7 +815,7 @@ class AgentRegistry:
             task_type_str = task_type.name
             
             if capability_name not in self.capabilities:
-                self.capabilities[capability_name] = {}
+                self.capabilities = {**self.capabilities, capability_name: {}}
                 
             if task_type_str not in self.capabilities[capability_name]:
                 self.capabilities[capability_name][task_type_str] = set()
@@ -906,7 +906,7 @@ class AgentRegistry:
         # For now, we just accept the declaration as true
         # Future implementations could test capabilities with sample tasks
         capability_info.verification_method = DiscoveryMethod.SELF_DECLARATION.value
-        capability_info.last_verified = datetime.utcnow()
+        capability_info.last_verified = datetime.now(timezone.utc)
         return True
     
     def discover_capabilities(self, agent_id: str, methods: Optional[List[DiscoveryMethod]] = None) -> Dict[str, CapabilityInfo]:
@@ -1118,11 +1118,11 @@ class AgentRegistry:
             if success:
                 # Successful task
                 perf.success_rate = perf.success_rate * (1 - success_weight) + 1.0 * success_weight
-                perf.last_success = datetime.utcnow()
+                perf.last_success = datetime.now(timezone.utc)
             else:
                 # Failed task
                 perf.success_rate = perf.success_rate * (1 - success_weight) + 0.0 * success_weight
-                perf.last_failure = datetime.utcnow()
+                perf.last_failure = datetime.now(timezone.utc)
                 perf.error_count += 1
                 
                 # Track error type
@@ -1194,6 +1194,6 @@ class AgentRegistry:
         # Normalize by number of task types
         num_task_types = len(total_tasks_by_type)
         if num_task_types > 0:
-            self.opportunity_scores[agent_id] = total_opportunity_score / num_task_types
+            self.opportunity_scores = {**self.opportunity_scores, agent_id: total_opportunity_score / num_task_types}
         else:
-            self.opportunity_scores[agent_id] = 1.0
+            self.opportunity_scores = {**self.opportunity_scores, agent_id: 1.0}

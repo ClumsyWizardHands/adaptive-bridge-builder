@@ -15,7 +15,7 @@ import re
 from enum import Enum
 from typing import Dict, List, Any, Optional, Union, Set, Tuple
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from communication_channel_manager import (
     CommunicationChannelManager, 
@@ -97,10 +97,10 @@ class IdentityLink:
             identity: The identity on this channel
             verified: Whether this identity is verified
         """
-        self.channel_identities[channel_type] = identity
+        self.channel_identities = {**self.channel_identities, channel_type: identity}
         if verified and self.verification_level < 2:
             self.verification_level = 2
-            self.last_verification = datetime.utcnow()
+            self.last_verification = datetime.now(timezone.utc)
     
     def get_channel_identity(self, channel_type: ChannelType) -> Optional[str]:
         """
@@ -148,27 +148,27 @@ class ContextLink:
     def add_session(self, session_id: str) -> None:
         """Add a session to this context link."""
         if session_id not in self.session_ids:
-            self.session_ids.append(session_id)
-            self.last_updated = datetime.utcnow()
+            self.session_ids = [*self.session_ids, session_id]
+            self.last_updated = datetime.now(timezone.utc)
     
     def add_message(self, message_id: str) -> None:
         """Add a message to this context link."""
         if message_id not in self.message_ids:
-            self.message_ids.append(message_id)
-            self.last_updated = datetime.utcnow()
+            self.message_ids = [*self.message_ids, message_id]
+            self.last_updated = datetime.now(timezone.utc)
     
     def add_entity(self, entity_id: str) -> None:
         """Add an entity to this context link."""
         if entity_id not in self.entity_ids:
-            self.entity_ids.append(entity_id)
-            self.last_updated = datetime.utcnow()
+            self.entity_ids = [*self.entity_ids, entity_id]
+            self.last_updated = datetime.now(timezone.utc)
             
     def is_expired(self) -> bool:
         """Check if this context link has expired."""
         if not self.expiry_time:
             return False
             
-        return datetime.utcnow() >= self.expiry_time
+        return datetime.now(timezone.utc) >= self.expiry_time
 
 
 class CrossModalContextManager:
@@ -272,12 +272,12 @@ class CrossModalContextManager:
             metadata: Additional metadata about this identity link
         """
         if primary_id not in self.identity_links:
-            self.identity_links[primary_id] = IdentityLink(
+            self.identity_links = {**self.identity_links, primary_id: IdentityLink(
                 primary_id=primary_id,
                 verification_level=2 if verified else 1,
-                last_verification=datetime.utcnow() if verified else None,
+                last_verification=datetime.now(timezone.utc) if verified else None,
                 metadata=metadata or {}
-            )
+            )}
             
         self.identity_links[primary_id].add_channel_identity(
             channel_type=channel_type,
@@ -368,9 +368,9 @@ class CrossModalContextManager:
         # Calculate expiry time if specified
         expiry_time = None
         if expiry_days is not None:
-            expiry_time = datetime.utcnow() + timedelta(days=expiry_days)
+            expiry_time = datetime.now(timezone.utc) + timedelta(days=expiry_days)
         elif self.context_expiry_days:
-            expiry_time = datetime.utcnow() + timedelta(days=self.context_expiry_days)
+            expiry_time = datetime.now(timezone.utc) + timedelta(days=self.context_expiry_days)
             
         # Create the context link
         context_link = ContextLink(
@@ -385,27 +385,27 @@ class CrossModalContextManager:
         )
         
         # Store the context link
-        self.context_links[link_id] = context_link
+        self.context_links = {**self.context_links, link_id: context_link}
         
         # Update indices
         if primary_topic not in self.topic_index:
-            self.topic_index[primary_topic] = []
+            self.topic_index = {**self.topic_index, primary_topic: []}
         self.topic_index[primary_topic].append(link_id)
         
         for entity_id in entity_ids:
             if entity_id not in self.entity_index:
-                self.entity_index[entity_id] = []
+                self.entity_index = {**self.entity_index, entity_id: []}
             self.entity_index[entity_id].append(link_id)
             
         if session_ids:
             for session_id in session_ids:
                 if session_id not in self.session_index:
-                    self.session_index[session_id] = []
+                    self.session_index = {**self.session_index, session_id: []}
                 self.session_index[session_id].append(link_id)
                 
         if message_ids:
             for message_id in message_ids:
-                self.message_index[message_id] = link_id
+                self.message_index = {**self.message_index, message_id: link_id}
                 
         # Check if we're over the limit and clean up if needed
         if len(self.context_links) > self.max_context_links:
@@ -449,7 +449,7 @@ class CrossModalContextManager:
             for session_id in session_ids:
                 context_link.add_session(session_id)
                 if session_id not in self.session_index:
-                    self.session_index[session_id] = []
+                    self.session_index = {**self.session_index, session_id: []}
                 if link_id not in self.session_index[session_id]:
                     self.session_index[session_id].append(link_id)
                     
@@ -457,14 +457,14 @@ class CrossModalContextManager:
         if message_ids:
             for message_id in message_ids:
                 context_link.add_message(message_id)
-                self.message_index[message_id] = link_id
+                self.message_index = {**self.message_index, message_id: link_id}
                 
         # Add entities
         if entity_ids:
             for entity_id in entity_ids:
                 context_link.add_entity(entity_id)
                 if entity_id not in self.entity_index:
-                    self.entity_index[entity_id] = []
+                    self.entity_index = {**self.entity_index, entity_id: []}
                 if link_id not in self.entity_index[entity_id]:
                     self.entity_index[entity_id].append(link_id)
                     

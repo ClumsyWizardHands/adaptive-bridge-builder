@@ -1,0 +1,41 @@
+{
+  "summary": {
+    "init_files_created": 2,
+    "relative_imports_fixed": 14,
+    "requirements_added": 10
+  },
+  "details": {
+    "init_files_created": [
+      "src\\tests\\__init__.py",
+      "src\\empire_framework\\adk\\__init__.py"
+    ],
+    "relative_imports_fixed": [
+      "src\\api\\integration_assistant\\app.py",
+      "src\\api\\integration_assistant\\code_generator.py",
+      "src\\api\\integration_assistant\\websocket_manager.py",
+      "src\\api\\integration_assistant\\__init__.py",
+      "src\\empire_framework\\a2a\\component_task_handler.py",
+      "src\\empire_framework\\a2a\\streaming_adapter.py",
+      "src\\empire_framework\\adk\\example_usage.py",
+      "src\\empire_framework\\registry\\test_component_registry.py",
+      "src\\empire_framework\\registry\\__init__.py",
+      "src\\empire_framework\\storage\\test_versioned_component_store.py",
+      "src\\empire_framework\\storage\\__init__.py",
+      "src\\empire_framework\\validation\\test_schema_validator.py",
+      "src\\empire_framework\\validation\\validator_example.py",
+      "src\\empire_framework\\validation\\__init__.py"
+    ],
+    "requirements_added": [
+      "ctransformers",
+      "dicttoxml",
+      "emoji",
+      "google-generativeai",
+      "llama-cpp-python",
+      "markdown",
+      "reportlab",
+      "types-pandas",
+      "types-requests",
+      "xmltodict"
+    ]
+  }
+}

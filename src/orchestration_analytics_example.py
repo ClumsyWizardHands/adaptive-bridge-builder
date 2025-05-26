@@ -16,7 +16,7 @@ The example showcases how to:
 
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional
 
 from orchestration_analytics import (
@@ -42,13 +42,13 @@ def create_sample_task() -> Task:
         priority=TaskPriority.HIGH,
         dependencies=[],
         metadata={
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
             "estimated_duration": 60,  # minutes
             "task_type": TaskType.EXTRACTION.name
         }
     )
 
-def run_example():
+def run_example() -> None:
     """Run the example demonstration of OrchestrationAnalytics."""
     # Initialize sample components
     logger.info("Initializing components...")
@@ -85,7 +85,7 @@ def run_example():
         analytics.record_metric(
             metric_id=data_throughput_metric,
             value=8.5 + (i * 0.5),  # Increasing throughput
-            timestamp=(datetime.utcnow() - timedelta(minutes=10-i)).isoformat(),
+            timestamp=(datetime.now(timezone.utc) - timedelta(minutes=10-i)).isoformat(),
             context={"task_id": "task-123", "agent_id": "processor-agent-001"}
         )
     
@@ -155,8 +155,8 @@ def run_example():
         title="Task Execution Timeline",
         description="Timeline of task execution across agents",
         time_range=(
-            (datetime.utcnow() - timedelta(hours=1)).isoformat(),
-            datetime.utcnow().isoformat()
+            (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat(),
+            datetime.now(timezone.utc).isoformat()
         ),
         data_sources={"tasks": True, "agents": ["processor-agent-001"]},
         filters={"task_types": [TaskType.EXTRACTION.name, TaskType.TRANSFORMATION.name]},

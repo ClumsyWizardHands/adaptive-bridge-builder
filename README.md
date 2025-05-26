@@ -13,6 +13,37 @@ The Adaptive Bridge Builder agent embodies the "Empire of the Adaptive Hero" pro
 3. Adapt to changing communication requirements
 4. Serve as a trusted intermediary for complex agent ecosystems
 
+## Empire Framework Integration
+
+The Adaptive Bridge Builder is built upon the Empire Framework, a structured approach to agent design that focuses on principled operation and adaptable execution. The framework provides:
+
+### Core Empire Components
+
+- **Ends-Means-Principles (EMP) Structure**: Every action is guided by clear ends (goals), appropriate means (methods), and consistent principles (values)
+- **Profile-Based Operation**: The agent embodies the "Empire of the Adaptive Hero" profile, emphasizing adaptability, fairness, and harmony
+- **Principle Engine**: Core component that evaluates actions against established principles to ensure ethical operation
+- **Growth Journal**: Integrated learning system that records experiences and adaptations for continuous improvement
+
+### Directory Structure
+
+- **memory-bank/**: Central repository for the agent's knowledge and context
+  - **activeContext.md**: Current focus and recent decisions
+  - **progress.md**: Detailed component status and capabilities
+  - **projectbrief.md**: Mission statement and strategic goals
+  - **systemPatterns.md**: Architectural patterns and design approaches
+  - **techContext.md**: Technical details and constraints
+  - **evolution/**: Growth and capability development frameworks
+  - **analytics/**: Performance metrics and KPIs
+
+### Implementation References
+
+- `src/principle_engine.py`: Implementation of the principled decision-making system
+- `src/emotional_intelligence.py`: Empathy and emotional understanding capabilities
+- `src/continuous_evolution_system.py`: Growth and adaptation mechanisms
+- `src/empire_agent_card_extensions.py`: Empire Framework extensions to the A2A Agent Card standard
+
+For a comprehensive understanding of the Empire Framework and its implementation in this agent, see [EMPIRE_FRAMEWORK_GUIDE.md](memory-bank/EMPIRE_FRAMEWORK_GUIDE.md).
+
 ## Key Components
 
 ### Core Framework
@@ -47,6 +78,7 @@ The Adaptive Bridge Builder agent embodies the "Empire of the Adaptive Hero" pro
 - Emoji Knowledge Base
 - Emoji Sequence Optimizer
 - Emoji Communication Endpoint
+- Emoji Emotional Analyzer
 
 ## Technical Details
 
@@ -111,6 +143,7 @@ This project is actively under development. Current focus is on the emoji commun
 3. EmojiDialogueManager
 4. EmojiKnowledgeBase
 5. EmojiSequenceOptimizer
+6. EmojiEmotionalAnalyzer
 
 ## Testing
 

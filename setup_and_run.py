@@ -11,6 +11,8 @@ import sys
 import subprocess
 import platform
 import shutil
+import json
+import re
 
 def print_header(title):
     """Print a formatted header."""
@@ -129,6 +131,185 @@ def verify_agent_files():
     print("All required agent files are present. ✓")
     return True
 
+def setup_empire_framework():
+    """Set up Empire Framework directories and schemas."""
+    print_header("SETTING UP EMPIRE FRAMEWORK")
+    
+    # Define required directories
+    directories = [
+        "resources/empire_framework_schemas",
+        "resources/principles"
+    ]
+    
+    # Create directories if they don't exist
+    for directory in directories:
+        if not os.path.exists(directory):
+            print(f"Creating directory '{directory}'...")
+            os.makedirs(directory, exist_ok=True)
+    
+    # Check if schema files exist
+    schema_file = "resources/empire_framework_schemas/principle_schema.json"
+    if not os.path.exists(schema_file):
+        print(f"Warning: Schema file '{schema_file}' is missing.")
+        print("Please create it manually or download it from the repository.")
+    else:
+        print(f"Schema file '{schema_file}' is present. ✓")
+    
+    # Check if any principle files exist
+    principle_files = os.listdir("resources/principles") if os.path.exists("resources/principles") else []
+    principle_files = [f for f in principle_files if f.endswith(".json")]
+    
+    if not principle_files:
+        print("No principle files found in 'resources/principles'.")
+        print("You may need to create or download them.")
+    else:
+        print(f"Found {len(principle_files)} principle files. ✓")
+    
+    return True
+
+def setup_pre_commit_hooks():
+    """Set up pre-commit hooks for Empire Framework compatibility."""
+    print_header("SETTING UP PRE-COMMIT HOOKS")
+    
+    pre_commit_config = ".pre-commit-config.yaml"
+    if not os.path.exists(pre_commit_config):
+        print(f"Warning: '{pre_commit_config}' not found.")
+        print("Pre-commit hooks for Empire Framework will not be installed.")
+        return False
+    
+    try:
+        print("Installing pre-commit...")
+        subprocess.run([sys.executable, "-m", "pip", "install", "pre-commit"], check=True)
+        
+        print("Installing pre-commit hooks...")
+        subprocess.run(["pre-commit", "install"], check=True)
+        
+        print("Pre-commit hooks installed successfully. ✓")
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to set up pre-commit hooks: {e}")
+        return False
+    except FileNotFoundError:
+        print("pre-commit command not found. Skipping hook installation.")
+        return False
+
+def validate_empire_schemas():
+    """Validate Empire Framework schemas if requested."""
+    print_header("VALIDATING EMPIRE FRAMEWORK SCHEMAS")
+    
+    try:
+        import jsonschema
+    except ImportError:
+        print("jsonschema module not found. Skipping schema validation.")
+        return False
+    
+    schema_dir = "resources/empire_framework_schemas"
+    principle_dir = "resources/principles"
+    
+    if not os.path.exists(schema_dir) or not os.path.exists(principle_dir):
+        print("Schema or principle directories not found. Skipping validation.")
+        return False
+    
+    schema_files = [f for f in os.listdir(schema_dir) if f.endswith(".json")]
+    principle_files = [f for f in os.listdir(principle_dir) if f.endswith(".json")]
+    
+    if not schema_files:
+        print("No schema files found. Skipping validation.")
+        return False
+    
+    if not principle_files:
+        print("No principle files found. Skipping validation.")
+        return False
+    
+    # Validate schema files themselves
+    print("Validating schema files...")
+    meta_schema = {"$schema": "http://json-schema.org/draft-07/schema#"}
+    
+    try:
+        for schema_file in schema_files:
+            file_path = os.path.join(schema_dir, schema_file)
+            with open(file_path, 'r') as f:
+                schema = json.load(f)
+            
+            jsonschema.validate(schema, meta_schema)
+            print(f"  '{schema_file}' is valid. ✓")
+        
+        # Validate principle files against their schema
+        principle_schema_path = os.path.join(schema_dir, "principle_schema.json")
+        if os.path.exists(principle_schema_path):
+            with open(principle_schema_path, 'r') as f:
+                principle_schema = json.load(f)
+            
+            print("\nValidating principle files...")
+            for principle_file in principle_files:
+                file_path = os.path.join(principle_dir, principle_file)
+                with open(file_path, 'r') as f:
+                    principle = json.load(f)
+                
+                jsonschema.validate(principle, principle_schema)
+                print(f"  '{principle_file}' is valid. ✓")
+        
+        print("\nAll schemas and principle files are valid. ✓")
+        return True
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON: {e}")
+        return False
+    except jsonschema.exceptions.ValidationError as e:
+        print(f"Schema validation error: {e}")
+        return False
+
+def validate_memory_bank():
+    """Validate Memory Bank markdown files."""
+    print_header("VALIDATING MEMORY BANK")
+    
+    memory_bank_dir = "memory-bank"
+    if not os.path.exists(memory_bank_dir):
+        print("Memory Bank directory not found. Skipping validation.")
+        return False
+    
+    print("Checking Memory Bank files...")
+    
+    # Get all markdown files in the memory-bank directory and subdirectories
+    markdown_files = []
+    for root, dirs, files in os.walk(memory_bank_dir):
+        for file in files:
+            if file.endswith(".md"):
+                markdown_files.append(os.path.join(root, file))
+    
+    if not markdown_files:
+        print("No Markdown files found in Memory Bank. Skipping validation.")
+        return False
+    
+    # Basic validation: check each file has at least one heading
+    valid_files = 0
+    invalid_files = []
+    
+    for file_path in markdown_files:
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # Check for headings (lines starting with # followed by space)
+            headings = re.findall(r'^#+ .+$', content, re.MULTILINE)
+            
+            if headings:
+                valid_files += 1
+            else:
+                invalid_files.append(os.path.relpath(file_path, memory_bank_dir))
+        except Exception as e:
+            print(f"Error reading file {file_path}: {e}")
+            invalid_files.append(os.path.relpath(file_path, memory_bank_dir))
+    
+    if invalid_files:
+        print("The following files do not have proper headings:")
+        for file in invalid_files:
+            print(f"  - {file}")
+        print(f"\n{valid_files} of {len(markdown_files)} files are valid.")
+    else:
+        print(f"All {valid_files} Memory Bank files are valid. ✓")
+    
+    return len(invalid_files) == 0
+
 def run_agent():
     """Run the Adaptive Bridge Builder agent."""
     print_header("RUNNING ADAPTIVE BRIDGE BUILDER")
@@ -137,8 +318,9 @@ def run_agent():
     print("1. Interactive Bridge Terminal (Recommended for beginners)")
     print("2. Dual-Agent Interactive Terminal")
     print("3. Demonstration Script")
+    print("4. Empire Framework Validation")
     
-    choice = input("\nEnter your choice (1-3): ")
+    choice = input("\nEnter your choice (1-4): ")
     
     if choice == "1":
         run_interactive_bridge()
@@ -146,8 +328,10 @@ def run_agent():
         run_interactive_agents()
     elif choice == "3":
         run_demo_script()
+    elif choice == "4":
+        validate_empire_integration()
     else:
-        print(f"Invalid choice: {choice}. Please enter 1, 2, or 3.")
+        print(f"Invalid choice: {choice}. Please enter 1, 2, 3, or 4.")
         run_agent()
 
 def run_interactive_bridge():
@@ -219,6 +403,29 @@ This script demonstrates the core capabilities of the Adaptive Bridge Builder:
         print(f"Error running demo script: {e}")
         sys.exit(1)
 
+def validate_empire_integration():
+    """Validate Empire Framework integration."""
+    print_header("VALIDATING EMPIRE FRAMEWORK INTEGRATION")
+    
+    print("""
+This option validates your Empire Framework integration:
+1. Schema validation
+2. Principle file validation
+3. Memory Bank structure validation
+4. Directory structure verification
+""")
+    
+    input("Press Enter to continue...")
+    
+    # Run validations
+    setup_empire_framework()
+    validate_empire_schemas()
+    validate_memory_bank()
+    
+    print("\nValidation complete. See above for any issues found.")
+    input("\nPress Enter to return to the main menu...")
+    run_agent()
+
 def main():
     """Main function to set up and run the agent."""
     print_header("ADAPTIVE BRIDGE BUILDER SETUP")
@@ -235,6 +442,12 @@ def main():
     
     # Verify agent files
     verify_agent_files()
+    
+    # Set up Empire Framework
+    setup_empire_framework()
+    
+    # Set up pre-commit hooks
+    setup_pre_commit_hooks()
     
     # Run the agent
     run_agent()

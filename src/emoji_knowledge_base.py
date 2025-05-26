@@ -1,3 +1,4 @@
+import emoji
 """
 EmojiKnowledgeBase Component for Adaptive Bridge Builder Agent
 
@@ -476,11 +477,11 @@ class EmojiKnowledgeBase:
         is_update = emoji in self.emojis
         
         # Store the emoji metadata
-        self.emojis[emoji] = metadata
+        self.emojis = {**self.emojis, emoji: metadata}
         
         # Update statistics
         if not is_update:
-            self.emoji_count += 1
+            self.emoji_count = self.emoji_count + 1
         
         # Add to version tracking if requested
         if update_version:
@@ -624,11 +625,11 @@ class EmojiKnowledgeBase:
         is_update = concept in self.concepts
         
         # Store the concept mapping
-        self.concepts[concept] = mapping
+        self.concepts = {**self.concepts, concept: mapping}
         
         # Update statistics
         if not is_update:
-            self.concept_count += 1
+            self.concept_count = self.concept_count + 1
         
         # Add to version tracking if requested
         if update_version:
@@ -678,6 +679,51 @@ class EmojiKnowledgeBase:
         
         return mapping
     
+    def get_emoji(self, emoji: str) -> Optional[EmojiMetadata]:
+        """Get emoji metadata by emoji character.
+        
+        Args:
+            emoji: The emoji character
+            
+        Returns:
+            Emoji metadata dictionary or None if not found
+        """
+        return self.emojis.get(emoji)
+    
+
+    def find_concept_for_emoji(self, emoji: str) -> List[str]:
+        """Find concepts that use this emoji.
+        
+        Args:
+            emoji: The emoji to find concepts for
+            
+        Returns:
+            List of concept names that include this emoji
+        """
+        concepts = []
+        
+        # Search in primary emojis
+        for concept, mapping in self.concepts.items():
+            for domain, primary_emoji in mapping.primary_emoji.items():
+                if primary_emoji == emoji:
+                    concepts.append(concept)
+                    break
+            
+            # Search in alternative emojis
+            for domain, alt_emojis in mapping.alternative_emojis.items():
+                if emoji in alt_emojis:
+                    concepts.append(concept)
+                    break
+            
+            # Search in emoji combinations
+            for domain, combinations in mapping.emoji_combinations.items():
+                for combo in combinations:
+                    if emoji in combo:
+                        concepts.append(concept)
+                        break
+        
+        return list(set(concepts))  # Remove duplicates
+
     def add_combination_pattern(
         self,
         name: str,
@@ -741,11 +787,11 @@ class EmojiKnowledgeBase:
         is_update = pattern_id in self.patterns
         
         # Store the pattern
-        self.patterns[pattern_id] = pattern
+        self.patterns = {**self.patterns, pattern_id: pattern}
         
         # Update statistics
         if not is_update:
-            self.pattern_count += 1
+            self.pattern_count = self.pattern_count + 1
         
         # Add to version tracking if requested
         if update_version:
@@ -814,4 +860,67 @@ class EmojiKnowledgeBase:
         """
         # Get pending changes from the current version
         if self.versions and hasattr(self.versions[-1], "pending_changes"):
-            pending_changes
+            pending_changes = self.versions[-1].pending_changes
+        else:
+            pending_changes = {}
+            
+        # Create new version record
+        version_record = KnowledgeBaseVersion(
+            version=version,
+            name=name,
+            notes=notes,
+            new_emojis=pending_changes.get("new_emojis", []),
+            updated_emojis=pending_changes.get("updated_emojis", []),
+            deprecated_emojis=pending_changes.get("deprecated_emojis", []),
+            new_concepts=pending_changes.get("new_concepts", []),
+            updated_concepts=pending_changes.get("updated_concepts", []),
+            new_patterns=pending_changes.get("new_patterns", []),
+            updated_patterns=pending_changes.get("updated_patterns", [])
+        )
+        
+        # Add to version history
+        self.versions = [*self.versions, version_record]
+        self.current_version = version
+        
+        # Clear pending changes for next version
+        if self.versions:
+            self.versions[-1].pending_changes = {
+                "new_emojis": [],
+                "updated_emojis": [],
+                "deprecated_emojis": [],
+                "new_concepts": [],
+                "updated_concepts": [],
+                "new_patterns": [],
+                "updated_patterns": []
+            }
+            
+        return version_record
+    
+    def _add_to_version_tracking(self, category: str, item: str) -> None:
+        """
+        Add an item to version tracking for the current version.
+        
+        Args:
+            category: The category to add to (e.g., "new_emojis", "updated_concepts")
+            item: The item identifier to add
+        """
+        # Ensure we have a version to track changes in
+        if not self.versions:
+            self.create_new_version("1.0.0", "Initial Version", "Initial version with tracking")
+            
+        # Get or create pending changes on the last version
+        if not hasattr(self.versions[-1], "pending_changes"):
+            self.versions[-1].pending_changes = {
+                "new_emojis": [],
+                "updated_emojis": [],
+                "deprecated_emojis": [],
+                "new_concepts": [],
+                "updated_concepts": [],
+                "new_patterns": [],
+                "updated_patterns": []
+            }
+            
+        # Add item to the appropriate category if not already present
+        if category in self.versions[-1].pending_changes:
+            if item not in self.versions[-1].pending_changes[category]:
+                self.versions[-1].pending_changes[category].append(item)

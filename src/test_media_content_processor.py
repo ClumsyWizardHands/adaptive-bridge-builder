@@ -1,3 +1,5 @@
+from PIL import Image
+import markdown
 #!/usr/bin/env python3
 """
 Test Module for MediaContentProcessor
@@ -26,7 +28,7 @@ from media_content_processor import (
 class TestMediaContentProcessor(unittest.TestCase):
     """Test cases for the MediaContentProcessor class."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment before each test."""
         # Create a temporary directory for testing
         self.test_dir = tempfile.mkdtemp()
@@ -40,12 +42,12 @@ class TestMediaContentProcessor(unittest.TestCase):
         # Create test data
         self._create_test_data()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up after tests."""
         # Remove the temporary directory
         shutil.rmtree(self.test_dir)
 
-    def _create_test_data(self):
+    def _create_test_data(self) -> None:
         """Create test data for testing."""
         # Create a simple test image
         self.test_image_data = b'\x89PNG\r\n\x1a\n' + os.urandom(100)  # Fake PNG header + random data
@@ -69,7 +71,7 @@ More test content.
         ]
 
     @patch('media_content_processor.Image')
-    def test_create_image(self, mock_image):
+    def test_create_image(self, mock_image) -> None:
         """Test creating an image content entry."""
         # Mock PIL Image behavior
         mock_img = MagicMock()
@@ -101,7 +103,7 @@ More test content.
             self.assertIn(AccessibilityFeature.ALT_TEXT, image_content.accessibility)
             self.assertEqual(image_content.accessibility[AccessibilityFeature.ALT_TEXT], "Test image")
 
-    def test_save_and_load_content(self):
+    def test_save_and_load_content(self) -> None:
         """Test saving and loading content."""
         # Create a simple media content
         content_id = "test_content_123"
@@ -131,7 +133,7 @@ More test content.
         self.assertEqual(loaded_content.title, "Test Document")
         self.assertEqual(loaded_content.content, self.test_doc_content)
 
-    def test_ensure_accessibility(self):
+    def test_ensure_accessibility(self) -> None:
         """Test ensuring accessibility features are added."""
         # Create a test image content without accessibility features
         image_content = ImageContent(
@@ -158,7 +160,7 @@ More test content.
         self.assertIsInstance(updated_content.accessibility[AccessibilityFeature.ALT_TEXT], str)
         self.assertTrue(len(updated_content.accessibility[AccessibilityFeature.ALT_TEXT]) > 0)
 
-    def test_generate_content_id(self):
+    def test_generate_content_id(self) -> None:
         """Test generating unique content IDs."""
         # Generate multiple IDs and check uniqueness
         ids = [self.processor._generate_content_id() for _ in range(10)]
@@ -171,7 +173,7 @@ More test content.
             self.assertTrue(id.startswith("media_"))
             self.assertTrue(len(id) > 10)  # Should have timestamp and uuid
 
-    def test_generate_alt_text(self):
+    def test_generate_alt_text(self) -> None:
         """Test generating alternative text for different media types."""
         # Test for image
         image_content = ImageContent(
@@ -213,7 +215,7 @@ More test content.
         self.assertIn("Table", alt_text)
         self.assertIn("3 rows", alt_text)
 
-    def test_device_profiles(self):
+    def test_device_profiles(self) -> None:
         """Test device profile functionality."""
         # Get default profiles
         profiles = DeviceProfile.get_default_profiles()
@@ -251,7 +253,7 @@ More test content.
         self.assertEqual(restored_profile.screen_width, desktop_profile.screen_width)
         self.assertEqual(restored_profile.supports_images, desktop_profile.supports_images)
 
-    def test_analysis_result(self):
+    def test_analysis_result(self) -> None:
         """Test AnalysisResult functionality."""
         # Create an analysis result
         result = AnalysisResult(
@@ -293,7 +295,7 @@ More test content.
         self.assertIn("test_analysis", summary)
         self.assertIn("Confidence: 0.85", summary)
 
-    def test_document_content_serialization(self):
+    def test_document_content_serialization(self) -> None:
         """Test DocumentContent serialization and deserialization."""
         # Create document content
         doc = DocumentContent(
@@ -332,7 +334,7 @@ More test content.
         self.assertEqual(restored_doc.metadata["author"], "Test Author")
         self.assertTrue(restored_doc.accessibility[AccessibilityFeature.SCREEN_READER])
 
-    def test_table_content_serialization(self):
+    def test_table_content_serialization(self) -> None:
         """Test TableContent serialization and deserialization."""
         # Create table content
         table = TableContent(

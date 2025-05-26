@@ -1,3 +1,4 @@
+import emoji
 """
 Advanced examples demonstrating the EmojiGrammarSystem component functionality.
 
@@ -18,7 +19,7 @@ from emoji_grammar_system import (
 from emoji_translation_engine import EmojiTranslationEngine
 
 
-def demonstrate_basic_grammar_patterns():
+def demonstrate_basic_grammar_patterns() -> None:
     """Demonstrate basic emoji grammar patterns for different sentence types."""
     print("\n=== Basic Grammar Patterns ===\n")
     
@@ -106,7 +107,7 @@ def demonstrate_basic_grammar_patterns():
             print()
 
 
-def demonstrate_tense_modifiers():
+def demonstrate_tense_modifiers() -> None:
     """Demonstrate tense modifiers in emoji grammar."""
     print("\n=== Tense Modifiers ===\n")
     
@@ -188,7 +189,7 @@ def demonstrate_tense_modifiers():
             print()
 
 
-def demonstrate_quantity_modifiers():
+def demonstrate_quantity_modifiers() -> None:
     """Demonstrate quantity modifiers in emoji grammar."""
     print("\n=== Quantity Modifiers ===\n")
     
@@ -254,7 +255,7 @@ def demonstrate_quantity_modifiers():
         print()
 
 
-def demonstrate_relationship_indicators():
+def demonstrate_relationship_indicators() -> None:
     """Demonstrate relationship indicators in emoji grammar."""
     print("\n=== Relationship Indicators ===\n")
     
@@ -324,7 +325,7 @@ def demonstrate_relationship_indicators():
         print()
 
 
-def demonstrate_question_patterns():
+def demonstrate_question_patterns() -> None:
     """Demonstrate patterns for forming questions in emoji grammar."""
     print("\n=== Question Patterns ===\n")
     
@@ -401,7 +402,7 @@ def demonstrate_question_patterns():
         print()
 
 
-def demonstrate_command_patterns():
+def demonstrate_command_patterns() -> None:
     """Demonstrate patterns for forming commands in emoji grammar."""
     print("\n=== Command Patterns ===\n")
     
@@ -488,7 +489,7 @@ def demonstrate_command_patterns():
         print()
 
 
-def demonstrate_conditional_expressions():
+def demonstrate_conditional_expressions() -> None:
     """Demonstrate patterns for conditional expressions in emoji grammar."""
     print("\n=== Conditional Expression Patterns ===\n")
     
@@ -560,7 +561,7 @@ def demonstrate_conditional_expressions():
         print()
 
 
-def demonstrate_negation_patterns():
+def demonstrate_negation_patterns() -> None:
     """Demonstrate patterns for negation in emoji grammar."""
     print("\n=== Negation Patterns ===\n")
     
@@ -638,7 +639,7 @@ def demonstrate_negation_patterns():
         print()
 
 
-def demonstrate_emotional_nuance():
+def demonstrate_emotional_nuance() -> None:
     """Demonstrate emotional nuance in emoji grammar."""
     print("\n=== Emotional Nuance Patterns ===\n")
     
@@ -752,7 +753,7 @@ def demonstrate_emotional_nuance():
             print()
 
 
-def demonstrate_complex_communication():
+def demonstrate_complex_communication() -> None:
     """Demonstrate complex communication scenarios with emoji grammar."""
     print("\n=== Complex Communication Scenarios ===\n")
     
@@ -817,7 +818,7 @@ def demonstrate_complex_communication():
         print()
 
 
-def main():
+def main() -> None:
     """Run all emoji grammar system demonstrations."""
     print("="*80)
     print("             Advanced EmojiGrammarSystem Demonstrations")

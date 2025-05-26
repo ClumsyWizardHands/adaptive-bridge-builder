@@ -1,3 +1,4 @@
+import emoji
 #!/usr/bin/env python3
 """
 Chat Channel Adapter
@@ -13,7 +14,7 @@ import logging
 import time
 import uuid
 import websockets
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Dict, List, Any, Optional, Union, Tuple, Callable, Set, Awaitable
 
@@ -159,6 +160,7 @@ class ChatChannelAdapter(ChannelAdapter):
             rich_message_templates: Templates for rich message components
         """
         super().__init__(ChannelType.CHAT, channel_id)
+        self._background_tasks: List[asyncio.Task] = []
         self.config = config
         self.agent_id = agent_id
         self.message_handler = message_handler
@@ -244,7 +246,7 @@ class ChatChannelAdapter(ChannelAdapter):
                 )
                 
                 # Set up connection task
-                self.connection_task = asyncio.create_task(self._connection_handler())
+                self.connection_task = self.connection_task = asyncio.create_task(self._connection_handler())
                 self.is_connected = True
                 logger.info(f"Connected to {self.config.platform.value} chat")
                 
@@ -291,7 +293,7 @@ class ChatChannelAdapter(ChannelAdapter):
         """Handle the websocket connection and messages."""
         try:
             # Start message processor
-            processor_task = asyncio.create_task(self._process_outgoing_messages())
+            processor_task = processor_task = asyncio.create_task(self._process_outgoing_messages())
             
             # Process incoming messages
             async for message in self.websocket:
@@ -344,6 +346,7 @@ class ChatChannelAdapter(ChannelAdapter):
     async def _process_outgoing_messages(self) -> None:
         """Process the outgoing message queue."""
         try:
+            # TODO: Add cancellation check or break condition
             while True:
                 # Get message from queue
                 message, future = await self.message_queue.get()
@@ -594,15 +597,15 @@ class ChatChannelAdapter(ChannelAdapter):
             
             if success:
                 # Update status
-                self.message_status[message.message_id] = DeliveryStatus.SENT
+                self.message_status = {**self.message_status, message.message_id: DeliveryStatus.SENT}
                 return DeliveryStatus.SENT
             else:
-                self.message_status[message.message_id] = DeliveryStatus.FAILED
+                self.message_status = {**self.message_status, message.message_id: DeliveryStatus.FAILED}
                 return DeliveryStatus.FAILED
                 
         except Exception as e:
             logger.error(f"Error sending chat message: {str(e)}")
-            self.message_status[message.message_id] = DeliveryStatus.FAILED
+            self.message_status = {**self.message_status, message.message_id: DeliveryStatus.FAILED}
             return DeliveryStatus.FAILED
     
     async def receive_message(self, raw_message: Any) -> ChannelMessage:

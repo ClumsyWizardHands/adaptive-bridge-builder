@@ -1,3 +1,4 @@
+import emoji
 #!/usr/bin/env python3
 """
 Communication Style Analyzer for Adaptive Bridge Builder
@@ -11,7 +12,7 @@ import re
 import json
 import logging
 from typing import Dict, Any, List, Optional, Tuple, Union
-from datetime import datetime
+from datetime import datetime, timezone
 from collections import Counter
 import statistics
 from enum import Enum
@@ -73,7 +74,7 @@ class Message:
         direction = MessageDirection(data.get("direction", "received"))
         message = cls(
             content=data.get("content", ""),
-            timestamp=data.get("timestamp", datetime.utcnow().isoformat()),
+            timestamp=data.get("timestamp", datetime.now(timezone.utc).isoformat()),
             direction=direction,
             metadata=data.get("metadata", {})
         )
@@ -87,18 +88,18 @@ class Message:
 class MessageHistory:
     """Represents a history of messages with an agent."""
     
-    def __init__(self, agent_id: str):
+    def __init__(self, agent_id: str) -> None:
         self.agent_id = agent_id
         self.messages: List[Message] = []
-        self.last_updated = datetime.utcnow().isoformat()
+        self.last_updated = datetime.now(timezone.utc).isoformat()
     
     def add_message(self, message: Union[Message, Dict[str, Any]]) -> None:
         """Add a message to the history."""
         if isinstance(message, dict):
             message = Message.from_dict(message)
         
-        self.messages.append(message)
-        self.last_updated = datetime.utcnow().isoformat()
+        self.messages = [*self.messages, message]
+        self.last_updated = datetime.now(timezone.utc).isoformat()
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert the message history to a dictionary."""
@@ -112,7 +113,7 @@ class MessageHistory:
     def from_dict(cls, data: Dict[str, Any]) -> 'MessageHistory':
         """Create a MessageHistory from a dictionary."""
         history = cls(agent_id=data.get("agent_id", "unknown"))
-        history.last_updated = data.get("last_updated", datetime.utcnow().isoformat())
+        history.last_updated = data.get("last_updated", datetime.now(timezone.utc).isoformat())
         
         for msg_data in data.get("messages", []):
             history.add_message(Message.from_dict(msg_data))
@@ -187,7 +188,7 @@ class CommunicationStyleAnalyzer:
     directness, and emotional tone.
     """
     
-    def __init__(self, principle_engine: Optional[PrincipleEngine] = None):
+    def __init__(self, principle_engine: Optional[PrincipleEngine] = None) -> None:
         """
         Initialize the CommunicationStyleAnalyzer.
         
@@ -348,7 +349,7 @@ class CommunicationStyleAnalyzer:
         # Check if we already have a recent analysis for this agent
         if agent_id in self.style_cache:
             cached_style, cache_time = self.style_cache[agent_id]
-            cache_age = (datetime.utcnow() - cache_time).total_seconds()
+            cache_age = (datetime.now(timezone.utc) - cache_time).total_seconds()
             
             # If the cache is less than an hour old and we have enough messages analyzed
             if cache_age < 3600 and cached_style.sample_count >= len(received_messages):
@@ -364,7 +365,7 @@ class CommunicationStyleAnalyzer:
         # Initialize a new communication style
         style = CommunicationStyle(agent_id=agent_id)
         style.sample_count = len(received_messages)
-        style.last_updated = datetime.utcnow().isoformat()
+        style.last_updated = datetime.now(timezone.utc).isoformat()
         
         # Analyze various aspects of communication style
         formality_score = self._analyze_formality(received_messages)
@@ -397,7 +398,7 @@ class CommunicationStyleAnalyzer:
         style.style_notes = self._generate_style_notes(received_messages)
         
         # Cache the result
-        self.style_cache[agent_id] = (style, datetime.utcnow())
+        self.style_cache = {**self.style_cache, agent_id: (style, datetime.now(timezone.utc))}
         
         logger.info(f"Completed style analysis for agent {agent_id}: {style.to_dict()}")
         return style
@@ -698,7 +699,7 @@ class CommunicationStyleAnalyzer:
                 has_structure = True
                 
             # Check for explicit sections
-            elif re.search(r'^\s*(Section|Part|Step|Phase|Category)[\s:]', content, re.MULTILINE, re.IGNORECASE):
+            elif re.search(r'^\s*(Section|Part|Step|Phase|Category)[\s:]', content, re.MULTILINE | re.IGNORECASE):
                 has_structure = True
             
             if has_structure:
@@ -1124,7 +1125,7 @@ class CommunicationStyleAnalyzer:
         for example in examples:
             msg = Message(
                 content=example,
-                timestamp=datetime.utcnow().isoformat(),
+                timestamp=datetime.now(timezone.utc).isoformat(),
                 direction=MessageDirection.RECEIVED
             )
             messages.append(msg)
@@ -1137,6 +1138,66 @@ class CommunicationStyleAnalyzer:
         # Analyze the history to derive a style
         style = self.analyze_message_history(history)
         return style
+    
+    def analyze_message(self, message: Union[str, Dict[str, Any], Message], agent_id: str = "unknown") -> Dict[str, Any]:
+        """
+        Analyze a single message to extract style characteristics.
+        
+        Args:
+            message: The message to analyze (string, dict, or Message object)
+            agent_id: The agent ID associated with the message
+            
+        Returns:
+            Dictionary containing analysis results including formality, detail level, directness, and tone
+        """
+        # Convert to Message object if needed
+        if isinstance(message, str):
+            msg = Message(
+                content=message,
+                timestamp=datetime.now(timezone.utc).isoformat(),
+                direction=MessageDirection.RECEIVED
+            )
+        elif isinstance(message, dict):
+            msg = Message.from_dict(message)
+        else:
+            msg = message
+        
+        # Analyze individual aspects
+        formality_score = self._analyze_formality([msg])
+        detail_score = self._analyze_detail_level([msg])
+        directness_score = self._analyze_directness([msg])
+        tone_score = self._analyze_emotional_tone([msg])
+        
+        # Map scores to enum values
+        formality = self._map_score_to_enum(formality_score, FormalityLevel)
+        detail_level = self._map_score_to_enum(detail_score, DetailLevel)
+        directness = self._map_score_to_enum(directness_score, DirectnessLevel)
+        emotional_tone = self._map_score_to_enum(tone_score, EmotionalTone)
+        
+        # Additional analysis
+        word_count = len(msg.content.split())
+        has_greeting = bool(re.search(r'^\s*(hi|hello|hey|greetings|dear)\b', msg.content, re.IGNORECASE))
+        has_signoff = bool(re.search(r'\b(regards|sincerely|best|cheers|thanks)\s*[,!]?\s*$', msg.content, re.IGNORECASE))
+        has_questions = bool(re.search(r'\?', msg.content))
+        
+        # Return analysis results
+        return {
+            "agent_id": agent_id,
+            "timestamp": msg.timestamp,
+            "formality": formality.name,
+            "formality_score": formality_score,
+            "detail_level": detail_level.name,
+            "detail_score": detail_score,
+            "directness": directness.name,
+            "directness_score": directness_score,
+            "emotional_tone": emotional_tone.name,
+            "tone_score": tone_score,
+            "word_count": word_count,
+            "has_greeting": has_greeting,
+            "has_signoff": has_signoff,
+            "has_questions": has_questions,
+            "vocabulary_complexity": self._analyze_vocabulary_complexity([msg])
+        }
 
 
 # Example usage
@@ -1157,7 +1218,7 @@ if __name__ == "__main__":
     for content in formal_messages:
         msg = Message(
             content=content,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             direction=MessageDirection.RECEIVED
         )
         history.add_message(msg)
@@ -1182,7 +1243,7 @@ if __name__ == "__main__":
     for content in casual_messages:
         msg = Message(
             content=content,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             direction=MessageDirection.RECEIVED
         )
         casual_history.add_message(msg)

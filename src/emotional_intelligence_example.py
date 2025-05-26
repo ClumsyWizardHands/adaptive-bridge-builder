@@ -19,7 +19,7 @@ from emotional_intelligence import (
     InteractionType
 )
 
-def print_divider(title: str = None):
+def print_divider(title: str = None) -> None:
     """Print a divider with an optional title."""
     width = 80
     if title:
@@ -27,7 +27,7 @@ def print_divider(title: str = None):
     else:
         print(f"\n{'=' * width}")
 
-def main():
+def main() -> None:
     """Demonstrate the EmotionalIntelligence module functionality."""
     print_divider("EMOTIONAL INTELLIGENCE MODULE DEMONSTRATION")
     

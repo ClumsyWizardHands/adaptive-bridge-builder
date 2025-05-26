@@ -160,10 +160,10 @@ def main():
     
     # Print results summary
     print("\n=== Test Results ===")
-    print(f"Home Endpoint: {'✓' if home_result else '✗'}")
-    print(f"Agent Card Endpoint: {'✓' if agent_card_result else '✗'}")
-    print(f"Health Endpoint: {'✓' if health_result else '✗'}")
-    print(f"Process Endpoint: {'✓' if process_result else '✗'}")
+    print(f"Home Endpoint: {'[PASS]' if home_result else '[FAIL]'}")
+    print(f"Agent Card Endpoint: {'[PASS]' if agent_card_result else '[FAIL]'}")
+    print(f"Health Endpoint: {'[PASS]' if health_result else '[FAIL]'}")
+    print(f"Process Endpoint: {'[PASS]' if process_result else '[FAIL]'}")
     
     # Determine if all tests passed
     if all([home_result, agent_card_result, health_result, process_result]):

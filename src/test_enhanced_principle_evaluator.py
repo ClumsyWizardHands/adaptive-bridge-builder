@@ -22,7 +22,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("TestEnhancedEvaluator")
 
-def print_separator(title=None):
+def print_separator(title=None) -> None:
     """Print a separator line with optional title."""
     print("\n" + "=" * 80)
     if title:
@@ -119,7 +119,7 @@ def compare_evaluations(
         except Exception as e:
             print(f"\nUnable to get enhanced alternatives: {e}")
 
-def main():
+def main() -> int:
     """Run tests comparing standard and enhanced principle evaluators."""
     principles_file = "custom_principles_fixed.json"
     

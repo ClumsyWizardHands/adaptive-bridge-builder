@@ -13,8 +13,8 @@ import json
 import logging
 import os
 import uuid
-from datetime import datetime
-from typing import Dict, List, Any, Optional, Tuple
+from datetime import datetime, timezone
+from typing import Dict, List, Any, Optional, Tuple, Union
 from enum import Enum
 import math
 
@@ -117,7 +117,7 @@ class InteractionRecord:
         """
         self.agent_id = agent_id
         self.interaction_type = interaction_type
-        self.timestamp = timestamp or datetime.utcnow().isoformat()
+        self.timestamp = timestamp or datetime.now(timezone.utc).isoformat()
         self.message_id = message_id
         self.conversation_id = conversation_id
         self.content_summary = content_summary
@@ -189,7 +189,7 @@ class RelationshipMemory:
         self.agent_id = agent_id
         self.memory_type = memory_type
         self.content = content
-        self.timestamp = timestamp or datetime.utcnow().isoformat()
+        self.timestamp = timestamp or datetime.now(timezone.utc).isoformat()
         self.importance = max(0.0, min(5.0, importance))
         self.related_interactions = related_interactions or []
         self.metadata = metadata or {}
@@ -199,8 +199,8 @@ class RelationshipMemory:
     
     def access(self) -> None:
         """Record an access to this memory."""
-        self.last_accessed = datetime.utcnow().isoformat()
-        self.access_count += 1
+        self.last_accessed = datetime.now(timezone.utc).isoformat()
+        self.access_count = self.access_count + 1
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert the relationship memory to a dictionary."""
@@ -280,7 +280,7 @@ class AgentRelationship:
         self.metadata = metadata or {}
         self.memories: List[RelationshipMemory] = []
         self.recent_interactions: List[str] = []  # Store interaction IDs
-        self.created_at = datetime.utcnow().isoformat()
+        self.created_at = datetime.now(timezone.utc).isoformat()
         self.updated_at = self.created_at
         self.repair_attempts = 0
         self.blocked_reason = None
@@ -403,7 +403,7 @@ class AgentRelationship:
                 return
                 
         # Add new memory
-        self.memories.append(memory)
+        self.memories = [*self.memories, memory]
         
         # Sort memories by importance (descending)
         self.memories.sort(key=lambda m: m.importance, reverse=True)
@@ -522,7 +522,7 @@ class RelationshipTracker:
                 with open(os.path.join(self.data_dir, rel_file), 'r') as f:
                     rel_data = json.load(f)
                     relationship = AgentRelationship.from_dict(rel_data)
-                    self.relationships[relationship.agent_id] = relationship
+                    self.relationships = {**self.relationships, relationship.agent_id: relationship}
                 
                 # Load interactions
                 int_file = rel_file.replace("relationship_", "interactions_")
@@ -532,7 +532,7 @@ class RelationshipTracker:
                         int_data = json.load(f)
                         for interaction_dict in int_data:
                             interaction = InteractionRecord.from_dict(interaction_dict)
-                            self.interactions[interaction.interaction_id] = interaction
+                            self.interactions = {**self.interactions, interaction.interaction_id: interaction}
             except Exception as e:
                 logger.error(f"Error loading relationship data from {rel_file}: {e}")
         
@@ -592,7 +592,7 @@ class RelationshipTracker:
             
         # Create new relationship
         relationship = AgentRelationship(agent_id=agent_id)
-        self.relationships[agent_id] = relationship
+        self.relationships = {**self.relationships, agent_id: relationship}
         
         # Save if auto-save is enabled
         if self.auto_save:
@@ -648,7 +648,7 @@ class RelationshipTracker:
         interaction.trust_impact = trust_impact
         
         # Store the interaction
-        self.interactions[interaction.interaction_id] = interaction
+        self.interactions = {**self.interactions, interaction.interaction_id: interaction}
         
         # Update the relationship
         relationship = self.get_relationship(agent_id)
@@ -667,7 +667,7 @@ class RelationshipTracker:
             
         relationship.last_interaction = interaction.timestamp
         relationship.interaction_count += 1
-        relationship.updated_at = datetime.utcnow().isoformat()
+        relationship.updated_at = datetime.now(timezone.utc).isoformat()
         
         # Add to recent interactions
         relationship.recent_interactions.append(interaction.interaction_id)
@@ -755,7 +755,7 @@ class RelationshipTracker:
         if relationship.last_interaction:
             try:
                 last_time = datetime.fromisoformat(relationship.last_interaction)
-                now = datetime.utcnow()
+                now = datetime.now(timezone.utc)
                 time_since_last = (now - last_time).total_seconds() / 86400.0  # Days
             except (ValueError, TypeError):
                 time_since_last = 0
@@ -1003,7 +1003,7 @@ class RelationshipTracker:
                 relationship.preferences[key] = value
                 
         # Update timestamp
-        relationship.updated_at = datetime.utcnow().isoformat()
+        relationship.updated_at = datetime.now(timezone.utc).isoformat()
         
         # Auto-save if enabled
         if self.auto_save:
@@ -1033,7 +1033,7 @@ class RelationshipTracker:
             
         # Update communication style
         relationship.communication_style = style_dict
-        relationship.updated_at = datetime.utcnow().isoformat()
+        relationship.updated_at = datetime.now(timezone.utc).isoformat()
         
         # Add memory about style
         memory = RelationshipMemory(
@@ -1209,7 +1209,7 @@ class RelationshipTracker:
         
         # Update repair attempts counter
         relationship.repair_attempts += 1
-        relationship.updated_at = datetime.utcnow().isoformat()
+        relationship.updated_at = datetime.now(timezone.utc).isoformat()
         relationship.status = RelationshipStatus.REPAIRING
         
         # Add a memory for this repair attempt
@@ -1271,7 +1271,7 @@ class RelationshipTracker:
         if relationship.trust_level >= TrustLevel.HIGH:
             relationship.status = RelationshipStatus.TRUSTED
             
-        relationship.updated_at = datetime.utcnow().isoformat()
+        relationship.updated_at = datetime.now(timezone.utc).isoformat()
         
         # Add memory for successful repair
         memory = RelationshipMemory(
@@ -1329,7 +1329,7 @@ class RelationshipTracker:
         else:
             relationship.status = RelationshipStatus.STRAINED
             
-        relationship.updated_at = datetime.utcnow().isoformat()
+        relationship.updated_at = datetime.now(timezone.utc).isoformat()
         
         # Add memory for failed repair
         memory = RelationshipMemory(
@@ -1377,7 +1377,7 @@ class RelationshipTracker:
         old_status = relationship.status
         relationship.status = RelationshipStatus.BLOCKED
         relationship.blocked_reason = reason
-        relationship.updated_at = datetime.utcnow().isoformat()
+        relationship.updated_at = datetime.now(timezone.utc).isoformat()
         
         # Add memory for blocking
         memory = RelationshipMemory(
@@ -1435,7 +1435,7 @@ class RelationshipTracker:
         # Clear blocked reason
         blocked_reason = relationship.blocked_reason
         relationship.blocked_reason = None
-        relationship.updated_at = datetime.utcnow().isoformat()
+        relationship.updated_at = datetime.now(timezone.utc).isoformat()
         
         # Add memory for unblocking
         memory = RelationshipMemory(

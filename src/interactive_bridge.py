@@ -1,3 +1,4 @@
+import cmd
 #!/usr/bin/env python3
 """
 Interactive Bridge Agent Terminal
@@ -10,7 +11,7 @@ import json
 import uuid
 import cmd
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional, List, Union
 
 # Import the Adaptive Bridge Builder
@@ -34,7 +35,7 @@ class BridgeTerminal(cmd.Cmd):
 """
     prompt = '(bridge) '
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the terminal and bridge agent."""
         super().__init__()
         
@@ -49,9 +50,9 @@ class BridgeTerminal(cmd.Cmd):
         print(f"Bridge Agent initialized with ID: {self.bridge_card['agent_id']}")
         print(f"Active conversation ID: {self.conversation_id}\n")
     
-    def do_card(self, arg):
+    def do_card(self, arg) -> None:
         """Display the bridge agent's card."""
-        self.message_count += 1
+        self.message_count = self.message_count + 1
         msg_id = f"msg-{self.message_count}-{str(uuid.uuid4())}"
         
         message = {
@@ -68,13 +69,13 @@ class BridgeTerminal(cmd.Cmd):
         print("\nBridge Agent Card:")
         print(json.dumps(response.get('result', {}), indent=2))
     
-    def do_send(self, arg):
+    def do_send(self, arg) -> None:
         """Send a message to the bridge agent."""
         if not arg:
             print("Error: Please provide a message to send.")
             return
             
-        self.message_count += 1
+        self.message_count = self.message_count + 1
         msg_id = f"msg-{self.message_count}-{str(uuid.uuid4())}"
         
         # Create A2A message
@@ -84,7 +85,7 @@ class BridgeTerminal(cmd.Cmd):
             "params": {
                 "conversation_id": self.conversation_id,
                 "content": arg,
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             },
             "id": msg_id
         }
@@ -94,7 +95,7 @@ class BridgeTerminal(cmd.Cmd):
         print("\nResponse from Bridge Agent:")
         print(json.dumps(response, indent=2))
     
-    def do_route(self, arg):
+    def do_route(self, arg) -> None:
         """Route a message through the bridge."""
         if not arg:
             print("Error: Please provide a message and destination in format: <destination> <message>")
@@ -109,7 +110,7 @@ class BridgeTerminal(cmd.Cmd):
             destination = parts[0]
             content = parts[1]
                 
-            self.message_count += 1
+            self.message_count = self.message_count + 1
             msg_id = f"msg-{self.message_count}-{str(uuid.uuid4())}"
             
             # Create routing message
@@ -120,7 +121,7 @@ class BridgeTerminal(cmd.Cmd):
                     "conversation_id": self.conversation_id,
                     "destination": destination,
                     "content": content,
-                    "timestamp": datetime.utcnow().isoformat()
+                    "timestamp": datetime.now(timezone.utc).isoformat()
                 },
                 "id": msg_id
             }
@@ -132,7 +133,7 @@ class BridgeTerminal(cmd.Cmd):
         except Exception as e:
             print(f"Error: {e}")
     
-    def do_translate(self, arg):
+    def do_translate(self, arg) -> None:
         """Translate a message between protocols."""
         if not arg:
             print("Error: Please provide source protocol, target protocol, and message in format: <source> <target> <message>")
@@ -148,7 +149,7 @@ class BridgeTerminal(cmd.Cmd):
             target_protocol = parts[1]
             content = parts[2]
                 
-            self.message_count += 1
+            self.message_count = self.message_count + 1
             msg_id = f"msg-{self.message_count}-{str(uuid.uuid4())}"
             
             # Create translation message
@@ -160,7 +161,7 @@ class BridgeTerminal(cmd.Cmd):
                     "source_protocol": source_protocol,
                     "target_protocol": target_protocol,
                     "content": content,
-                    "timestamp": datetime.utcnow().isoformat()
+                    "timestamp": datetime.now(timezone.utc).isoformat()
                 },
                 "id": msg_id
             }
@@ -172,18 +173,18 @@ class BridgeTerminal(cmd.Cmd):
         except Exception as e:
             print(f"Error: {e}")
     
-    def do_new(self, arg):
+    def do_new(self, arg) -> None:
         """Start a new conversation."""
         self.conversation_id = f"convo-{str(uuid.uuid4())}"
         self.message_count = 0
         print(f"\nStarted new conversation with ID: {self.conversation_id}")
     
-    def do_exit(self, arg):
+    def do_exit(self, arg) -> int:
         """Exit the terminal."""
         print("\nExiting Adaptive Bridge Builder terminal. Goodbye!")
         return True
         
-    def do_EOF(self, arg):
+    def do_EOF(self, arg) -> int:
         """Exit on Ctrl-D."""
         print("\nExiting Adaptive Bridge Builder terminal. Goodbye!")
         return True

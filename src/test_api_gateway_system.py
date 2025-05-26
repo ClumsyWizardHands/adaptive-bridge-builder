@@ -6,10 +6,12 @@ including authentication, rate limiting, caching, error handling, and data trans
 """
 import asyncio
 import datetime
+from datetime import timezone
 import json
 import logging
 import os
 import unittest
+from typing import Any, Coroutine
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from api_gateway_system import (
@@ -41,7 +43,7 @@ class TestApiGatewaySystem(unittest.TestCase):
     Test case for the ApiGatewaySystem class.
     """
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up for the tests."""
         # Create the API Gateway System
         self.gateway = ApiGatewaySystem(
@@ -59,12 +61,12 @@ class TestApiGatewaySystem(unittest.TestCase):
         # Register a test API
         self.register_test_api()
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up after the tests."""
         # Close the event loop
         self.loop.close()
     
-    def register_test_api(self):
+    def register_test_api(self) -> None:
         """Register a test API for use in tests."""
         # Authentication configuration
         auth_config = AuthConfig(
@@ -124,7 +126,7 @@ class TestApiGatewaySystem(unittest.TestCase):
         # Register the API
         self.gateway.register_api(test_api)
     
-    def test_api_registration(self):
+    def test_api_registration(self) -> None:
         """Test API registration and listing."""
         # List registered APIs
         apis = self.gateway.list_apis()
@@ -147,7 +149,7 @@ class TestApiGatewaySystem(unittest.TestCase):
         self.assertIn("get_data", api_details["endpoints"])
         self.assertIn("create_data", api_details["endpoints"])
     
-    def test_unregistration(self):
+    def test_unregistration(self) -> None:
         """Test API unregistration."""
         # Unregister the test API
         result = self.gateway.unregister_api("test_api")
@@ -163,7 +165,7 @@ class TestApiGatewaySystem(unittest.TestCase):
         self.assertFalse(result)
     
     @patch("aiohttp.ClientSession")
-    async def test_call_endpoint_success(self, mock_session):
+    async def test_call_endpoint_success(self, mock_session) -> None:
         """Test successful API endpoint call."""
         # Set up mock response
         mock_response = AsyncMock()
@@ -195,7 +197,7 @@ class TestApiGatewaySystem(unittest.TestCase):
         self.assertEqual(response["data"]["name"], "Test Data")
     
     @patch("aiohttp.ClientSession")
-    async def test_call_endpoint_error(self, mock_session):
+    async def test_call_endpoint_error(self, mock_session) -> None:
         """Test API endpoint call with error."""
         # Set up mock response
         mock_response = AsyncMock()
@@ -225,7 +227,7 @@ class TestApiGatewaySystem(unittest.TestCase):
         self.assertEqual(response["status"], 404)
         self.assertEqual(response["error"], "Not found")
     
-    async def test_rate_limiter(self):
+    async def test_rate_limiter(self) -> None:
         """Test the rate limiter functionality."""
         # Create a rate limiter with a low limit for testing
         rate_limit_config = RateLimitConfig(
@@ -267,7 +269,7 @@ class TestApiGatewaySystem(unittest.TestCase):
         allowed, wait_time = await rate_limiter.check_rate_limit("test_client", "test_endpoint")
         self.assertTrue(allowed)
     
-    async def test_cache_manager(self):
+    async def test_cache_manager(self) -> None:
         """Test the cache manager functionality."""
         # Create a cache manager
         cache_config = CacheConfig(
@@ -326,7 +328,7 @@ class TestApiGatewaySystem(unittest.TestCase):
         )
         self.assertFalse(hit)
     
-    async def test_circuit_breaker(self):
+    async def test_circuit_breaker(self) -> Coroutine[Any, Any, str]:
         """Test the circuit breaker functionality."""
         # Create a circuit breaker
         error_config = ErrorHandlingConfig(
@@ -337,11 +339,11 @@ class TestApiGatewaySystem(unittest.TestCase):
         circuit_breaker = CircuitBreaker(error_config)
         
         # Define a test function that fails
-        async def fail_func():
+        async def fail_func() -> None:
             raise Exception("Test failure")
         
         # Define a successful function
-        async def success_func():
+        async def success_func() -> Coroutine[Any, Any, str]:
             return "Success"
         
         # First attempt - should raise the exception
@@ -372,7 +374,7 @@ class TestApiGatewaySystem(unittest.TestCase):
         state = circuit_breaker.get_state()
         self.assertEqual(state["state"], circuit_breaker.CLOSED)
     
-    def test_data_transformer(self):
+    def test_data_transformer(self) -> None:
         """Test the data transformer functionality."""
         transformer = DataTransformer()
         
@@ -430,7 +432,7 @@ class TestApiGatewaySystem(unittest.TestCase):
         self.assertEqual(added_data["created"], "2025-01-01")
         
         # Register a custom transformer
-        def custom_transform(data, prefix="", **kwargs):
+        def custom_transform(data, prefix="", **kwargs) -> None:
             if isinstance(data, dict):
                 return {f"{prefix}{k}": v for k, v in data.items()}
             return data
@@ -456,7 +458,7 @@ class TestApiGatewaySystem(unittest.TestCase):
         self.assertEqual(custom_result["user_age"], 30)
     
     @patch("aiohttp.ClientSession")
-    async def test_authentication(self, mock_session):
+    async def test_authentication(self, mock_session) -> None:
         """Test different authentication methods."""
         # Set up mock response
         mock_response = AsyncMock()

@@ -28,7 +28,7 @@ from human_interaction_styler import (
 class TestHumanInteractionStyler(unittest.TestCase):
     """Test case for HumanInteractionStyler functionality."""
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment."""
         # Create a temporary directory for profile storage
         self.temp_dir = tempfile.mkdtemp()
@@ -61,12 +61,12 @@ class TestHumanInteractionStyler(unittest.TestCase):
         Each service is containerized and uses modern security protocols.
         """
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up after tests."""
         # Remove the temporary directory
         shutil.rmtree(self.temp_dir)
     
-    def test_profile_creation(self):
+    def test_profile_creation(self) -> None:
         """Test creating and retrieving human profiles."""
         # Create a profile
         human_id = "test_user"
@@ -92,7 +92,7 @@ class TestHumanInteractionStyler(unittest.TestCase):
         self.assertEqual(loaded_profile.human_id, human_id)
         self.assertEqual(loaded_profile.name, "Test User")
     
-    def test_formality_detection(self):
+    def test_formality_detection(self) -> None:
         """Test detection of formality preferences from messages."""
         # Process formal message
         human_id = "formal_user"
@@ -108,7 +108,7 @@ class TestHumanInteractionStyler(unittest.TestCase):
         self.assertGreater(formal_profile.communication_style.formality.value, 
                         casual_profile.communication_style.formality.value)
     
-    def test_directness_detection(self):
+    def test_directness_detection(self) -> None:
         """Test detection of directness preferences from messages."""
         # Process direct message
         human_id = "direct_user"
@@ -124,7 +124,7 @@ class TestHumanInteractionStyler(unittest.TestCase):
         self.assertGreaterEqual(direct_profile.communication_style.directness.value, 
                              indirect_profile.communication_style.directness.value)
     
-    def test_emotional_state_detection(self):
+    def test_emotional_state_detection(self) -> None:
         """Test detection of emotional states from messages."""
         # Detect emotions from emotional message
         emotions = self.styler.detect_emotional_state(self.test_message_emotional)
@@ -135,7 +135,7 @@ class TestHumanInteractionStyler(unittest.TestCase):
         primary_emotion = max(emotions, key=lambda e: e.confidence)
         self.assertEqual(primary_emotion.category.name, "JOY")
     
-    def test_profile_update_from_message(self):
+    def test_profile_update_from_message(self) -> None:
         """Test updating a profile based on a message."""
         human_id = "test_profile_update"
         
@@ -153,7 +153,7 @@ class TestHumanInteractionStyler(unittest.TestCase):
         self.assertGreater(updated_profile.emotional_expressiveness, 0.5)
         self.assertEqual(updated_profile.primary_emotional_tone, EmotionalTone.POSITIVE)
     
-    def test_response_adaptation_formality(self):
+    def test_response_adaptation_formality(self) -> None:
         """Test adaptation of responses based on formality."""
         # Create formal profile
         formal_id = "formal_adaptation_test"
@@ -179,7 +179,7 @@ class TestHumanInteractionStyler(unittest.TestCase):
         self.assertIn("Hey,", casual_response)
         self.assertIn("Cheers!", casual_response)
     
-    def test_response_adaptation_detail_level(self):
+    def test_response_adaptation_detail_level(self) -> None:
         """Test adaptation of responses based on detail level."""
         # Create detailed profile
         detailed_id = "detailed_adaptation_test"
@@ -222,7 +222,7 @@ class TestHumanInteractionStyler(unittest.TestCase):
         # Verify concise response is shorter and contains a note about omitted details
         self.assertIn("details have been omitted", adapted_concise)
     
-    def test_response_adaptation_directness(self):
+    def test_response_adaptation_directness(self) -> None:
         """Test adaptation of responses based on directness."""
         # Create direct profile
         direct_id = "direct_adaptation_test"
@@ -260,7 +260,7 @@ class TestHumanInteractionStyler(unittest.TestCase):
         # For indirect user, should use softening language
         self.assertIn("might consider", indirect_response)
     
-    def test_cultural_adaptation(self):
+    def test_cultural_adaptation(self) -> None:
         """Test adaptation based on cultural context."""
         # Create profile with collectivist culture
         collectivist_id = "collectivist_test"
@@ -289,7 +289,7 @@ class TestHumanInteractionStyler(unittest.TestCase):
         self.assertIn("I think", individualist_adapted)
         self.assertIn("you should", individualist_adapted)
     
-    def test_authenticity_principle(self):
+    def test_authenticity_principle(self) -> None:
         """Test the 'Authenticity Beyond Performance' principle."""
         # Create a profile with high confidence and many interactions
         authentic_id = "authenticity_test"
@@ -320,7 +320,7 @@ class TestHumanInteractionStyler(unittest.TestCase):
         self.assertNotIn("adapted my communication style", new_adapted)
         self.assertNotIn("authentic and genuine", new_adapted)
     
-    def test_profile_serialization(self):
+    def test_profile_serialization(self) -> None:
         """Test profile serialization and deserialization."""
         # Create a profile with various attributes
         human_id = "serialization_test"

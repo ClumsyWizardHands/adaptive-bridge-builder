@@ -14,7 +14,7 @@ import uuid
 import logging
 import time
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Set, Tuple, Union, Callable
 from enum import Enum, auto
 import threading
@@ -551,12 +551,12 @@ class LearningJourney:
             domain.completion_percentage for domain in self.domains.values()
         )
         self.overall_progress = total_progress / len(self.domains)
-        self.updated_at = datetime.utcnow().isoformat()
+        self.updated_at = datetime.now(timezone.utc).isoformat()
         
         # Update status if complete
         if self.overall_progress >= 1.0:
             self.status = "completed"
-            self.end_date = datetime.utcnow().isoformat()
+            self.end_date = datetime.now(timezone.utc).isoformat()
             
         return self.overall_progress
 
@@ -794,7 +794,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
                 with open(journey_path, "r") as f:
                     journeys_data = json.load(f)
                     for journey_id, journey_data in journeys_data.items():
-                        self.learning_journeys[journey_id] = LearningJourney.from_dict(journey_data)
+                        self.learning_journeys = {**self.learning_journeys, journey_id: LearningJourney.from_dict(journey_data)}
             
             # Load learner profiles
             profiles_path = os.path.join(self.storage_dir, "learner_profiles.json")
@@ -802,7 +802,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
                 with open(profiles_path, "r") as f:
                     profiles_data = json.load(f)
                     for learner_id, profile_data in profiles_data.items():
-                        self.learner_profiles[learner_id] = LearnerProfile.from_dict(profile_data)
+                        self.learner_profiles = {**self.learner_profiles, learner_id: LearnerProfile.from_dict(profile_data)}
             
             # Load learning domains
             domains_path = os.path.join(self.storage_dir, "learning_domains.json")
@@ -810,7 +810,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
                 with open(domains_path, "r") as f:
                     domains_data = json.load(f)
                     for domain_id, domain_data in domains_data.items():
-                        self.learning_domains[domain_id] = LearningDomain.from_dict(domain_data)
+                        self.learning_domains = {**self.learning_domains, domain_id: LearningDomain.from_dict(domain_data)}
             
             # Load session metrics
             metrics_path = os.path.join(self.storage_dir, "session_metrics.json")
@@ -818,7 +818,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
                 with open(metrics_path, "r") as f:
                     metrics_data = json.load(f)
                     for session_id, session_data in metrics_data.items():
-                        self.session_metrics[session_id] = LearningSessionMetrics.from_dict(session_data)
+                        self.session_metrics = {**self.session_metrics, session_id: LearningSessionMetrics.from_dict(session_data)}
             
             # Load outcome reports
             reports_path = os.path.join(self.storage_dir, "outcome_reports.json")
@@ -826,7 +826,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
                 with open(reports_path, "r") as f:
                     reports_data = json.load(f)
                     for report_id, report_data in reports_data.items():
-                        self.outcome_reports[report_id] = LearningOutcomeReport.from_dict(report_data)
+                        self.outcome_reports = {**self.outcome_reports, report_id: LearningOutcomeReport.from_dict(report_data)}
             
             # Load educational agent profiles
             agents_path = os.path.join(self.storage_dir, "educational_agents.json")
@@ -948,7 +948,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
             metadata=metadata
         )
         
-        self.learner_profiles[learner_id] = profile
+        self.learner_profiles = {**self.learner_profiles, learner_id: profile}
         self._save_data()
         
         logger.info(f"Created learner profile for {name} (ID: {learner_id})")
@@ -991,7 +991,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
         metadata = metadata or {}
         
         journey_id = f"journey-{uuid.uuid4()}"
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
         
         # Get the domains
         domains = {
@@ -1016,7 +1016,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
             metadata=metadata
         )
         
-        self.learning_journeys[journey_id] = journey
+        self.learning_journeys = {**self.learning_journeys, journey_id: journey}
         self._save_data()
         
         logger.info(f"Created learning journey '{name}' (ID: {journey_id}) for learner {learner_id}")
@@ -1055,7 +1055,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
         
         # Create session ID and start time
         session_id = f"session-{uuid.uuid4()}"
-        start_time = datetime.utcnow().isoformat()
+        start_time = datetime.now(timezone.utc).isoformat()
         
         # Create session metrics
         metrics = LearningSessionMetrics(
@@ -1063,7 +1063,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
             learner_id=learner_id,
             start_time=start_time
         )
-        self.session_metrics[session_id] = metrics
+        self.session_metrics = {**self.session_metrics, session_id: metrics}
         
         # Create session context
         session_context = {
@@ -1079,7 +1079,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
         }
         
         # Update active sessions
-        self.active_sessions[session_id] = session_context
+        self.active_sessions = {**self.active_sessions, session_id: session_context}
         
         # Update journey's active session
         journey.active_session = {
@@ -1117,7 +1117,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
             logger.warning(f"Session context for {session_id} not found")
         else:
             # Remove from active sessions
-            del self.active_sessions[session_id]
+            self.active_sessions = {k: v for k, v in self.active_sessions.items() if k != session_id}
             
             # Update journey's active session
             journey_id = context.get("journey_id")
@@ -1127,7 +1127,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
                     journey.active_session = None
         
         # Update metrics
-        end_time = datetime.utcnow().isoformat()
+        end_time = datetime.now(timezone.utc).isoformat()
         metrics.end_time = end_time
         
         # Calculate duration
@@ -1199,7 +1199,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
         
         # Update journey progress
         journey.update_progress()
-        journey.updated_at = datetime.utcnow().isoformat()
+        journey.updated_at = datetime.now(timezone.utc).isoformat()
         
         # Save the updated data
         self._save_data()
@@ -1230,12 +1230,12 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
         if reporting_period is None:
             reporting_period = {
                 "start_date": journey.start_date,
-                "end_date": datetime.utcnow().isoformat()
+                "end_date": datetime.now(timezone.utc).isoformat()
             }
         
         # Generate report ID
         report_id = f"report-{uuid.uuid4()}"
-        generated_at = datetime.utcnow().isoformat()
+        generated_at = datetime.now(timezone.utc).isoformat()
         
         # Calculate domain progress
         domain_progress = {
@@ -1305,7 +1305,7 @@ class LearningJourneyOrchestrator(ProjectOrchestrator):
         )
         
         # Save the report
-        self.outcome_reports[report_id] = report
+        self.outcome_reports = {**self.outcome_reports, report_id: report}
         self._save_data()
         
         logger.info(f"Generated learning outcome report {report_id} for journey {journey_id}")

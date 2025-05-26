@@ -1,3 +1,4 @@
+import markdown
 """
 Communication Examples
 
@@ -10,7 +11,7 @@ import json
 import os
 import base64
 from typing import Dict, List, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 from content_handler import ContentHandler, ContentFormat
 from file_exchange_handler import FileExchangeHandler, TransferStatus, TransferType
@@ -36,7 +37,7 @@ AGENT_IDS = {
 }
 
 
-def example_content_handling():
+def example_content_handling() -> None:
     """Example demonstrating content handling with different data types."""
     print("\n===== CONTENT HANDLING EXAMPLE =====\n")
     
@@ -214,7 +215,7 @@ Based on our analysis, we recommend the following actions:
     print(enhanced_md[:500] + "..." if len(enhanced_md) > 500 else enhanced_md)
 
 
-def example_file_exchange():
+def example_file_exchange() -> None:
     """Example demonstrating file exchange between agents."""
     print("\n===== FILE EXCHANGE EXAMPLE =====\n")
     
@@ -352,7 +353,7 @@ Key insights:
     print(f"Files will be stored in: {processed_manifest.get('output_dir')}")
 
 
-def example_collaborative_tasks():
+def example_collaborative_tasks() -> None:
     """Example demonstrating collaborative task handling between agents."""
     print("\n===== COLLABORATIVE TASKS EXAMPLE =====\n")
     
@@ -488,7 +489,7 @@ def example_collaborative_tasks():
     print("Task graph saved to example_output/task_graph.json")
 
 
-def example_communication_adaptation():
+def example_communication_adaptation() -> None:
     """Example demonstrating communication adaptation based on agent capabilities."""
     print("\n===== COMMUNICATION ADAPTATION EXAMPLE =====\n")
     
@@ -666,7 +667,7 @@ For improved performance, consider:
     print("Compatibility matrix saved to example_output/compatibility_matrix.json")
 
 
-def integrated_example():
+def integrated_example() -> None:
     """
     Integrated example combining content handling, file exchange,
     collaborative tasks, and communication adaptation.

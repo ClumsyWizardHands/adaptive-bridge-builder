@@ -12,13 +12,13 @@ import uuid
 from adaptive_bridge_builder import AdaptiveBridgeBuilder
 from principle_engine import PrincipleEngine
 
-def print_header(title):
+def print_header(title) -> None:
     """Print a formatted section header."""
     print(f"\n{'-' * 80}")
     print(f"  {title}")
     print(f"{'-' * 80}")
 
-def print_json(title, data):
+def print_json(title, data) -> None:
     """Print formatted JSON data."""
     print(f"\n{title}:")
     print(json.dumps(data, indent=2))
@@ -30,7 +30,7 @@ class PrincipleGuidedBridgeBuilder(AdaptiveBridgeBuilder):
     to ensure all communications adhere to core principles.
     """
     
-    def __init__(self, agent_id=None, agent_card_path="src/agent_card.json", principles_file=None):
+    def __init__(self, agent_id=None, agent_card_path="src/agent_card.json", principles_file=None) -> None:
         """
         Initialize the PrincipleGuidedBridgeBuilder.
         
@@ -47,7 +47,7 @@ class PrincipleGuidedBridgeBuilder(AdaptiveBridgeBuilder):
         
         print(f"PrincipleGuidedBridgeBuilder initialized with {len(self.principle_engine.principles)} principles")
     
-    def process_message(self, message):
+    def process_message(self, message) -> None:
         """
         Process an incoming message with principle evaluation and alignment.
         
@@ -80,16 +80,28 @@ class PrincipleGuidedBridgeBuilder(AdaptiveBridgeBuilder):
         
         return consistent_response
     
-    def get_principle_consistency_report(self):
+    def get_principle_consistency_report(self) -> None:
         """Get a detailed report on principle consistency."""
         return self.principle_engine.get_consistency_report()
     
-    def get_principle_descriptions(self):
+    def get_principle_descriptions(self) -> None:
         """Get descriptions of all principles."""
         return self.principle_engine.get_principle_descriptions()
 
 
-def demonstrate_principle_effects():
+
+    async def __aenter__(self):
+        """Enter async context."""
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Exit async context and cleanup."""
+        if hasattr(self, 'cleanup'):
+            await self.cleanup()
+        elif hasattr(self, 'close'):
+            await self.close()
+        return False
+def demonstrate_principle_effects() -> None:
     """Demonstrate how each principle affects communication decisions."""
     print_header("PRINCIPLE EFFECTS DEMONSTRATION")
     
@@ -383,7 +395,7 @@ def demonstrate_principle_effects():
             print(f"  Overall Score Improvement: {original_score['overall_score']:.1f} → {improved_score['overall_score']:.1f}")
 
 
-def main():
+def main() -> None:
     """Main demonstration function."""
     print_header("PRINCIPLE GUIDED BRIDGE BUILDER DEMONSTRATION")
     

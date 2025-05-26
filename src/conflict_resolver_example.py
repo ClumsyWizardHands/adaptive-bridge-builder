@@ -12,7 +12,7 @@ and creating distance when conflicts can't be resolved.
 import json
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional
 
 from conflict_resolver import (
@@ -51,7 +51,7 @@ def create_example_message(
         "id": message_id or f"msg-{uuid.uuid4().hex[:8]}"
     }
 
-def print_separator(title: str = None):
+def print_separator(title: str = None) -> None:
     """Print a separator line with optional title."""
     width = 80
     if title:
@@ -59,7 +59,7 @@ def print_separator(title: str = None):
     else:
         print("\n" + "=" * width + "\n")
 
-def create_test_data():
+def create_test_data() -> None:
     """Create test data for different conflict types."""
     test_data = {}
     
@@ -175,7 +175,7 @@ def create_test_data():
     
     return test_data
 
-def main():
+def main() -> None:
     """Run the Conflict Resolver example."""
     print_separator("1. Initializing Components")
     

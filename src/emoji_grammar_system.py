@@ -1,3 +1,4 @@
+import emoji
 """
 EmojiGrammarSystem Component for Adaptive Bridge Builder Agent
 
@@ -97,7 +98,7 @@ class EmojiGrammarRule:
         self.description = description
         self.sentence_type = sentence_type
     
-    def __str__(self):
+    def __str__(self) -> str:
         roles_str = " + ".join([role.value for role in self.pattern])
         return f"{self.name}: {roles_str}"
     
@@ -121,13 +122,13 @@ class EmojiGrammarRuleSet:
     parsing emoji sequences.
     """
     
-    def __init__(self):
+    def __init__(self) -> None:
         self.rules: List[EmojiGrammarRule] = []
         self._initialize_default_rules()
     
     def add_rule(self, rule: EmojiGrammarRule) -> None:
         """Add a grammar rule to the rule set."""
-        self.rules.append(rule)
+        self.rules = [*self.rules, rule]
     
     def get_rules_by_sentence_type(self, sentence_type: SentenceType) -> List[EmojiGrammarRule]:
         """Get all rules for a specific sentence type."""
@@ -261,7 +262,7 @@ class EmojiGrammarElement:
         self.role = role
         self.metadata = metadata or {}
     
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.emoji} ({self.role.value})"
 
 
@@ -287,7 +288,7 @@ class EmojiSentence:
         self.roles = [element.role for element in elements]
         self.emoji_sequence = ''.join([element.emoji for element in elements])
     
-    def __str__(self):
+    def __str__(self) -> str:
         return self.emoji_sequence
     
     def get_elements_by_role(self, role: GrammaticalRole) -> List[EmojiGrammarElement]:
@@ -416,7 +417,7 @@ class EmojiGrammarParser:
     determine their grammatical structure according to defined rules.
     """
     
-    def __init__(self, rule_set: EmojiGrammarRuleSet, emoji_engine: EmojiTranslationEngine):
+    def __init__(self, rule_set: EmojiGrammarRuleSet, emoji_engine: EmojiTranslationEngine) -> None:
         self.rule_set = rule_set
         self.emoji_engine = emoji_engine
     
@@ -617,7 +618,7 @@ class EmojiGrammarGenerator:
     following defined grammatical rules.
     """
     
-    def __init__(self, rule_set: EmojiGrammarRuleSet, emoji_engine: EmojiTranslationEngine):
+    def __init__(self, rule_set: EmojiGrammarRuleSet, emoji_engine: EmojiTranslationEngine) -> None:
         self.rule_set = rule_set
         self.emoji_engine = emoji_engine
     
@@ -864,7 +865,7 @@ class EmojiGrammarSystem:
     grammar rules for emoji-based communication.
     """
     
-    def __init__(self, emoji_engine: Optional[EmojiTranslationEngine] = None):
+    def __init__(self, emoji_engine: Optional[EmojiTranslationEngine] = None) -> None:
         """
         Initialize the emoji grammar system.
         
@@ -967,7 +968,7 @@ class EmojiGrammarSystem:
 
 
 # Example usage
-def emoji_grammar_system_example():
+def emoji_grammar_system_example() -> None:
     """Example usage of the EmojiGrammarSystem."""
     
     # Initialize the system

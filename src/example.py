@@ -10,7 +10,7 @@ import json
 import uuid
 from adaptive_bridge_builder import AdaptiveBridgeBuilder
 
-def print_response(title, response):
+def print_response(title, response) -> None:
     """Print a formatted JSON-RPC response."""
     print(f"\n{'-' * 40}")
     print(f"{title}:")
@@ -18,7 +18,7 @@ def print_response(title, response):
     print(json.dumps(response, indent=2))
     print(f"{'-' * 40}\n")
 
-def main():
+def main() -> None:
     """Main demonstration function."""
     print("Initializing Adaptive Bridge Builder Agent...")
     

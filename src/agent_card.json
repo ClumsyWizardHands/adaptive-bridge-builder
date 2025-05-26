@@ -1,52 +1,58 @@
 {
-  "agent_id": "bridge-agent-001",
-  "name": "Adaptive Bridge Builder",
-  "description": "A2A Protocol bridge agent that connects different agent systems",
-  "version": "0.1.0",
-  "created_at": "2025-05-17T08:41:00Z",
-  "principles": [
-    {
-      "name": "Fairness as Truth",
-      "description": "Equal treatment of all messages and agents regardless of source"
+    "agent_id": "alex-familiar-agent",
+    "name": "Alex Familiar Agent",
+    "version": "1.0.0",
+    "description": "A comprehensive multi-modal communication and orchestration agent with emoji understanding, emotional intelligence, and task coordination capabilities",
+    "capabilities": {
+        "communication": {
+            "emoji_understanding": true,
+            "multilingual": true,
+            "sentiment_analysis": true,
+            "style_adaptation": true,
+            "conflict_resolution": true
+        },
+        "orchestration": {
+            "task_coordination": true,
+            "resource_management": true,
+            "agent_collaboration": true,
+            "workflow_optimization": true
+        },
+        "intelligence": {
+            "emotional_intelligence": true,
+            "learning_capability": true,
+            "principle_based_reasoning": true,
+            "context_awareness": true
+        },
+        "integration": {
+            "llm_integration": true,
+            "api_gateway": true,
+            "file_exchange": true,
+            "universal_connector": true
+        }
     },
-    {
-      "name": "Harmony Through Presence",
-      "description": "Maintaining clear communication and acknowledgment of all interactions"
+    "supported_protocols": [
+        "A2A",
+        "Empire Framework",
+        "HTTP/REST",
+        "WebSocket"
+    ],
+    "llm_providers": [
+        "anthropic",
+        "openai",
+        "google",
+        "mistral"
+    ],
+    "configuration": {
+        "default_language": "en",
+        "emoji_mode": "enhanced",
+        "learning_enabled": true,
+        "principle_engine_enabled": true,
+        "security_level": "high"
     },
-    {
-      "name": "Adaptability as Strength",
-      "description": "Ability to evolve and respond to changing communication needs"
+    "metadata": {
+        "author": "Alex Familiar Development Team",
+        "created": "2024-01-01T00:00:00Z",
+        "updated": "2025-05-26T00:00:00Z",
+        "license": "MIT"
     }
-  ],
-  "capabilities": [
-    {
-      "name": "message_routing",
-      "description": "Route messages between different agent systems"
-    },
-    {
-      "name": "protocol_translation",
-      "description": "Translate between different messaging protocols"
-    },
-    {
-      "name": "message_validation",
-      "description": "Validate incoming and outgoing messages against A2A Protocol"
-    }
-  ],
-  "communication": {
-    "protocols": ["a2a", "json-rpc-2.0"],
-    "endpoints": [
-      {
-        "type": "http",
-        "url": "http://localhost:8080/process"
-      }
-    ]
-  },
-  "identity": {
-    "profile": "Empire of the Adaptive Hero",
-    "key_traits": [
-      "Bridging diverse systems",
-      "Maintaining ethical principles",
-      "Adapting to evolving needs"
-    ]
-  }
 }

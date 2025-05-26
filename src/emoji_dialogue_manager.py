@@ -1,3 +1,5 @@
+import cmd
+import emoji
 """
 EmojiDialogueManager Component for Adaptive Bridge Builder Agent
 
@@ -114,8 +116,8 @@ class ConversationContext:
     
     def add_message(self, message: Dict[str, Any]) -> None:
         """Add a message to the conversation history."""
-        self.conversation_history.append(message)
-        self.active_context_window.append(message)
+        self.conversation_history = [*self.conversation_history, message]
+        self.active_context_window = [*self.active_context_window, message]
         
         # Prune context window if needed
         if len(self.active_context_window) > self.max_context_window_size:
@@ -128,14 +130,14 @@ class ConversationContext:
         if "topics" in message:
             for topic in message["topics"]:
                 if topic not in self.current_topics:
-                    self.current_topics.append(topic)
+                    self.current_topics = [*self.current_topics, topic]
                 if topic not in self.topic_history:
-                    self.topic_history.append(topic)
+                    self.topic_history = [*self.topic_history, topic]
         
         # Track entities
         if "entities" in message:
             for entity_id, entity_data in message["entities"].items():
-                self.referenced_entities[entity_id] = entity_data
+                self.referenced_entities = {**self.referenced_entities, entity_id: entity_data}
     
     def get_recent_messages(self, count: int = 5) -> List[Dict[str, Any]]:
         """Get the most recent messages from the conversation history."""
@@ -173,7 +175,7 @@ class ConversationContext:
                 # Move from pending to history
                 clarification["selected_meaning"] = selected_meaning
                 clarification["resolution_time"] = time.time()
-                self.ambiguity_history.append(clarification)
+                self.ambiguity_history = [*self.ambiguity_history, clarification]
                 
                 # Remove from pending
                 self.pending_clarifications.pop(i)
@@ -267,7 +269,7 @@ class EmojiDialogueManager:
         context.update_complexity(complexity_level)
         
         # Store in active contexts
-        self.active_contexts[dialogue_id] = context
+        self.active_contexts = {**self.active_contexts, dialogue_id: context}
         
         return context
     
@@ -297,10 +299,10 @@ class EmojiDialogueManager:
             # Move to archive
             context = self.active_contexts[dialogue_id]
             context.current_state = DialogueState.IDLE
-            self.conversation_archive[dialogue_id] = context
+            self.conversation_archive = {**self.conversation_archive, dialogue_id: context}
             
             # Remove from active
-            del self.active_contexts[dialogue_id]
+            self.active_contexts = {k: v for k, v in self.active_contexts.items() if k != dialogue_id}
             
             return True
         
@@ -1083,7 +1085,7 @@ class EmojiDialogueManager:
 
 
 # Example usage
-def emoji_dialogue_manager_example():
+def emoji_dialogue_manager_example() -> None:
     """Example demonstrating the EmojiDialogueManager."""
     print("\n=== EmojiDialogueManager Demonstration ===\n")
     

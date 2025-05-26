@@ -1,3 +1,4 @@
+import emoji
 """
 Example demonstrating the EmojiTranslationEngine component functionality.
 
@@ -13,7 +14,7 @@ from emoji_translation_engine import (
     EmojiEntry
 )
 
-def demonstrate_text_to_emoji():
+def demonstrate_text_to_emoji() -> None:
     """Demonstrate text to emoji translation with different modes and contexts."""
     print("\n=== Text to Emoji Translation ===\n")
     
@@ -75,7 +76,7 @@ def demonstrate_text_to_emoji():
     print()
 
 
-def demonstrate_emoji_to_text():
+def demonstrate_emoji_to_text() -> None:
     """Demonstrate emoji to text translation with different resolution strategies."""
     print("\n=== Emoji to Text Translation ===\n")
     
@@ -160,7 +161,7 @@ def demonstrate_emoji_to_text():
         print()
 
 
-def demonstrate_abstract_concept_handling():
+def demonstrate_abstract_concept_handling() -> None:
     """Demonstrate how the engine handles abstract concepts."""
     print("\n=== Abstract Concept Handling ===\n")
     
@@ -217,7 +218,7 @@ def demonstrate_abstract_concept_handling():
         print()
 
 
-def demonstrate_ambiguity_resolution():
+def demonstrate_ambiguity_resolution() -> None:
     """Demonstrate ambiguity resolution through user feedback."""
     print("\n=== Ambiguity Resolution ===\n")
     
@@ -296,7 +297,7 @@ def demonstrate_ambiguity_resolution():
             print("  ✕ Learning not visible in this case")
 
 
-def demonstrate_dictionary_customization():
+def demonstrate_dictionary_customization() -> None:
     """Demonstrate customizing the emoji dictionary."""
     print("\n=== Dictionary Customization ===\n")
     
@@ -374,7 +375,7 @@ def demonstrate_dictionary_customization():
     print("  (and could be loaded by a new instance of the engine)")
 
 
-def demonstrate_real_communication_scenarios():
+def demonstrate_real_communication_scenarios() -> None:
     """Demonstrate using the engine in real communication scenarios."""
     print("\n=== Real Communication Scenarios ===\n")
     
@@ -462,7 +463,7 @@ def demonstrate_real_communication_scenarios():
         print()
 
 
-def main():
+def main() -> None:
     """Main function to run all demonstrations."""
     print("="*80)
     print("                  EmojiTranslationEngine Demonstration")

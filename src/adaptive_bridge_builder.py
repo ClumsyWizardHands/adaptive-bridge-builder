@@ -10,7 +10,7 @@ embodying the principles of "Fairness as Truth," "Harmony Through Presence," and
 import json
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional, List, Union
 
 # Configure logging
@@ -28,7 +28,7 @@ class AdaptiveBridgeBuilder:
     facilitating communication and ensuring adherence to core principles.
     """
     
-    def __init__(self, agent_id: Optional[str] = None, agent_card_path: str = "src/agent_card.json"):
+    def __init__(self, agent_id: Optional[str] = None, agent_card_path: str = "src/agent_card.json") -> None:
         """
         Initialize the Adaptive Bridge Builder agent.
         
@@ -37,7 +37,7 @@ class AdaptiveBridgeBuilder:
             agent_card_path: Path to the agent card JSON file.
         """
         self.agent_id = agent_id or str(uuid.uuid4())
-        self.created_at = datetime.utcnow().isoformat()
+        self.created_at = datetime.now(timezone.utc).isoformat()
         self.message_counter = 0
         self.active_conversations: Dict[str, Dict[str, Any]] = {}
         
@@ -134,7 +134,7 @@ class AdaptiveBridgeBuilder:
         Returns:
             A response message in JSON-RPC 2.0 format.
         """
-        self.message_counter += 1
+        self.message_counter = self.message_counter + 1
         logger.info(f"Processing message {self.message_counter}: {message.get('id', 'No ID')}")
         
         # Validate the message structure according to JSON-RPC 2.0
@@ -157,14 +157,14 @@ class AdaptiveBridgeBuilder:
         # Apply "Harmony Through Presence" - acknowledge receipt of the message
         conversation_id = params.get("conversation_id", str(uuid.uuid4()))
         if conversation_id not in self.active_conversations:
-            self.active_conversations[conversation_id] = {
-                "started_at": datetime.utcnow().isoformat(),
+            self.active_conversations = {**self.active_conversations, conversation_id: {
+                "started_at": datetime.now(timezone.utc).isoformat(),
                 "message_count": 0,
-                "last_activity": datetime.utcnow().isoformat()
-            }
+                "last_activity": datetime.now(timezone.utc).isoformat()
+            }}
         
         self.active_conversations[conversation_id]["message_count"] += 1
-        self.active_conversations[conversation_id]["last_activity"] = datetime.utcnow().isoformat()
+        self.active_conversations[conversation_id]["last_activity"] = datetime.now(timezone.utc).isoformat()
         
         # Apply "Adaptability as Strength" - handle different message types
         try:
@@ -277,7 +277,7 @@ class AdaptiveBridgeBuilder:
         logger.info(f"Routing message to {params.get('destination', 'unknown')}")
         return {
             "status": "acknowledged",
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "message": "Message accepted for routing"
         }
     
@@ -298,7 +298,7 @@ class AdaptiveBridgeBuilder:
         logger.info(f"Translating from {source_protocol} to {target_protocol}")
         return {
             "status": "acknowledged",
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "message": f"Translation from {source_protocol} to {target_protocol} acknowledged"
         }
 

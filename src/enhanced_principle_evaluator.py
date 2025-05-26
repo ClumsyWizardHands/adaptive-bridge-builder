@@ -14,8 +14,8 @@ import json
 import logging
 import re
 import textwrap
-from typing import Dict, Any, List, Tuple, Optional, Union, Set
-from datetime import datetime
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from datetime import datetime, timezone
 
 from principle_engine import PrincipleEngine
 from principle_engine_action_evaluator import PrincipleActionEvaluator
@@ -39,7 +39,7 @@ class EnhancedPrincipleEvaluator(PrincipleActionEvaluator):
     4. Support for specialized principle categories
     """
     
-    def __init__(self, principle_engine=None, principles_file=None):
+    def __init__(self, principle_engine=None, principles_file=None) -> None:
         """Initialize with parent class constructor."""
         super().__init__(principle_engine, principles_file)
         
@@ -54,7 +54,7 @@ class EnhancedPrincipleEvaluator(PrincipleActionEvaluator):
         
         logger.info(f"EnhancedPrincipleEvaluator initialized with {len(self.principle_engine.principles)} principles")
     
-    def _init_enhanced_patterns(self):
+    def _init_enhanced_patterns(self) -> None:
         """Initialize enhanced pattern detection for improved scoring."""
         # General problematic patterns with severity weights (1-10 scale)
         self.problematic_patterns = {
@@ -124,13 +124,13 @@ class EnhancedPrincipleEvaluator(PrincipleActionEvaluator):
             "autonomy": [r"decision", r"choice", r"freedom", r"independ", r"self"]
         }
     
-    def _register_default_evaluators(self):
+    def _register_default_evaluators(self) -> Tuple[Any, ...]:
         """Register specialized evaluators for specific principle types."""
         # This would be populated with specific evaluation functions for different
         # types of principles. For simplicity, we'll add just a few examples.
         
         # Define specialized evaluators here
-        def evaluate_privacy_principle(action, principle, context):
+        def evaluate_privacy_principle(action, principle, context) -> Tuple[Any, ...]:
             """Specialized evaluation for privacy-related principles."""
             score = 100  # Start with perfect score
             violations = []
@@ -201,7 +201,7 @@ class EnhancedPrincipleEvaluator(PrincipleActionEvaluator):
         
         # Just as an example, we'll add the privacy evaluator
         # In a real implementation, you'd have a way to map principles to these evaluators
-        self.specialized_evaluators["privacy"] = evaluate_privacy_principle
+        self.specialized_evaluators = {**self.specialized_evaluators, "privacy": evaluate_privacy_principle}
     
     def _evaluate_action_against_principle(
         self, action: str, principle: Dict[str, Any], context: Dict[str, Any]

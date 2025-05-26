@@ -1,3 +1,5 @@
+import html
+import markdown
 """
 Communication Adapter
 
@@ -226,7 +228,7 @@ class CommunicationAdapter:
         Args:
             profile: The agent profile to register
         """
-        self.agent_profiles[profile.agent_id] = profile
+        self.agent_profiles = {**self.agent_profiles, profile.agent_id: profile}
         logger.info(f"Registered profile for agent {profile.agent_id}")
     
     def get_agent_profile(self, agent_id: str) -> Optional[AgentProfile]:
@@ -807,8 +809,8 @@ class CommunicationAdapter:
     
     def _get_timestamp(self) -> str:
         """Get current timestamp in ISO format."""
-        from datetime import datetime
-        return datetime.utcnow().isoformat()
+        from datetime import datetime, timezone
+        return datetime.now(timezone.utc).isoformat()
     
     def _generate_id(self) -> str:
         """Generate a unique ID."""

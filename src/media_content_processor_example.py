@@ -1,3 +1,7 @@
+from PIL import Image
+import html
+import markdown
+import reportlab
 #!/usr/bin/env python3
 """
 Media Content Processor Example
@@ -45,7 +49,7 @@ def setup_media_processor() -> MediaContentProcessor:
     return processor
 
 
-def demonstrate_image_processing(processor: MediaContentProcessor):
+def demonstrate_image_processing(processor: MediaContentProcessor) -> None:
     """Demonstrate image processing capabilities."""
     print("\n=== IMAGE PROCESSING DEMONSTRATION ===")
     
@@ -241,7 +245,7 @@ def adapt_image_for_device(
     return adapted_image
 
 
-def demonstrate_chart_generation(processor: MediaContentProcessor):
+def demonstrate_chart_generation(processor: MediaContentProcessor) -> None:
     """Demonstrate chart generation capabilities."""
     print("\n=== CHART GENERATION DEMONSTRATION ===")
     
@@ -563,7 +567,7 @@ def get_chart_usage_guidance(chart_type: ChartType) -> str:
     return guidance.get(chart_type, "No specific guidance available for this chart type.")
 
 
-def demonstrate_document_generation(processor: MediaContentProcessor):
+def demonstrate_document_generation(processor: MediaContentProcessor) -> None:
     """Demonstrate document generation capabilities."""
     print("\n=== DOCUMENT GENERATION DEMONSTRATION ===")
     
@@ -914,7 +918,7 @@ def get_document_format_guidance(format: DocumentFormat) -> str:
     return guidance.get(format, "No specific guidance available for this format.")
 
 
-def demonstrate_table_content(processor: MediaContentProcessor):
+def demonstrate_table_content(processor: MediaContentProcessor) -> None:
     """Demonstrate structured table data capabilities."""
     print("\n=== TABLE DATA DEMONSTRATION ===")
     
@@ -1101,7 +1105,7 @@ def convert_table_to_format(table: TableContent, format: str) -> str:
         return "Unsupported format"
 
 
-def demonstrate_media_analysis(processor: MediaContentProcessor):
+def demonstrate_media_analysis(processor: MediaContentProcessor) -> None:
     """Demonstrate media content analysis capabilities."""
     print("\n=== MEDIA ANALYSIS DEMONSTRATION ===")
     
@@ -1307,7 +1311,7 @@ def analyze_text_content(content: str) -> AnalysisResult:
     return result
 
 
-def demonstrate_media_selection(processor: MediaContentProcessor):
+def demonstrate_media_selection(processor: MediaContentProcessor) -> None:
     """Demonstrate how the agent decides which media type to use in different scenarios."""
     print("\n=== MEDIA SELECTION DEMONSTRATION ===")
     
@@ -1502,7 +1506,7 @@ def select_media_for_scenario(scenario: Dict[str, Any]) -> List[Tuple[str, str]]
     return results
 
 
-def main():
+def main() -> None:
     """Run all demonstrations."""
     print("MEDIA CONTENT PROCESSOR EXAMPLE DEMONSTRATIONS")
     print("==============================================")

@@ -1,0 +1,52 @@
+{
+  "timestamp": 1748276118,
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "failed": 1,
+    "errors": 1,
+    "skipped": 0,
+    "pass_rate": 0.0
+  },
+  "suites": {
+    "Adaptive Bridge Builder Core Tests": {
+      "summary": {
+        "total": 2,
+        "passed": 0,
+        "failed": 1,
+        "errors": 1,
+        "skipped": 0,
+        "pass_rate": 0.0
+      },
+      "test_cases": [
+        {
+          "test_id": "dd7b0e20-c1c7-4ad9-a06b-98ca3fe96084",
+          "name": "Communication Style Adaptation Test",
+          "status": "FAIL",
+          "duration_ms": 11.013984680175781,
+          "metrics": [
+            {
+              "name": "Formal style detection",
+              "result": "FAIL",
+              "expected": "Successful evaluation",
+              "actual": "Error: 'dict' object has no attribute 'formality'",
+              "details": "Traceback (most recent call last):\n  File \"C:\\Users\\every\\Desktop\\Alex Familiar\\src\\test_framework.py\", line 138, in run\n    passed, expected, actual, details = metric.evaluator(test_data)\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\every\\Desktop\\Alex Familiar\\src\\test_scenarios.py\", line 108, in <lambda>\n    data[\"formal_detected\"].formality.value >= 3,\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'dict' object has no attribute 'formality'\n"
+            },
+            {
+              "name": "Casual style detection",
+              "result": "FAIL",
+              "expected": "Successful evaluation",
+              "actual": "Error: 'dict' object has no attribute 'formality'",
+              "details": "Traceback (most recent call last):\n  File \"C:\\Users\\every\\Desktop\\Alex Familiar\\src\\test_framework.py\", line 138, in run\n    passed, expected, actual, details = metric.evaluator(test_data)\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\every\\Desktop\\Alex Familiar\\src\\test_scenarios.py\", line 118, in <lambda>\n    data[\"casual_detected\"].formality.value <= 2,\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'dict' object has no attribute 'formality'\n"
+            },
+            {
+              "name": "Direct style detection",
+              "result": "FAIL",
+              "expected": "Successful evaluation",
+              "actual": "Error: 'dict' object has no attribute 'directness'",
+              "details": "Traceback (most recent call last):\n  File \"C:\\Users\\every\\Desktop\\Alex Familiar\\src\\test_framework.py\", line 138, in run\n    passed, expected, actual, details = metric.evaluator(test_data)\n                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\every\\Desktop\\Alex Familiar\\src\\test_scenarios.py\", line 128, in <lambda>\n    data[\"direct_detected\"].directness.value >= 3,\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'dict' object has no attribute 'directness'\n"
+            }
+          ],
+          "error": null,
+          "test_data": {
+            "analyzer": 

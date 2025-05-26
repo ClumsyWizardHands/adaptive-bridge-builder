@@ -8,8 +8,9 @@ core principles.
 """
 
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import random
+from typing import Any, Dict
 
 from principle_engine import PrincipleEngine
 from communication_style import CommunicationStyle
@@ -20,18 +21,18 @@ from communication_style_analyzer import (
     MessageDirection
 )
 
-def print_header(title):
+def print_header(title) -> None:
     """Print a formatted section header."""
     print(f"\n{'=' * 80}")
     print(f"  {title}")
     print(f"{'=' * 80}")
 
-def print_json(title, data):
+def print_json(title, data) -> None:
     """Print formatted JSON data."""
     print(f"\n{title}:")
     print(json.dumps(data, indent=2))
 
-def generate_example_message_histories():
+def generate_example_message_histories() -> Dict[str, Any]:
     """Generate several example message histories with different styles."""
     # Create example agents with different communication styles
     
@@ -44,7 +45,7 @@ def generate_example_message_histories():
     ]
     
     # Add timestamps with appropriate intervals
-    base_time = datetime.utcnow() - timedelta(days=7)
+    base_time = datetime.now(timezone.utc) - timedelta(days=7)
     for i, content in enumerate(formal_messages):
         msg_time = base_time + timedelta(hours=i*8)  # 8-hour intervals
         formal_history.add_message(Message(
@@ -62,7 +63,7 @@ def generate_example_message_histories():
     ]
     
     # Add timestamps with frequent intervals (showing quick responses)
-    base_time = datetime.utcnow() - timedelta(days=3)
+    base_time = datetime.now(timezone.utc) - timedelta(days=3)
     for i, content in enumerate(casual_messages):
         msg_time = base_time + timedelta(minutes=i*45)  # 45-min intervals
         casual_history.add_message(Message(
@@ -80,7 +81,7 @@ def generate_example_message_histories():
     ]
     
     # Add timestamps with moderate intervals
-    base_time = datetime.utcnow() - timedelta(days=5)
+    base_time = datetime.now(timezone.utc) - timedelta(days=5)
     for i, content in enumerate(balanced_messages):
         msg_time = base_time + timedelta(hours=i*12)  # 12-hour intervals
         balanced_history.add_message(Message(
@@ -98,7 +99,7 @@ def generate_example_message_histories():
     ]
     
     # Add timestamps with problem-focused intervals
-    base_time = datetime.utcnow() - timedelta(days=2)
+    base_time = datetime.now(timezone.utc) - timedelta(days=2)
     for i, content in enumerate(technical_messages):
         msg_time = base_time + timedelta(hours=i*4)  # 4-hour intervals
         technical_history.add_message(Message(
@@ -114,7 +115,7 @@ def generate_example_message_histories():
         "technical": technical_history
     }
 
-def demonstrate_principle_guided_style_adaptation():
+def demonstrate_principle_guided_style_adaptation() -> None:
     """
     Demonstrate how to adapt communication based on both principles and style.
     
@@ -180,7 +181,7 @@ def demonstrate_principle_guided_style_adaptation():
             "status": "acknowledged",
             "message": "Announcement will be delivered to all users",
             "priority_route": True,  # This would violate balance in mediation
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
     }
     
@@ -254,7 +255,7 @@ def demonstrate_principle_guided_style_adaptation():
                 final_evaluation = principle_engine.evaluate_message(refined_msg_obj)
                 print(f"\nFinal principle score: {final_evaluation['overall_score']:.2f}")
 
-def main():
+def main() -> None:
     """Main demonstration function."""
     # Demonstrate principle-guided style adaptation
     demonstrate_principle_guided_style_adaptation()

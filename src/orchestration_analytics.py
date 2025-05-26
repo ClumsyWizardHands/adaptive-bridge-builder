@@ -1,3 +1,4 @@
+import html
 """
 Orchestration Analytics System
 
@@ -17,7 +18,7 @@ import uuid
 import time
 import logging
 import heapq
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import threading
 import copy
 import math
@@ -151,7 +152,7 @@ class MetricTimeSeries:
     ) -> None:
         """Add a new data point to the time series."""
         if timestamp is None:
-            timestamp = datetime.utcnow().isoformat()
+            timestamp = datetime.now(timezone.utc).isoformat()
             
         self.data_points.append(MetricDataPoint(
             timestamp=timestamp,
@@ -590,8 +591,8 @@ class OrchestrationAnalytics:
                 metadata=metadata or {}
             )
             
-            self.metric_definitions[metric_id] = metric_def
-            self.metric_data[metric_id] = MetricTimeSeries(metric_id=metric_id)
+            self.metric_definitions = {**self.metric_definitions, metric_id: metric_def}
+            self.metric_data = {**self.metric_data, metric_id: MetricTimeSeries(metric_id=metric_id)}
             
             logger.info(f"Registered metric '{name}' with ID {metric_id}")
             
@@ -660,7 +661,7 @@ class OrchestrationAnalytics:
             filtered_points = time_series.data_points
             
             if start_time or end_time:
-                now = datetime.utcnow().isoformat()
+                now = datetime.now(timezone.utc).isoformat()
                 start = start_time or "0001-01-01T00:00:00Z"
                 end = end_time or now
                 
@@ -719,10 +720,10 @@ class OrchestrationAnalytics:
             self._analyze_communication_bottlenecks(bottlenecks)
             
             # Save bottleneck analyses
-            now = datetime.utcnow().isoformat()
+            now = datetime.now(timezone.utc).isoformat()
             for bottleneck in bottlenecks:
                 bottleneck.detected_at = now
-                self.bottleneck_analyses[bottleneck.bottleneck_id] = bottleneck
+                self.bottleneck_analyses = {**self.bottleneck_analyses, bottleneck.bottleneck_id: bottleneck}
                 
             return bottlenecks
     
@@ -817,3 +818,105 @@ class OrchestrationAnalytics:
         dependency_map = {}
         
         # Find tasks blocked by dependencies
+        if self.orchestrator_engine and hasattr(self.orchestrator_engine, 'task_coordinator'):
+            for task_id, task in self.orchestrator_engine.task_coordinator.tasks.items():
+                if task.status == TaskStatus.PENDING:
+                    # Check if task has unmet dependencies
+                    dependencies = task.metadata.get("dependencies", [])
+                    if dependencies:
+                        blocked_tasks.append(task_id)
+                        dependency_map[task_id] = dependencies
+        
+        # Analyze critical path delays
+        if blocked_tasks:
+            critical_delay = 0
+            for task_id in blocked_tasks:
+                # Estimate delay impact
+                critical_delay += 60  # Base delay estimate
+            
+            if critical_delay > 120:  # More than 2 minutes of critical path delay
+                bottleneck_id = f"bottleneck-dependency-{str(uuid.uuid4())[:8]}"
+                
+                bottleneck = BottleneckAnalysis(
+                    bottleneck_id=bottleneck_id,
+                    bottleneck_type=BottleneckType.SEQUENTIAL_DEPENDENCY,
+                    severity=min(1.0, critical_delay / 600),  # 10 minutes = severity 1.0
+                    detected_at="",  # Will be set later
+                    affected_items={
+                        "tasks": blocked_tasks,
+                        "dependencies": list(set(sum(dependency_map.values(), [])))
+                    },
+                    metrics={"critical_delay": critical_delay},
+                    impact_assessment=f"Critical path delayed by {critical_delay} seconds due to sequential dependencies",
+                    root_cause_analysis="Tasks arranged in sequential chain preventing parallelization",
+                    estimated_impact={
+                        "total_delay": critical_delay,
+                        "blocked_tasks": blocked_tasks
+                    }
+                )
+                
+                bottlenecks.append(bottleneck)
+    
+    def _analyze_communication_bottlenecks(self, bottlenecks: List[BottleneckAnalysis]) -> None:
+        """
+        Analyze communication patterns to identify latency and overhead bottlenecks.
+        
+        Args:
+            bottlenecks: List to append identified bottlenecks to
+        """
+        # Check communication metrics
+        comm_volume_metric = None
+        comm_overhead_metric = None
+        
+        # Find communication-related metrics
+        for metric_id, metric_def in self.metric_definitions.items():
+            if metric_def.name == "Communication Volume":
+                comm_volume_metric = metric_id
+            elif metric_def.name == "Coordination Overhead":
+                comm_overhead_metric = metric_id
+        
+        # Analyze communication volume
+        if comm_volume_metric:
+            comm_volume = self.get_metric_value(comm_volume_metric, AnalysisPeriod.HOURLY)
+            if comm_volume and comm_volume > 1000:  # More than 1000 messages per hour
+                bottleneck_id = f"bottleneck-comm-volume-{str(uuid.uuid4())[:8]}"
+                
+                bottleneck = BottleneckAnalysis(
+                    bottleneck_id=bottleneck_id,
+                    bottleneck_type=BottleneckType.COMMUNICATION_LATENCY,
+                    severity=min(1.0, comm_volume / 5000),  # 5000 messages/hour = severity 1.0
+                    detected_at="",  # Will be set later
+                    affected_items={"system": ["communication_subsystem"]},
+                    metrics={"communication_volume": comm_volume},
+                    impact_assessment=f"High communication volume ({comm_volume:.0f} messages/hour) causing system overhead",
+                    root_cause_analysis="Excessive inter-agent communication or inefficient message patterns",
+                    estimated_impact={
+                        "overhead_percentage": min(50, comm_volume / 100),
+                        "latency_increase": comm_volume / 50  # ms
+                    }
+                )
+                
+                bottlenecks.append(bottleneck)
+        
+        # Analyze coordination overhead
+        if comm_overhead_metric:
+            coord_overhead = self.get_metric_value(comm_overhead_metric, AnalysisPeriod.HOURLY)
+            if coord_overhead and coord_overhead > 40:  # More than 40% coordination overhead
+                bottleneck_id = f"bottleneck-coord-overhead-{str(uuid.uuid4())[:8]}"
+                
+                bottleneck = BottleneckAnalysis(
+                    bottleneck_id=bottleneck_id,
+                    bottleneck_type=BottleneckType.COORDINATION_OVERHEAD,
+                    severity=min(1.0, coord_overhead / 60),  # 60% overhead = severity 1.0
+                    detected_at="",  # Will be set later
+                    affected_items={"system": ["orchestration_layer"]},
+                    metrics={"coordination_overhead": coord_overhead},
+                    impact_assessment=f"Coordination overhead at {coord_overhead:.1f}%, reducing effective work time",
+                    root_cause_analysis="Complex task dependencies or inefficient orchestration patterns",
+                    estimated_impact={
+                        "efficiency_loss": coord_overhead,
+                        "effective_capacity": 100 - coord_overhead
+                    }
+                )
+                
+                bottlenecks.append(bottleneck)

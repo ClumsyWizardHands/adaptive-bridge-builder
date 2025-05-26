@@ -1,3 +1,6 @@
+import html
+import markdown
+import semver
 """
 Agent Card
 
@@ -10,7 +13,7 @@ import os
 import uuid
 import time
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional, Set, Tuple, Callable, Union
 import logging
 from enum import Enum
@@ -70,7 +73,7 @@ class AgentCard:
             
         self.card_data: Dict[str, Any] = {}
         self.card_hash: str = ""
-        self._last_updated: datetime = datetime.utcnow()
+        self._last_updated: datetime = datetime.now(timezone.utc)
         
         if card_path:
             self.load_from_file(card_path)
@@ -83,8 +86,8 @@ class AgentCard:
                 "name": "Unnamed Agent",
                 "description": "No description provided",
                 "version": "0.1.0",
-                "created_at": datetime.utcnow().isoformat(),
-                "updated_at": datetime.utcnow().isoformat(),
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "updated_at": datetime.now(timezone.utc).isoformat(),
                 "principles": [],
                 "capabilities": [],
                 "communication": {
@@ -115,7 +118,7 @@ class AgentCard:
             with open(file_path, 'r') as f:
                 self.card_data = json.load(f)
             self._validate_card()
-            self._last_updated = datetime.utcnow()
+            self._last_updated = datetime.now(timezone.utc)
             self._update_hash()
             logger.info(f"Loaded agent card for {self.card_data.get('name', 'unknown agent')}")
         except Exception as e:
@@ -131,7 +134,7 @@ class AgentCard:
         """
         self.card_data = card_data
         self._validate_card()
-        self._last_updated = datetime.utcnow()
+        self._last_updated = datetime.now(timezone.utc)
         self._update_hash()
         logger.info(f"Loaded agent card for {self.card_data.get('name', 'unknown agent')}")
     
@@ -144,7 +147,7 @@ class AgentCard:
         """
         try:
             # Update the updated_at timestamp
-            self.card_data["updated_at"] = datetime.utcnow().isoformat()
+            self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
             
             # Make sure parent directory exists
             os.makedirs(os.path.dirname(os.path.abspath(file_path)), exist_ok=True)
@@ -171,23 +174,23 @@ class AgentCard:
         
         # Ensure created_at and updated_at are present
         if "created_at" not in self.card_data:
-            self.card_data["created_at"] = datetime.utcnow().isoformat()
+            self.card_data = {**self.card_data, "created_at": datetime.now(timezone.utc).isoformat()}
         if "updated_at" not in self.card_data:
-            self.card_data["updated_at"] = datetime.utcnow().isoformat()
+            self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
         
         # Ensure capabilities is a list
         if "capabilities" not in self.card_data:
-            self.card_data["capabilities"] = []
+            self.card_data = {**self.card_data, "capabilities": []}
         elif not isinstance(self.card_data["capabilities"], list):
             raise ValueError("Agent card capabilities must be a list")
         
         # Ensure communication section exists
         if "communication" not in self.card_data:
-            self.card_data["communication"] = {
+            self.card_data = {**self.card_data, "communication": {
                 "protocols": [],
                 "formats": ["json"],
                 "endpoints": []
-            }
+            }}
     
     def _update_hash(self) -> None:
         """
@@ -226,7 +229,7 @@ class AgentCard:
             # Validate semver
             if not semver.VersionInfo.isvalid(new_version):
                 raise ValueError(f"Invalid version format: {new_version}")
-            self.card_data["version"] = new_version
+            self.card_data = {**self.card_data, "version": new_version}
         else:
             # Increment based on specified level
             parsed_version = semver.VersionInfo.parse(current_version)
@@ -237,10 +240,10 @@ class AgentCard:
             else:  # Default to patch
                 new_ver = parsed_version.bump_patch()
                 
-            self.card_data["version"] = str(new_ver)
+            self.card_data = {**self.card_data, "version": str(new_ver)}
         
         # Update updated_at timestamp
-        self.card_data["updated_at"] = datetime.utcnow().isoformat()
+        self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
         self._update_hash()
         
         return self.card_data["version"]
@@ -351,19 +354,19 @@ class AgentCard:
                 # Update existing capability
                 self.card_data["capabilities"][i] = new_capability
                 logger.info(f"Updated capability: {name}")
-                self.card_data["updated_at"] = datetime.utcnow().isoformat()
+                self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
                 self._update_hash()
                 return
         
         # Add new capability
         if "capabilities" not in self.card_data:
-            self.card_data["capabilities"] = []
+            self.card_data = {**self.card_data, "capabilities": []}
             
         self.card_data["capabilities"].append(new_capability)
         logger.info(f"Added new capability: {name}")
         
         # Update timestamp
-        self.card_data["updated_at"] = datetime.utcnow().isoformat()
+        self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
         self._update_hash()
     
     def remove_capability(self, name: str) -> bool:
@@ -380,16 +383,16 @@ class AgentCard:
             return False
             
         initial_count = len(self.card_data["capabilities"])
-        self.card_data["capabilities"] = [
+        self.card_data = {**self.card_data, "capabilities": [
             cap for cap in self.card_data["capabilities"] 
             if cap["name"] != name
-        ]
+        ]}
         
         removed = len(self.card_data["capabilities"]) < initial_count
         
         if removed:
             logger.info(f"Removed capability: {name}")
-            self.card_data["updated_at"] = datetime.utcnow().isoformat()
+            self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
             self._update_hash()
             
         return removed
@@ -423,18 +426,18 @@ class AgentCard:
                     # Update existing principle
                     self.card_data["principles"][i] = new_principle
                     logger.info(f"Updated principle: {name}")
-                    self.card_data["updated_at"] = datetime.utcnow().isoformat()
+                    self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
                     self._update_hash()
                     return
         else:
-            self.card_data["principles"] = []
+            self.card_data = {**self.card_data, "principles": []}
             
         # Add new principle
         self.card_data["principles"].append(new_principle)
         logger.info(f"Added new principle: {name}")
         
         # Update timestamp
-        self.card_data["updated_at"] = datetime.utcnow().isoformat()
+        self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
         self._update_hash()
     
     def get_capability(self, name: str) -> Optional[Dict[str, Any]]:
@@ -497,7 +500,7 @@ class AgentCard:
             authentication: Authentication configuration
         """
         if "communication" not in self.card_data:
-            self.card_data["communication"] = {}
+            self.card_data = {**self.card_data, "communication": {}}
             
         comm = self.card_data["communication"]
         
@@ -514,7 +517,7 @@ class AgentCard:
             comm["authentication"] = authentication
             
         # Update timestamp
-        self.card_data["updated_at"] = datetime.utcnow().isoformat()
+        self.card_data = {**self.card_data, "updated_at": datetime.now(timezone.utc).isoformat()}
         self._update_hash()
         
         logger.info(f"Updated communication configuration")
@@ -618,7 +621,7 @@ class AgentRegistry:
     5. Tracking compatibility and communication history
     """
     
-    def __init__(self, storage_dir: str = "agent_registry"):
+    def __init__(self, storage_dir: str = "agent_registry") -> None:
         """
         Initialize the agent registry.
         
@@ -648,7 +651,7 @@ class AgentRegistry:
                         agent_card = AgentCard(card_path=file_path)
                         agent_id = agent_card.get_agent_id()
                         if agent_id:
-                            self.agents[agent_id] = agent_card
+                            self.agents = {**self.agents, agent_id: agent_card}
                     except Exception as e:
                         logger.warning(f"Failed to load agent card from {file_path}: {str(e)}")
         except Exception as e:
@@ -666,7 +669,7 @@ class AgentRegistry:
             raise ValueError("Agent card missing agent_id")
             
         # Store in memory
-        self.agents[agent_id] = agent_card
+        self.agents = {**self.agents, agent_id: agent_card}
         
         # Store to disk
         file_path = os.path.join(self.storage_dir, f"{agent_id}.json")
@@ -742,7 +745,7 @@ class AgentRegistry:
             return False
             
         # Remove from memory
-        del self.agents[agent_id]
+        self.agents = {k: v for k, v in self.agents.items() if k != agent_id}
         
         # Remove from disk
         file_path = os.path.join(self.storage_dir, f"{agent_id}.json")
@@ -756,7 +759,7 @@ class AgentRegistry:
                 keys_to_remove.append(key)
                 
         for key in keys_to_remove:
-            del self.compatibility_cache[key]
+            self.compatibility_cache = {k: v for k, v in self.compatibility_cache.items() if k != key}
             
         logger.info(f"Unregistered agent: {agent_id}")
         return True
@@ -904,7 +907,7 @@ class AgentRegistry:
                 is_compatible, compatibility_level, details = self.compatibility_cache[cache_key]
             else:
                 is_compatible, compatibility_level, details = my_agent.is_compatible_with(agent_card)
-                self.compatibility_cache[cache_key] = (is_compatible, compatibility_level, details)
+                self.compatibility_cache = {**self.compatibility_cache, cache_key: (is_compatible, compatibility_level, details)}
                 
             # If not compatible or below minimum compatibility level, skip
             if not is_compatible or compatibility_level.value < min_compatibility.value:
@@ -1015,7 +1018,7 @@ class AgentRegistry:
         # Update cache
         for key in list(self.compatibility_cache.keys()):
             if agent_id in key:
-                del self.compatibility_cache[key]
+                self.compatibility_cache = {k: v for k, v in self.compatibility_cache.items() if k != key}
                 
         # Save to disk
         file_path = os.path.join(self.storage_dir, f"{agent_id}.json")

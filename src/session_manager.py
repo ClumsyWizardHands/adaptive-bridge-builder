@@ -11,7 +11,7 @@ import uuid
 import os
 import time
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Set, Tuple, Union
 from enum import Enum
 import heapq
@@ -87,7 +87,7 @@ class Session:
         self.max_message_count = max_message_count
         
         # Session state
-        self.created_at = datetime.utcnow()
+        self.created_at = datetime.now(timezone.utc)
         self.last_active_at = self.created_at
         self.messages: List[Dict[str, Any]] = []
         self.message_relevance: Dict[str, MessageRelevance] = {}  # message_id -> relevance
@@ -138,32 +138,32 @@ class Session:
             
         # Add timestamp if not present
         if "timestamp" not in message:
-            message["timestamp"] = datetime.utcnow().isoformat()
+            message["timestamp"] = datetime.now(timezone.utc).isoformat()
             
         # Add intent if provided
         if intent:
             message["intent"] = intent
-            self.intents.append(intent)
+            self.intents = [*self.intents, intent]
             self.last_intent = intent
             
         # Store the message
-        self.messages.append(message)
+        self.messages = [*self.messages, message]
         
         # Store relevance
-        self.message_relevance[message_id] = relevance
+        self.message_relevance = {**self.message_relevance, message_id: relevance}
         
         # Update session state
-        self.last_active_at = datetime.utcnow()
+        self.last_active_at = datetime.now(timezone.utc)
         self.status = SessionStatus.ACTIVE
         
         # Extract topics from message if available
         if "topics" in message:
             for topic in message["topics"]:
                 if topic not in self.topics:
-                    self.topics.append(topic)
+                    self.topics = [*self.topics, topic]
                     # Initialize topic relevance if new
                     if topic not in self.topic_relevance:
-                        self.topic_relevance[topic] = 0.5  # Default mid-relevance
+                        self.topic_relevance = {**self.topic_relevance, topic: 0.5  # Default mid-relevance}
                         
         # Manage message count if exceeded
         if len(self.messages) > self.max_message_count:
@@ -182,8 +182,8 @@ class Session:
             task_id: The ID of the task
             task_metadata: Metadata about the task
         """
-        self.tasks[task_id] = task_metadata
-        self.last_active_at = datetime.utcnow()
+        self.tasks = {**self.tasks, task_id: task_metadata}
+        self.last_active_at = datetime.now(timezone.utc)
         
     def update_topic_relevance(self, topic: str, relevance_delta: float) -> None:
         """
@@ -194,11 +194,11 @@ class Session:
             relevance_delta: Change in relevance (-1.0 to 1.0)
         """
         if topic not in self.topic_relevance:
-            self.topic_relevance[topic] = 0.5  # Default mid-relevance
+            self.topic_relevance = {**self.topic_relevance, topic: 0.5  # Default mid-relevance}
             
         # Update relevance, keeping within 0.0-1.0 range
         current = self.topic_relevance[topic]
-        self.topic_relevance[topic] = max(0.0, min(1.0, current + relevance_delta))
+        self.topic_relevance = {**self.topic_relevance, topic: max(0.0, min(1.0, current + relevance_delta))}
         
     def update_message_relevance(self, message_id: str, relevance: MessageRelevance) -> bool:
         """
@@ -214,7 +214,7 @@ class Session:
         if message_id not in self.message_relevance:
             return False
             
-        self.message_relevance[message_id] = relevance
+        self.message_relevance = {**self.message_relevance, message_id: relevance}
         return True
         
     def is_expired(self) -> bool:
@@ -225,14 +225,14 @@ class Session:
         if self.max_inactive_time is None:
             return False
             
-        inactive_seconds = (datetime.utcnow() - self.last_active_at).total_seconds()
+        inactive_seconds = (datetime.now(timezone.utc) - self.last_active_at).total_seconds()
         return inactive_seconds > self.max_inactive_time
         
     def activate(self) -> None:
         """Activate an idle session."""
         if self.status == SessionStatus.IDLE:
             self.status = SessionStatus.ACTIVE
-            self.last_active_at = datetime.utcnow()
+            self.last_active_at = datetime.now(timezone.utc)
             logger.info(f"Session {self.session_id} activated")
             
     def idle(self) -> None:
@@ -387,7 +387,7 @@ class Session:
                 
         # Update summary state
         self.summary = summary
-        self.summary_last_updated = datetime.utcnow()
+        self.summary_last_updated = datetime.now(timezone.utc)
         
         return summary
         
@@ -508,9 +508,9 @@ class Session:
         # Remove messages and their relevance entries
         for index in indices_to_remove:
             msg_id = self.messages[index]["id"]
-            del self.messages[index]
+            self.messages = {k: v for k, v in self.messages.items() if k != index}
             if msg_id in self.message_relevance:
-                del self.message_relevance[msg_id]
+                self.message_relevance = {k: v for k, v in self.message_relevance.items() if k != msg_id}
                 
         logger.info(f"Forgot {to_forget} least relevant messages in session {self.session_id}")
 
@@ -562,7 +562,7 @@ class SessionManager:
         self.agent_sessions: Dict[str, List[str]] = {}  # agent_id -> [session_ids]
         
         # Tracking for session cleanup
-        self.last_cleanup = datetime.utcnow()
+        self.last_cleanup = datetime.now(timezone.utc)
         
         # Session retrieval indices
         self._session_topic_index: Dict[str, List[str]] = {}  # topic -> [session_ids]
@@ -621,11 +621,11 @@ class SessionManager:
         )
         
         # Store session
-        self.active_sessions[session_id] = session
+        self.active_sessions = {**self.active_sessions, session_id: session}
         
         # Update agent sessions index
         if initiator_id not in self.agent_sessions:
-            self.agent_sessions[initiator_id] = []
+            self.agent_sessions = {**self.agent_sessions, initiator_id: []}
             
         self.agent_sessions[initiator_id].append(session_id)
         
@@ -659,7 +659,7 @@ class SessionManager:
         session = self._load_session(session_id)
         if session:
             # Add to active sessions
-            self.active_sessions[session_id] = session
+            self.active_sessions = {**self.active_sessions, session_id: session}
             return session
             
         return None
@@ -793,7 +793,7 @@ class SessionManager:
         
         # Remove from active sessions
         if session_id in self.active_sessions:
-            del self.active_sessions[session_id]
+            self.active_sessions = {k: v for k, v in self.active_sessions.items() if k != session_id}
             
         return True
     
@@ -819,7 +819,7 @@ class SessionManager:
         
         # Remove from active sessions
         if session_id in self.active_sessions:
-            del self.active_sessions[session_id]
+            self.active_sessions = {k: v for k, v in self.active_sessions.items() if k != session_id}
             
         # Update indices
         self._update_session_indices(session, remove=True)
@@ -1031,7 +1031,7 @@ class SessionManager:
             Dictionary with cleanup statistics
         """
         # Check if cleanup is due
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         if (now - self.last_cleanup).total_seconds() < self.cleanup_interval:
             return {"expired": 0, "archived": 0, "saved": 0}
             
@@ -1059,7 +1059,7 @@ class SessionManager:
                     archived_count += 1
                     
                     # Remove from active sessions
-                    del self.active_sessions[session_id]
+                    self.active_sessions = {k: v for k, v in self.active_sessions.items() if k != session_id}
                     
                     # Save archived session
                     self._save_session(session)
@@ -1164,12 +1164,12 @@ class SessionManager:
                             continue
                             
                         # Add to active sessions
-                        self.active_sessions[session_id] = session
+                        self.active_sessions = {**self.active_sessions, session_id: session}
                         
                         # Update agent sessions index
                         initiator_id = session.initiator_id
                         if initiator_id not in self.agent_sessions:
-                            self.agent_sessions[initiator_id] = []
+                            self.agent_sessions = {**self.agent_sessions, initiator_id: []}
                             
                         if session_id not in self.agent_sessions[initiator_id]:
                             self.agent_sessions[initiator_id].append(session_id)
@@ -1192,7 +1192,7 @@ class SessionManager:
         # Update topic index
         for topic in session.topics:
             if topic not in self._session_topic_index:
-                self._session_topic_index[topic] = []
+                self._session_topic_index = {**self._session_topic_index, topic: []}
                 
             if remove:
                 if session.session_id in self._session_topic_index[topic]:

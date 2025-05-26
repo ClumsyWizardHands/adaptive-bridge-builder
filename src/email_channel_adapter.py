@@ -1,3 +1,6 @@
+import html
+import markdown
+import mimetypes
 #!/usr/bin/env python3
 """
 Email Channel Adapter
@@ -14,7 +17,7 @@ import mimetypes
 import os
 import smtplib
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from email.message import EmailMessage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -148,8 +151,8 @@ class EmailChannelAdapter(ChannelAdapter):
             email_address: Email address
             entity_id: Entity ID to associate with the email address
         """
-        self.email_to_entity[email_address] = entity_id
-        self.entity_to_email[entity_id] = email_address
+        self.email_to_entity = {**self.email_to_entity, email_address: entity_id}
+        self.entity_to_email = {**self.entity_to_email, entity_id: email_address}
         logger.debug(f"Registered mapping: {email_address} -> {entity_id}")
     
     def get_entity_for_email(self, email_address: str) -> Optional[str]:
@@ -281,7 +284,7 @@ class EmailChannelAdapter(ChannelAdapter):
             email_msg = mixed_msg
             
         # Store the mapping between our message ID and the email message ID
-        self.sent_messages[message.message_id] = {
+        self.sent_messages = {**self.sent_messages, message.message_id: {}
             'email_message_id': email_msg['Message-ID'],
             'recipient': recipient_email,
             'sent_time': datetime.now(),

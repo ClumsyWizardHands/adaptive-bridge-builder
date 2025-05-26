@@ -1,0 +1,194 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Empire Mean Component Schema",
+  "description": "Schema for defining Mean components in the Empire Framework, representing methods, tools, resources, or capabilities used to achieve Ends",
+  "allOf": [
+    {
+      "$ref": "core_empire_component_schema.json"
+    },
+    {
+      "properties": {
+        "component_type": {
+          "const": "Mean",
+          "description": "Specifies this component is a Mean (method/tool/resource)"
+        },
+        "resource_type": {
+          "type": "string",
+          "description": "The nature or classification of this Mean",
+          "examples": [
+            "Skill",
+            "Tool",
+            "Strategy",
+            "Relationship",
+            "Knowledge",
+            "Process"
+          ]
+        },
+        "category": {
+          "type": "string",
+          "description": "Optional domain or area categorization for this Mean",
+          "examples": [
+            "Communication",
+            "Technical",
+            "Financial",
+            "Analytical",
+            "Social",
+            "Strategic"
+          ]
+        },
+        "availability_status": {
+          "type": "string",
+          "description": "Optional current state of access or readiness for this Mean",
+          "enum": [
+            "AVAILABLE",
+            "LIMITED",
+            "ACQUIRED",
+            "NEEDS_DEVELOPMENT"
+          ]
+        },
+        "cost_factor": {
+          "type": "object",
+          "description": "Optional description of the various costs associated with using this Mean",
+          "properties": {
+            "time": {
+              "type": "string",
+              "description": "Time cost assessment"
+            },
+            "financial": {
+              "type": "string",
+              "description": "Financial cost assessment"
+            },
+            "effort": {
+              "type": "string",
+              "description": "Effort/energy cost assessment"
+            },
+            "cognitive_load": {
+              "type": "string",
+              "description": "Mental/cognitive cost assessment"
+            },
+            "opportunity_cost": {
+              "type": "string",
+              "description": "Assessment of what might be given up by using this Mean"
+            }
+          },
+          "examples": [
+            {
+              "time": "High",
+              "financial": "Low",
+              "effort": "Medium",
+              "cognitive_load": "High"
+            }
+          ]
+        },
+        "effectiveness_assessment": {
+          "type": "object",
+          "description": "Optional evaluation of how well this Mean performs",
+          "properties": {
+            "rating_scale_1_to_5": {
+              "type": "integer",
+              "description": "Numerical rating of effectiveness",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "rationale": {
+              "type": "string",
+              "description": "Explanation for the effectiveness rating"
+            },
+            "last_assessed_date": {
+              "type": "string",
+              "format": "date-time",
+              "description": "When this assessment was last updated"
+            },
+            "confidence_level": {
+              "type": "string",
+              "description": "Level of certainty in this assessment",
+              "enum": ["Low", "Medium", "High"]
+            },
+            "effectiveness_contexts": {
+              "type": "array",
+              "description": "Specific contexts where this Mean is most effective",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": ["rating_scale_1_to_5"]
+        },
+        "dependencies": {
+          "type": "array",
+          "description": "Optional list of other components this Mean relies on",
+          "items": {
+            "type": "object",
+            "required": ["component_id", "dependency_type"],
+            "properties": {
+              "component_id": {
+                "type": "string",
+                "description": "ID of the component this Mean depends on"
+              },
+              "dependency_type": {
+                "type": "string",
+                "description": "Nature of the dependency relationship",
+                "examples": [
+                  "PREREQUISITE",
+                  "ENHANCES",
+                  "REQUIRES",
+                  "CONSUMES"
+                ]
+              },
+              "description": {
+                "type": "string",
+                "description": "Optional explanation of how this dependency works"
+              },
+              "criticality": {
+                "type": "string",
+                "description": "How essential this dependency is",
+                "enum": ["Critical", "Important", "Helpful", "Optional"]
+              }
+            }
+          }
+        },
+        "contingency_plans": {
+          "type": "array",
+          "description": "Optional alternative approaches if this Mean becomes unavailable or ineffective",
+          "items": {
+            "type": "object",
+            "required": ["contingency_id", "trigger_description", "plan_description"],
+            "properties": {
+              "contingency_id": {
+                "type": "string",
+                "description": "Unique identifier for this contingency plan"
+              },
+              "trigger_description": {
+                "type": "string",
+                "description": "Conditions that would activate this contingency plan"
+              },
+              "plan_description": {
+                "type": "string",
+                "description": "Details of the alternative approach"
+              },
+              "required_means_ids": {
+                "type": "array",
+                "description": "Optional list of Mean component IDs needed for this contingency",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "readiness_status": {
+                "type": "string",
+                "description": "Current state of preparation for this contingency",
+                "enum": ["Ready", "In Development", "Theoretical", "Tested"]
+              },
+              "estimated_effectiveness": {
+                "type": "number",
+                "description": "Projected effectiveness compared to the primary Mean (0.0-1.0)",
+                "minimum": 0,
+                "maximum": 1
+              }
+            }
+          }
+        }
+      },
+      "required": ["resource_type"]
+    }
+  ]
+}

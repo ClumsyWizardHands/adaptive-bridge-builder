@@ -1,3 +1,7 @@
+from dicttoxml import dicttoxml
+import marshal
+import xml.etree.ElementTree as ET
+import xmltodict
 """
 ApiGatewaySystem - A system allowing agents to connect with virtually any external API or service.
 
@@ -8,6 +12,7 @@ providing a consistent interface regardless of the underlying API details.
 """
 import asyncio
 import datetime
+from datetime import timezone
 import hashlib
 import json
 import logging
@@ -17,7 +22,7 @@ import time
 import uuid
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple, Union, Callable
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 
 # Rate limiting related imports
 from collections import defaultdict, deque
@@ -198,7 +203,7 @@ class RateLimiter:
     It supports per-client, per-endpoint, and global rate limiting.
     """
     
-    def __init__(self, config: RateLimitConfig):
+    def __init__(self, config: RateLimitConfig) -> None:
         """Initialize the rate limiter with configuration"""
         self.config = config
         self.request_windows = defaultdict(deque)  # Maps client_id+endpoint -> timestamps
@@ -240,18 +245,18 @@ class RateLimiter:
         now = time.time()
         if now > self.last_refill[key] + 60:  # Refill every minute
             # Full refill if more than a minute has passed
-            self.tokens[key] = self.config.burst_size
-            self.last_refill[key] = now
+            self.tokens = {**self.tokens, key: self.config.burst_size}
+            self.last_refill = {**self.last_refill, key: now}
         else:
             # Partial refill based on time elapsed
             elapsed = now - self.last_refill[key]
             refill = int(elapsed * (requests_per_minute / 60))
             if refill > 0:
-                self.tokens[key] = min(
+                self.tokens = {**self.tokens, key: min(
                     self.config.burst_size,
                     self.tokens[key] + refill
-                )
-                self.last_refill[key] = now
+                )}
+                self.last_refill = {**self.last_refill, key: now}
         
         # Check if we have tokens available
         if self.tokens[key] > 0:
@@ -273,22 +278,22 @@ class RateLimiter:
         if client_id and endpoint:
             key = self.get_key(client_id, endpoint)
             if key in self.tokens:
-                del self.tokens[key]
-                del self.last_refill[key]
+                self.tokens = {k: v for k, v in self.tokens.items() if k != key}
+                self.last_refill = {k: v for k, v in self.last_refill.items() if k != key}
         elif client_id:
             for key in list(self.tokens.keys()):
                 if key.startswith(f"{client_id}:") or key == client_id:
-                    del self.tokens[key]
-                    del self.last_refill[key]
+                    self.tokens = {k: v for k, v in self.tokens.items() if k != key}
+                    self.last_refill = {k: v for k, v in self.last_refill.items() if k != key}
         elif endpoint:
             for key in list(self.tokens.keys()):
                 if key.endswith(f":{endpoint}") or key == endpoint:
-                    del self.tokens[key]
-                    del self.last_refill[key]
+                    self.tokens = {k: v for k, v in self.tokens.items() if k != key}
+                    self.last_refill = {k: v for k, v in self.last_refill.items() if k != key}
         else:
             # Reset all
-            self.tokens.clear()
-            self.last_refill.clear()
+            self.tokens = {}
+            self.last_refill = {}
 
 
 class CacheManager:
@@ -299,7 +304,7 @@ class CacheManager:
     and various cache key strategies.
     """
     
-    def __init__(self, config: CacheConfig):
+    def __init__(self, config: CacheConfig) -> None:
         """Initialize the cache manager with configuration"""
         self.config = config
         self.cache = {}  # Maps cache key -> (value, expiry, size)
@@ -371,8 +376,8 @@ class CacheManager:
         
         for key in expired_keys:
             _, _, size = self.cache[key]
-            self.cache_size -= size
-            del self.cache[key]
+            self.cache_size = self.cache_size - size
+            self.cache = {k: v for k, v in self.cache.items() if k != key}
         
         # If still over size limit, remove oldest entries
         if self.cache_size > self.config.max_size_mb * 1024 * 1024:
@@ -387,8 +392,8 @@ class CacheManager:
                 if self.cache_size <= self.config.max_size_mb * 1024 * 1024:
                     break
                     
-                self.cache_size -= size
-                del self.cache[key]
+                self.cache_size = self.cache_size - size
+                self.cache = {k: v for k, v in self.cache.items() if k != key}
     
     def get(self, endpoint: str, params: Dict, headers: Dict) -> Tuple[bool, Any, Dict]:
         """
@@ -406,7 +411,7 @@ class CacheManager:
                 - Extended headers with cache HIT/MISS info
         """
         if not self.config.enabled:
-            self.misses += 1
+            self.misses = self.misses + 1
             return False, None, {"X-Cache": "DISABLED"}
             
         cache_key = self._get_cache_key(endpoint, params, headers)
@@ -417,15 +422,15 @@ class CacheManager:
             
             # Check if expired
             if expiry < time.time():
-                self.misses += 1
+                self.misses = self.misses + 1
                 return False, None, {"X-Cache": "EXPIRED"}
                 
             # Valid cache hit
-            self.hits += 1
+            self.hits = self.hits + 1
             return True, self._deserialize(data), {"X-Cache": "HIT"}
         
         # Cache miss
-        self.misses += 1
+        self.misses = self.misses + 1
         return False, None, {"X-Cache": "MISS"}
     
     def set(self, endpoint: str, params: Dict, headers: Dict, response: Any) -> None:
@@ -463,14 +468,14 @@ class CacheManager:
         data_size = len(serialized_data)
         
         # Store in cache with expiry time
-        self.cache[cache_key] = (
+        self.cache = {**self.cache, cache_key: (
             serialized_data,
             time.time() + ttl,
             data_size
-        )
+        )}
         
         # Update cache size
-        self.cache_size += data_size
+        self.cache_size = self.cache_size + data_size
         
         # Clean up if needed
         self._cleanup_cache()
@@ -488,21 +493,21 @@ class CacheManager:
             cache_key = self._get_cache_key(endpoint, params, {})
             if cache_key in self.cache:
                 _, _, size = self.cache[cache_key]
-                self.cache_size -= size
-                del self.cache[cache_key]
+                self.cache_size = self.cache_size - size
+                self.cache = {k: v for k, v in self.cache.items() if k != cache_key}
         elif endpoint:
             # Invalidate all entries for an endpoint
             keys_to_remove = []
             for key, (_, _, size) in self.cache.items():
                 if key.startswith(f"{endpoint}:"):
-                    self.cache_size -= size
+                    self.cache_size = self.cache_size - size
                     keys_to_remove.append(key)
                     
             for key in keys_to_remove:
-                del self.cache[key]
+                self.cache = {k: v for k, v in self.cache.items() if k != key}
         else:
             # Invalidate entire cache
-            self.cache.clear()
+            self.cache = {}
             self.cache_size = 0
     
     def get_stats(self) -> Dict[str, Any]:
@@ -531,7 +536,7 @@ class CircuitBreaker:
     OPEN = "OPEN"           # Service considered unavailable, fast fail
     HALF_OPEN = "HALF_OPEN" # Testing if service is back, limited requests
     
-    def __init__(self, config: ErrorHandlingConfig):
+    def __init__(self, config: ErrorHandlingConfig) -> None:
         """Initialize the circuit breaker with configuration"""
         self.config = config
         self.state = self.CLOSED
@@ -575,7 +580,7 @@ class CircuitBreaker:
             
             # Success - move toward closed state
             if self.state == self.HALF_OPEN:
-                self.success_count += 1
+                self.success_count = self.success_count + 1
                 if self.success_count >= 2:  # Need 2 successful requests to close
                     self.state = self.CLOSED
                     self.failure_count = 0
@@ -586,7 +591,7 @@ class CircuitBreaker:
             
         except Exception as e:
             # Failure - record and possibly open circuit
-            self.failure_count += 1
+            self.failure_count = self.failure_count + 1
             self.last_failure_time = time.time()
             
             if self.state == self.HALF_OPEN or self.failure_count >= self.config.circuit_breaker_threshold:
@@ -639,6 +644,9 @@ class AuditLogger:
             "password", "api_key", "secret", "token", "auth", "key", "credential",
             "access_token", "refresh_token", "authorization", "ssn", "credit_card"
         ]
+        
+        # Import logging for internal use
+        import logging
         
         # Set up logger
         self.logger = logging.getLogger("api_gateway_audit")
@@ -756,7 +764,7 @@ class DataTransformer:
     field renaming, and custom transformations.
     """
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the data transformer"""
         # Registry of built-in transformers
         self.transformers = {
@@ -779,7 +787,7 @@ class DataTransformer:
     
     def register_transformer(self, name: str, transformer_func: Callable) -> None:
         """Register a custom transformer function"""
-        self.custom_transformers[name] = transformer_func
+        self.custom_transformers = {**self.custom_transformers, name: transformer_func}
     
     def transform(
         self,
@@ -1018,7 +1026,7 @@ class DataTransformer:
     
     def _flatten_nested(self, data: Dict, delimiter: str = ".", **kwargs) -> Dict:
         """Flatten nested dictionaries"""
-        def _flatten(d, parent_key=""):
+        def _flatten(d, parent_key="") -> Dict[Any, Any]:
             items = []
             for k, v in d.items():
                 new_key = f"{parent_key}{delimiter}{k}" if parent_key else k
@@ -1060,7 +1068,7 @@ class AuthenticationManager:
     Supports API keys, basic auth, OAuth, JWT, etc.
     """
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the authentication manager"""
         # Registry of auth handlers
         self.auth_handlers = {
@@ -1260,3 +1268,429 @@ class ApiGatewaySystem:
         self.rate_limiters: Dict[str, RateLimiter] = {}
         self.cache_managers: Dict[str, CacheManager] = {}
         self.circuit_breakers: Dict[str, Dict[str, CircuitBreaker]] = {}
+        
+    def register_api(self, api_config: ApiConfig) -> None:
+        """
+        Register an API with the gateway.
+        
+        Args:
+            api_config: Configuration for the API to register
+        """
+        # Store the API configuration
+        self.apis = {**self.apis, api_config.name: api_config}
+        
+        # Initialize rate limiter if configured
+        if api_config.global_rate_limit:
+            self.rate_limiters = {**self.rate_limiters, api_config.name: RateLimiter(api_config.global_rate_limit)}
+            
+        # Initialize cache manager if configured
+        if api_config.global_cache_config:
+            self.cache_managers = {**self.cache_managers, api_config.name: CacheManager(api_config.global_cache_config)}
+            
+        # Initialize circuit breakers for each endpoint
+        self.circuit_breakers = {**self.circuit_breakers, api_config.name: {}}
+        for endpoint_name, endpoint_config in api_config.endpoints.items():
+            error_config = endpoint_config.error_config or api_config.global_error_config
+            if error_config and error_config.circuit_breaker_enabled:
+                self.circuit_breakers[api_config.name][endpoint_name] = CircuitBreaker(error_config)
+                
+        # Log the registration using AuditLogger
+        entry = AuditLogEntry(
+            timestamp=datetime.datetime.now(timezone.utc),
+            api_name=api_config.name,
+            endpoint_name="",
+            request_id=str(uuid.uuid4()),
+            client_id="system",
+            request_method=None,
+            response_status=200
+        )
+        self.logger.log(entry)
+    
+    def unregister_api(self, api_name: str) -> bool:
+        """
+        Unregister an API from the gateway.
+        
+        Args:
+            api_name: Name of the API to unregister
+            
+        Returns:
+            True if the API was unregistered, False if it wasn't found
+        """
+        if api_name not in self.apis:
+            return False
+            
+        # Remove API configuration
+        self.apis = {k: v for k, v in self.apis.items() if k != api_name}
+        
+        # Remove related components
+        if api_name in self.rate_limiters:
+            self.rate_limiters = {k: v for k, v in self.rate_limiters.items() if k != api_name}
+            
+        if api_name in self.cache_managers:
+            self.cache_managers = {k: v for k, v in self.cache_managers.items() if k != api_name}
+            
+        if api_name in self.circuit_breakers:
+            self.circuit_breakers = {k: v for k, v in self.circuit_breakers.items() if k != api_name}
+            
+        # Log the unregistration using AuditLogger
+        entry = AuditLogEntry(
+            timestamp=datetime.datetime.now(timezone.utc),
+            api_name=api_name,
+            endpoint_name="",
+            request_id=str(uuid.uuid4()),
+            client_id="system",
+            request_method=None,
+            response_status=200
+        )
+        self.logger.log(entry)
+        return True
+    
+    def list_apis(self) -> List[Dict[str, Any]]:
+        """
+        Get a list of registered APIs.
+        
+        Returns:
+            List of API summary dictionaries
+        """
+        return [
+            {
+                "name": api.name,
+                "base_url": api.base_url,
+                "description": api.description,
+                "version": api.version,
+                "endpoint_count": len(api.endpoints),
+                "tags": api.tags
+            }
+            for api in self.apis.values()
+        ]
+    
+    def get_api_details(self, api_name: str) -> Optional[Dict[str, Any]]:
+        """
+        Get detailed information about a registered API.
+        
+        Args:
+            api_name: Name of the API
+            
+        Returns:
+            API details dictionary or None if not found
+        """
+        if api_name not in self.apis:
+            return None
+            
+        api = self.apis[api_name]
+        
+        # Create a detailed view of the API
+        return {
+            "name": api.name,
+            "base_url": api.base_url,
+            "description": api.description,
+            "version": api.version,
+            "authentication": api.auth.auth_type.value,
+            "endpoints": {
+                name: {
+                    "url": endpoint.url,
+                    "method": endpoint.method.value,
+                    "description": endpoint.description
+                }
+                for name, endpoint in api.endpoints.items()
+            },
+            "rate_limited": api.global_rate_limit is not None,
+            "caching_enabled": api.global_cache_config is not None,
+            "tags": api.tags,
+            "contact_info": api.contact_info
+        }
+    
+    async def call_endpoint(
+        self,
+        api_name: str,
+        endpoint_name: str,
+        client_id: str,
+        parameters: Dict[str, Any] = None,
+        body: Any = None,
+        headers: Dict[str, str] = None,
+        timeout_ms: Optional[int] = None,
+        return_raw_response: bool = False
+    ) -> Dict[str, Any]:
+        """
+        Call an API endpoint through the gateway.
+        
+        Args:
+            api_name: Name of the API
+            endpoint_name: Name of the endpoint to call
+            client_id: ID of the client making the request
+            parameters: Request parameters (query params or path params)
+            body: Request body for POST/PUT/PATCH
+            headers: Additional request headers
+            timeout_ms: Request timeout in milliseconds
+            return_raw_response: Whether to return the raw response
+            
+        Returns:
+            Dictionary with response data and metadata
+        """
+        # Get API and endpoint configurations
+        if api_name not in self.apis:
+            return {"status": 404, "error": f"API not found: {api_name}"}
+            
+        api = self.apis[api_name]
+        
+        if endpoint_name not in api.endpoints:
+            return {"status": 404, "error": f"Endpoint not found: {endpoint_name}"}
+            
+        endpoint = api.endpoints[endpoint_name]
+        
+        # Initialize parameters and headers
+        params = parameters or {}
+        req_headers = headers or {}
+        
+        # Merge API default headers with request headers
+        all_headers = api.headers.copy()
+        all_headers.update(req_headers)
+        
+        # Create a request ID
+        request_id = str(uuid.uuid4())
+        
+        # Start audit log entry
+        audit_entry = AuditLogEntry(
+            timestamp=datetime.datetime.now(timezone.utc),
+            api_name=api_name,
+            endpoint_name=endpoint_name,
+            request_id=request_id,
+            client_id=client_id,
+            request_method=endpoint.method,
+            request_params=params,
+            request_body=body
+        )
+        
+        # Check rate limits
+        rate_limited = False
+        if api_name in self.rate_limiters:
+            allowed, wait_time = await self.rate_limiters[api_name].check_rate_limit(
+                client_id, endpoint_name
+            )
+            
+            if not allowed:
+                rate_limited = True
+                audit_entry.rate_limited = True
+                audit_entry.response_status = 429
+                audit_entry.error_message = f"Rate limit exceeded. Try again in {wait_time} seconds."
+                self.logger.log(audit_entry)
+                
+                return {
+                    "status": 429,
+                    "error": f"Rate limit exceeded. Try again in {wait_time} seconds.",
+                    "request_id": request_id
+                }
+        
+        # Check cache (GET requests only)
+        cache_hit = False
+        if endpoint.method == HttpMethod.GET and api_name in self.cache_managers:
+            # Use endpoint cache config if available, otherwise use API global config
+            cache_config = endpoint.cache_config or api.global_cache_config
+            
+            if cache_config and cache_config.enabled:
+                hit, cached_data, cache_headers = self.cache_managers[api_name].get(
+                    endpoint_name, params, all_headers
+                )
+                
+                if hit:
+                    cache_hit = True
+                    audit_entry.cache_hit = True
+                    audit_entry.response_status = 200
+                    audit_entry.response_body = cached_data
+                    self.logger.log(audit_entry)
+                    
+                    return {
+                        "status": 200,
+                        "data": cached_data,
+                        "headers": cache_headers,
+                        "cache_hit": True,
+                        "request_id": request_id
+                    }
+        
+        # Apply authentication
+        try:
+            auth_headers = await self.auth_manager.authenticate(
+                endpoint.auth, all_headers, params
+            )
+            all_headers.update(auth_headers)
+        except Exception as e:
+            audit_entry.error_message = f"Authentication error: {str(e)}"
+            audit_entry.response_status = 401
+            self.logger.log(audit_entry)
+            
+            return {
+                "status": 401,
+                "error": f"Authentication error: {str(e)}",
+                "request_id": request_id
+            }
+        
+        # Build the full URL
+        url = api.base_url
+        if not url.endswith("/") and not endpoint.url.startswith("/"):
+            url += "/"
+        url += endpoint.url
+        
+        # Replace path parameters in URL
+        for key, value in params.items():
+            placeholder = f"{{{key}}}"
+            if placeholder in url:
+                url = url.replace(placeholder, str(value))
+                # Remove used parameters
+                params = {k: v for k, v in params.items() if k != key}
+        
+        # Transform request data if needed
+        transformed = False
+        transformed_body = body
+        
+        if body and endpoint.transform_request:
+            try:
+                transformed_body = endpoint.transform_request(body)
+                transformed = True
+            except Exception as e:
+                audit_entry.error_message = f"Request transformation error: {str(e)}"
+                audit_entry.response_status = 400
+                self.logger.log(audit_entry)
+                
+                return {
+                    "status": 400,
+                    "error": f"Request transformation error: {str(e)}",
+                    "request_id": request_id
+                }
+        
+        # Record request URL and headers
+        audit_entry.request_url = url
+        audit_entry.request_headers = all_headers
+        
+        # Use circuit breaker if enabled
+        circuit_breaker = None
+        if (api_name in self.circuit_breakers and
+                endpoint_name in self.circuit_breakers[api_name]):
+            circuit_breaker = self.circuit_breakers[api_name][endpoint_name]
+        
+        # Execute the request
+        start_time = time.time()
+        
+        try:
+            import aiohttp
+            
+            # Prepare for the HTTP request
+            timeout = aiohttp.ClientTimeout(
+                total=(timeout_ms or endpoint.timeout_ms or self.default_timeout_ms) / 1000
+            )
+            
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                # Select HTTP method
+                http_method = None
+                if endpoint.method == HttpMethod.GET:
+                    http_method = session.get
+                elif endpoint.method == HttpMethod.POST:
+                    http_method = session.post
+                elif endpoint.method == HttpMethod.PUT:
+                    http_method = session.put
+                elif endpoint.method == HttpMethod.DELETE:
+                    http_method = session.delete
+                elif endpoint.method == HttpMethod.PATCH:
+                    http_method = session.patch
+                elif endpoint.method == HttpMethod.HEAD:
+                    http_method = session.head
+                elif endpoint.method == HttpMethod.OPTIONS:
+                    http_method = session.options
+                
+                # Execute the request (with circuit breaker if available)
+                if circuit_breaker:
+                    response = await circuit_breaker.execute(
+                        http_method, url, params=params, headers=all_headers, json=transformed_body
+                    )
+                else:
+                    response = await http_method(
+                        url, params=params, headers=all_headers, json=transformed_body
+                    )
+                
+                # Record response timing
+                request_time = time.time() - start_time
+                audit_entry.latency_ms = int(request_time * 1000)
+                
+                # Process response
+                status = response.status
+                response_headers = dict(response.headers)
+                
+                # Get response data based on content type
+                content_type = response_headers.get("Content-Type", "")
+                
+                if "application/json" in content_type:
+                    data = await response.json()
+                elif "text/" in content_type:
+                    data = await response.text()
+                else:
+                    # Binary content or other
+                    if return_raw_response:
+                        data = await response.read()
+                    else:
+                        data = await response.text()
+                
+                # Transform response data if needed
+                if status < 400 and endpoint.transform_response:
+                    try:
+                        data = endpoint.transform_response(data)
+                        transformed = True
+                    except Exception as e:
+                        # Update audit entry with the transformation error
+                        audit_entry.error_message = f"Response transformation error: {str(e)}"
+                        status = 500
+                        data = {"error": f"Response transformation error: {str(e)}"}
+                
+                # Update audit entry
+                audit_entry.transformed = transformed
+                audit_entry.response_status = status
+                audit_entry.response_headers = response_headers
+                audit_entry.response_body = data
+                
+                # Cache successful GET responses
+                if (endpoint.method == HttpMethod.GET and
+                        status < 400 and
+                        api_name in self.cache_managers and
+                        (endpoint.cache_config or api.global_cache_config)):
+                    self.cache_managers[api_name].set(
+                        endpoint_name, params, response_headers, data
+                    )
+                
+                # Log the request
+                self.logger.log(audit_entry)
+                
+                # Return the response
+                if status >= 400:
+                    return {
+                        "status": status,
+                        "error": data,
+                        "headers": response_headers,
+                        "request_id": request_id,
+                        "latency_ms": audit_entry.latency_ms
+                    }
+                else:
+                    return {
+                        "status": status,
+                        "data": data,
+                        "headers": response_headers,
+                        "request_id": request_id,
+                        "latency_ms": audit_entry.latency_ms,
+                        "cache_hit": cache_hit,
+                        "transformed": transformed
+                    }
+                    
+        except Exception as e:
+            # Handle errors
+            request_time = time.time() - start_time
+            error_message = str(e)
+            
+            # Update audit entry
+            audit_entry.latency_ms = int(request_time * 1000)
+            audit_entry.error_message = error_message
+            audit_entry.response_status = 500
+            self.logger.log(audit_entry)
+            
+            return {
+                "status": 500,
+                "error": error_message,
+                "request_id": request_id,
+                "latency_ms": audit_entry.latency_ms
+            }

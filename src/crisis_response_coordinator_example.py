@@ -9,7 +9,7 @@ requiring immediate, coordinated response.
 
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional
 import uuid
 
@@ -220,7 +220,7 @@ def simulate_data_breach_crisis(coordinator: CrisisResponseCoordinator) -> Crisi
         The created Crisis instance
     """
     # Initialize crisis
-    current_time = datetime.utcnow()
+    current_time = datetime.now(timezone.utc)
     crisis = coordinator.register_crisis(
         name="Customer Database Security Breach",
         description=(
@@ -300,7 +300,7 @@ def simulate_data_breach_crisis(coordinator: CrisisResponseCoordinator) -> Crisi
     return crisis
 
 
-def demonstrate_crisis_response(coordinator: CrisisResponseCoordinator, crisis: Crisis):
+def demonstrate_crisis_response(coordinator: CrisisResponseCoordinator, crisis: Crisis) -> None:
     """
     Demonstrate the crisis response process, showing how the coordinator handles the data breach.
     
@@ -529,7 +529,7 @@ def demonstrate_crisis_response(coordinator: CrisisResponseCoordinator, crisis: 
     logger.info("  • Flexible decision-making process with multiple options maintained")
 
 
-def main():
+def main() -> None:
     """Run the crisis response coordinator example."""
     # Set up the crisis coordinator with specialized agents
     coordinator = setup_crisis_coordinator()

@@ -10,7 +10,7 @@ by systematically evaluating past performance and implementing targeted improvem
 import json
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Tuple, Optional, Set, Union
 from enum import Enum, auto
 from dataclasses import dataclass, field
@@ -303,9 +303,9 @@ class ContinuousEvolutionSystem:
         self.growth_milestones: List[GrowthMilestone] = []
         
         # Reflection schedule
-        self.last_reflection = datetime.utcnow() - timedelta(days=1)  # Start with reflection due
+        self.last_reflection = datetime.now(timezone.utc) - timedelta(days=1)  # Start with reflection due
         self.reflection_frequency = timedelta(hours=6)  # Reflect every 6 hours
-        self.last_deep_reflection = datetime.utcnow() - timedelta(days=7)  # Start with deep reflection due
+        self.last_deep_reflection = datetime.now(timezone.utc) - timedelta(days=7)  # Start with deep reflection due
         self.deep_reflection_frequency = timedelta(days=7)  # Deep reflect weekly
         
         # Load saved data
@@ -322,7 +322,7 @@ class ContinuousEvolutionSystem:
                 with open(patterns_file, 'r') as f:
                     patterns_data = json.load(f)
                     for pattern_id, pattern_data in patterns_data.items():
-                        self.orchestration_patterns[pattern_id] = OrchestrationPattern.from_dict(pattern_data)
+                        self.orchestration_patterns = {**self.orchestration_patterns, pattern_id: OrchestrationPattern.from_dict(pattern_data)}
             
             # Load capabilities
             capabilities_file = os.path.join(self.evolution_data_dir, "capabilities.json")
@@ -330,7 +330,7 @@ class ContinuousEvolutionSystem:
                 with open(capabilities_file, 'r') as f:
                     capabilities_data = json.load(f)
                     for capability_id, capability_data in capabilities_data.items():
-                        self.capabilities[capability_id] = CapabilityEvolution.from_dict(capability_data)
+                        self.capabilities = {**self.capabilities, capability_id: CapabilityEvolution.from_dict(capability_data)}
             
             # Load growth milestones
             milestones_file = os.path.join(self.evolution_data_dir, "growth_milestones.json")
@@ -338,7 +338,7 @@ class ContinuousEvolutionSystem:
                 with open(milestones_file, 'r') as f:
                     milestones_data = json.load(f)
                     for milestone_data in milestones_data:
-                        self.growth_milestones.append(GrowthMilestone.from_dict(milestone_data))
+                        self.growth_milestones = [*self.growth_milestones, GrowthMilestone.from_dict(milestone_data)]
             
             # Load reflection timestamps
             reflection_file = os.path.join(self.evolution_data_dir, "reflection_schedule.json")
@@ -346,10 +346,10 @@ class ContinuousEvolutionSystem:
                 with open(reflection_file, 'r') as f:
                     reflection_data = json.load(f)
                     self.last_reflection = datetime.fromisoformat(reflection_data.get(
-                        "last_reflection", datetime.utcnow().isoformat()
+                        "last_reflection", datetime.now(timezone.utc).isoformat()
                     ))
                     self.last_deep_reflection = datetime.fromisoformat(reflection_data.get(
-                        "last_deep_reflection", datetime.utcnow().isoformat()
+                        "last_deep_reflection", datetime.now(timezone.utc).isoformat()
                     ))
             
             logger.info(f"Loaded {len(self.orchestration_patterns)} orchestration patterns, "
@@ -445,7 +445,7 @@ class ContinuousEvolutionSystem:
             
             # Update pattern statistics
             pattern.occurrences += 1
-            pattern.last_observed = datetime.utcnow().isoformat()
+            pattern.last_observed = datetime.now(timezone.utc).isoformat()
             
             # Update outcome counts
             if outcome == OutcomeType.SUCCESSFUL:
@@ -555,7 +555,7 @@ class ContinuousEvolutionSystem:
                     "success_rate": pattern.success_rate
                 }
             
-            self.orchestration_patterns[pattern_id] = pattern
+            self.orchestration_patterns = {**self.orchestration_patterns, pattern_id: pattern}
         
         # Add corresponding entry to the learning system
         dimensions = [
@@ -585,7 +585,7 @@ class ContinuousEvolutionSystem:
         self._save_evolution_data()
         
         # Check if reflection is due
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         if now - self.last_reflection >= self.reflection_frequency:
             self.reflect_on_orchestration()
         
@@ -629,7 +629,7 @@ class ContinuousEvolutionSystem:
         
         # Create and add the entry
         entry = GrowthJournalEntry(
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             entry_type="orchestration",
             dimension="ORCHESTRATION",
             content=content,
@@ -653,7 +653,7 @@ class ContinuousEvolutionSystem:
         logger.info("Performing orchestration reflection")
         
         # Update reflection timestamp
-        self.last_reflection = datetime.utcnow()
+        self.last_reflection = datetime.now(timezone.utc)
         
         insights = []
         

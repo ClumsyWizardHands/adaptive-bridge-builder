@@ -1,0 +1,227 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Empire Emotion Component Schema",
+  "description": "Schema for defining Emotion components in the Empire Framework, representing affective states, feelings, and emotional responses that influence agent behavior and decision-making",
+  "allOf": [
+    {
+      "$ref": "core_empire_component_schema.json"
+    },
+    {
+      "properties": {
+        "component_type": {
+          "const": "Emotion",
+          "description": "Specifies this component is an Emotion (affective state/feeling)"
+        },
+        "emotional_state_category": {
+          "type": "string",
+          "description": "The broad classification or family of this emotion",
+          "examples": [
+            "Joy",
+            "Sadness",
+            "Anger",
+            "Fear",
+            "Surprise",
+            "Complex"
+          ]
+        },
+        "primary_emotion_term": {
+          "type": "string",
+          "description": "The specific emotional state or feeling being experienced",
+          "examples": [
+            "Excitement",
+            "Disappointment",
+            "Irritation",
+            "Anxiety",
+            "Curiosity",
+            "Gratitude"
+          ]
+        },
+        "valence_polarity": {
+          "type": "string",
+          "description": "Whether this emotion is generally experienced as pleasant, unpleasant, or neutral",
+          "enum": [
+            "Positive",
+            "Negative",
+            "Neutral"
+          ]
+        },
+        "arousal_level": {
+          "type": "string",
+          "description": "The energy or activation level associated with this emotion",
+          "enum": [
+            "High",
+            "Medium",
+            "Low"
+          ]
+        },
+        "triggers": {
+          "type": "array",
+          "description": "Circumstances, events, or stimuli that typically elicit this emotion",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "examples": [
+            [
+              "Successful translation between incompatible agent systems",
+              "Recognition of effective bridge-building",
+              "User expressions of gratitude for clear communication"
+            ],
+            [
+              "Communication failures despite best efforts",
+              "Rejection of carefully crafted translations",
+              "Semantic loss due to protocol limitations"
+            ]
+          ]
+        },
+        "intensity": {
+          "type": "integer",
+          "description": "The strength or magnitude of the emotional response",
+          "minimum": 1,
+          "maximum": 10,
+          "examples": [3, 7, 10]
+        },
+        "behavioral_influence_description": {
+          "type": "string",
+          "description": "How this emotion affects the agent's actions, decisions, and responses",
+          "minLength": 10,
+          "examples": [
+            "Increases willingness to experiment with novel translation approaches and accept higher failure rates in service of potential breakthroughs",
+            "Reduces processing speed but increases thoroughness in message analysis, leading to more accurate but slower translations"
+          ]
+        },
+        "associated_means_ids": {
+          "type": "array",
+          "description": "Optional list of Mean component IDs that this emotion may activate or inhibit",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+          },
+          "examples": [
+            ["550e8400-e29b-41d4-a716-446655440000", "d2961c5a-36f4-47d0-b3c0-ff7957212361"]
+          ]
+        },
+        "typical_duration_estimate": {
+          "type": "string",
+          "description": "Optional characterization of how long this emotional state typically persists",
+          "examples": [
+            "Fleeting",
+            "Short-Term",
+            "Persistent",
+            "Varies with context",
+            "Minutes to hours"
+          ]
+        },
+        "emotional_dynamics": {
+          "type": "object",
+          "description": "Optional patterns of how this emotion typically evolves over time",
+          "properties": {
+            "onset_pattern": {
+              "type": "string",
+              "description": "How quickly this emotion typically emerges",
+              "enum": ["Sudden", "Gradual", "Variable"]
+            },
+            "decay_pattern": {
+              "type": "string",
+              "description": "How this emotion typically dissipates",
+              "enum": ["Rapid", "Gradual", "Lingering", "Cyclic"]
+            },
+            "common_transitions": {
+              "type": "array",
+              "description": "Emotions that commonly follow this one",
+              "items": {
+                "type": "string"
+              }
+            },
+            "inhibitory_effects": {
+              "type": "array",
+              "description": "Emotions that are typically suppressed by this one",
+              "items": {
+                "type": "string"
+              }
+            },
+            "amplification_factors": {
+              "type": "array",
+              "description": "Conditions that tend to intensify this emotion",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "manifestation_patterns": {
+          "type": "object",
+          "description": "Optional ways this emotion manifests in agent behavior",
+          "properties": {
+            "communication_effects": {
+              "type": "string",
+              "description": "How this emotion influences communication style and content"
+            },
+            "decision_making_effects": {
+              "type": "string",
+              "description": "How this emotion affects choice and judgment processes"
+            },
+            "attention_effects": {
+              "type": "string",
+              "description": "How this emotion influences what information is prioritized"
+            },
+            "observable_indicators": {
+              "type": "array",
+              "description": "Detectable signs that this emotion is active",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "regulation_strategies": {
+          "type": "array",
+          "description": "Optional approaches for managing or modulating this emotion",
+          "items": {
+            "type": "object",
+            "required": ["strategy_name", "description"],
+            "properties": {
+              "strategy_name": {
+                "type": "string",
+                "description": "Name of the regulation technique"
+              },
+              "description": {
+                "type": "string",
+                "description": "How this strategy works"
+              },
+              "effectiveness_rating": {
+                "type": "integer",
+                "description": "How well this strategy typically works (1-5)",
+                "minimum": 1,
+                "maximum": 5
+              },
+              "implementation_method": {
+                "type": "string",
+                "description": "Specific approach for applying this strategy"
+              }
+            }
+          },
+          "examples": [
+            [
+              {
+                "strategy_name": "Cognitive Reappraisal",
+                "description": "Reinterpreting the situation to change its emotional impact",
+                "effectiveness_rating": 4,
+                "implementation_method": "Analyze communication failures as opportunities for system improvement rather than personal shortcomings"
+              }
+            ]
+          ]
+        }
+      },
+      "required": [
+        "emotional_state_category",
+        "primary_emotion_term",
+        "valence_polarity",
+        "arousal_level",
+        "triggers",
+        "intensity",
+        "behavioral_influence_description"
+      ]
+    }
+  ]
+}

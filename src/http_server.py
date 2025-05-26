@@ -11,6 +11,7 @@ import logging
 import os
 import traceback
 from flask import Flask, request, jsonify, make_response
+from typing import Any, Tuple
 
 # Configure logging
 logging.basicConfig(
@@ -26,7 +27,7 @@ app = Flask(__name__)
 agent = None
 PORT = int(os.environ.get("BRIDGE_PORT", 8080))
 
-def initialize_agent():
+def initialize_agent() -> int:
     """Initialize the agent safely."""
     global agent
     
@@ -45,7 +46,7 @@ def initialize_agent():
         return False
 
 @app.route("/", methods=["GET"])
-def home():
+def home() -> None:
     """Root endpoint with basic information."""
     return jsonify({
         "name": "Adaptive Bridge Builder Agent",
@@ -60,7 +61,7 @@ def home():
     })
 
 @app.route("/agent-card", methods=["GET"])
-def get_agent_card():
+def get_agent_card() -> Tuple[Any, ...]:
     """Endpoint to get the agent card."""
     try:
         logger.info("Agent card requested")
@@ -101,7 +102,7 @@ def get_agent_card():
         return jsonify({"error": str(e)}), 500
 
 @app.route("/process", methods=["GET", "POST"])
-def process_message():
+def process_message() -> Tuple[Any, ...]:
     """Endpoint to process JSON-RPC messages."""
     # Handle GET requests (for browser testing)
     if request.method == "GET":
@@ -155,22 +156,22 @@ def process_message():
         return jsonify(error_response), 500
 
 @app.route("/health", methods=["GET"])
-def health_check():
+def health_check() -> None:
     """Health check endpoint."""
     status = "healthy" if agent else "running in mock mode"
     return jsonify({"status": status, "agent": "available" if agent else "unavailable"})
 
 @app.errorhandler(404)
-def not_found(e):
+def not_found(e) -> Tuple[Any, ...]:
     """Handle 404 errors."""
     return jsonify({"error": "Endpoint not found", "message": str(e)}), 404
 
 @app.errorhandler(500)
-def server_error(e):
+def server_error(e) -> Tuple[Any, ...]:
     """Handle 500 errors."""
     return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
-def run_server():
+def run_server() -> None:
     """Run the HTTP server."""
     # Initialize the agent
     initialize_agent()

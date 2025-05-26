@@ -11,6 +11,7 @@ of the UniversalAgentConnector, including:
 """
 import asyncio
 import datetime
+from datetime import timezone
 import unittest
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -22,7 +23,7 @@ from universal_agent_connector import (
     AgentCapability,
     AgentMessage,
     ConnectionStatus,
-    A2AProtocolAdapter,
+    ProtocolAdapter,
     RestApiAdapter,
     WebSocketAdapter
 )
@@ -33,7 +34,7 @@ class TestUniversalAgentConnector(unittest.TestCase):
     Test case for the UniversalAgentConnector class.
     """
     
-    def setUp(self):
+    def setUp(self) -> None:
         """
         Set up for the tests.
         
@@ -67,7 +68,7 @@ class TestUniversalAgentConnector(unittest.TestCase):
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self.loop)
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """
         Clean up after the tests.
         
@@ -75,7 +76,7 @@ class TestUniversalAgentConnector(unittest.TestCase):
         """
         self.loop.close()
     
-    def test_initialize_built_in_adapters(self):
+    def test_initialize_built_in_adapters(self) -> None:
         """
         Test that built-in adapters are properly initialized.
         """
@@ -87,7 +88,7 @@ class TestUniversalAgentConnector(unittest.TestCase):
         
         # Check A2A adapter configuration
         a2a_adapter = self.connector._framework_adapters[AgentFramework.A2A]
-        self.assertEqual(a2a_adapter["adapter_class"], A2AProtocolAdapter)
+        self.assertEqual(a2a_adapter["adapter_class"], ProtocolAdapter)
         self.assertEqual(a2a_adapter["protocol_type"], ProtocolType.A2A)
         
         # Check REST adapter configuration
@@ -100,7 +101,7 @@ class TestUniversalAgentConnector(unittest.TestCase):
         self.assertEqual(ws_adapter["adapter_class"], WebSocketAdapter)
         self.assertEqual(ws_adapter["protocol_type"], ProtocolType.WEBSOCKET)
     
-    async def test_connect_to_agent_a2a(self):
+    async def test_connect_to_agent_a2a(self) -> None:
         """
         Test connecting to an agent using the A2A protocol.
         """
@@ -110,7 +111,7 @@ class TestUniversalAgentConnector(unittest.TestCase):
         mock_adapter.get_status.return_value = ConnectionStatus.CONNECTED
         
         # Mock adapter class initialization
-        with patch('universal_agent_connector.A2AProtocolAdapter', return_value=mock_adapter):
+        with patch('universal_agent_connector.ProtocolAdapter', return_value=mock_adapter):
             # Connect to the agent
             agent_id = "test_agent"
             result = await self.connector.connect_to_agent(
@@ -128,7 +129,7 @@ class TestUniversalAgentConnector(unittest.TestCase):
             self.security_manager.can_connect_to_agent.assert_called_once_with(agent_id)
             mock_adapter.connect.assert_called_once()
     
-    async def test_connect_to_agent_rest(self):
+    async def test_connect_to_agent_rest(self) -> None:
         """
         Test connecting to an agent using the REST protocol.
         """
@@ -161,7 +162,7 @@ class TestUniversalAgentConnector(unittest.TestCase):
             self.security_manager.can_connect_to_agent.assert_called_once_with(agent_id)
             mock_adapter.connect.assert_called_once()
     
-    async def test_connect_to_agent_websocket(self):
+    async def test_connect_to_agent_websocket(self) -> None:
         """
         Test connecting to an agent using the WebSocket protocol.
         """
@@ -195,7 +196,7 @@ class TestUniversalAgentConnector(unittest.TestCase):
             self.security_manager.can_connect_to_agent.assert_called_once_with(agent_id)
             mock_adapter.connect.assert_called_once()
     
-    async def test_disconnect_agent(self):
+    async def test_disconnect_agent(self) -> None:
         """
         Test disconnecting from an agent.
         """
@@ -222,7 +223,7 @@ class TestUniversalAgentConnector(unittest.TestCase):
                 session_type="agent_connection"
             )
     
-    async def test_disconnect_all_agents(self):
+    async def test_disconnect_all_agents(self) -> None:
         """
         Test disconnecting from all agents.
         """
@@ -247,7 +248,7 @@ class TestUniversalAgentConnector(unittest.TestCase):
         mock_adapter1.disconnect.assert_called_once()
         mock_adapter2.disconnect.assert_called_once()
     
-    async def test_send_message_to_agent(self):
+    async def test_send_message_to_agent(self) -> None:
         """
         Test sending a message to an agent.
         """
@@ -287,7 +288,7 @@ class TestUniversalAgentConnector(unittest.TestCase):
         self.assertEqual(message.sender_id, sender_id)
         self.assertEqual(message.recipient_id, agent_id)
     
-    async def test_receive_message_from_agent(self):
+    async def test_receive_message_from_agent(self) -> None:
         """
         Test receiving a message from an agent.
         """
@@ -322,7 +323,7 @@ class TestUniversalAgentConnector(unittest.TestCase):
             message.sender_id, message.recipient_id, message.type, message.content
         )
     
-    async def test_get_agent_capabilities(self):
+    async def test_get_agent_capabilities(self) -> None:
         """
         Test getting the capabilities of an agent.
         """

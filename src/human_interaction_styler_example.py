@@ -349,7 +349,7 @@ def simulate_authenticity_principle(styler: HumanInteractionStyler) -> None:
     print("This prevents the adaptation from becoming mere performance and preserves genuine")
     print("communication, especially in long-term relationships where trust has been established.")
 
-def main():
+def main() -> None:
     """Run all simulations to demonstrate HumanInteractionStyler capabilities."""
     print("\nHUMAN INTERACTION STYLER DEMONSTRATION\n")
     print("This example demonstrates how the HumanInteractionStyler:")

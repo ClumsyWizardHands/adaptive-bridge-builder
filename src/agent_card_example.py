@@ -1,3 +1,5 @@
+import html
+import markdown
 """
 Agent Card Example
 
@@ -7,13 +9,13 @@ to manage agent capabilities, discover other agents, and adapt communications.
 
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 from agent_card import AgentCard, AgentRegistry, CompatibilityLevel
 from communication_adapter import CommunicationAdapter, AgentCapability
 from content_handler import ContentHandler
 
-def load_existing_card_example():
+def load_existing_card_example() -> None:
     """Example of loading and working with an existing agent card."""
     print("\n=== Loading Existing Agent Card ===\n")
     
@@ -56,7 +58,7 @@ def load_existing_card_example():
     print(f"Saved updated card to example_output/updated_agent_card.json")
 
 
-def create_new_card_example():
+def create_new_card_example() -> None:
     """Example of creating a new agent card from scratch."""
     print("\n=== Creating New Agent Card ===\n")
     
@@ -130,7 +132,7 @@ def create_new_card_example():
     print(f"Saved new card to example_output/research_assistant_card.json")
 
 
-def agent_registry_example():
+def agent_registry_example() -> None:
     """Example of using the agent registry to discover and manage agents."""
     print("\n=== Agent Registry Example ===\n")
     
@@ -203,7 +205,7 @@ def agent_registry_example():
     print(f"  Chunking enabled: {protocol['chunking']}")
 
 
-def adaptive_communication_example():
+def adaptive_communication_example() -> None:
     """Example of adapting communication based on agent capabilities."""
     print("\n=== Adaptive Communication Example ===\n")
     
@@ -311,7 +313,7 @@ def adaptive_communication_example():
             print(f"  Sample: {message[:100]}...")
 
 
-def version_management_example():
+def version_management_example() -> None:
     """Example of managing agent card versions."""
     print("\n=== Version Management Example ===\n")
     

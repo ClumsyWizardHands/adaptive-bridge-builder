@@ -1,3 +1,4 @@
+import emoji
 """
 Domain-Specific Emoji Sets for specialized communication contexts.
 
@@ -30,7 +31,7 @@ class EmojiSequence:
 class DomainSpecificEmojiSet:
     """Base class for domain-specific emoji vocabularies."""
     
-    def __init__(self, domain_name: str):
+    def __init__(self, domain_name: str) -> None:
         """Initialize a domain-specific emoji set."""
         self.domain_name = domain_name
         self.emoji_mappings: Dict[str, DomainEmojiMapping] = {}
@@ -38,11 +39,11 @@ class DomainSpecificEmojiSet:
         
     def add_emoji_mapping(self, mapping: DomainEmojiMapping) -> None:
         """Add an emoji mapping to the domain set."""
-        self.emoji_mappings[mapping.emoji] = mapping
+        self.emoji_mappings = {**self.emoji_mappings, mapping.emoji: mapping}
         
     def add_common_sequence(self, sequence: EmojiSequence) -> None:
         """Add a common emoji sequence to the domain set."""
-        self.common_sequences.append(sequence)
+        self.common_sequences = [*self.common_sequences, sequence]
         
     def get_emoji_for_concept(self, concept: str) -> Optional[str]:
         """Get an emoji that represents a specific concept in this domain."""
@@ -77,13 +78,13 @@ class DomainSpecificEmojiSet:
 class TechnicalSupportEmojiSet(DomainSpecificEmojiSet):
     """Emoji set for technical support and IT-related communications."""
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the technical support emoji set."""
         super().__init__("Technical Support")
         self._initialize_mappings()
         self._initialize_sequences()
         
-    def _initialize_mappings(self):
+    def _initialize_mappings(self) -> None:
         """Initialize technical support emoji mappings."""
         # Error states
         self.add_emoji_mapping(DomainEmojiMapping(
@@ -184,7 +185,7 @@ class TechnicalSupportEmojiSet(DomainSpecificEmojiSet):
             related_concepts=["Speed", "Latency", "Optimization"]
         ))
         
-    def _initialize_sequences(self):
+    def _initialize_sequences(self) -> None:
         """Initialize common technical support emoji sequences."""
         # Critical system error sequence
         self.add_common_sequence(EmojiSequence(
@@ -230,13 +231,13 @@ class TechnicalSupportEmojiSet(DomainSpecificEmojiSet):
 class ProjectManagementEmojiSet(DomainSpecificEmojiSet):
     """Emoji set for project management and team coordination."""
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the project management emoji set."""
         super().__init__("Project Management")
         self._initialize_mappings()
         self._initialize_sequences()
         
-    def _initialize_mappings(self):
+    def _initialize_mappings(self) -> None:
         """Initialize project management emoji mappings."""
         # Task status
         self.add_emoji_mapping(DomainEmojiMapping(
@@ -346,7 +347,7 @@ class ProjectManagementEmojiSet(DomainSpecificEmojiSet):
             related_concepts=["Cycle", "Sprint", "Version"]
         ))
         
-    def _initialize_sequences(self):
+    def _initialize_sequences(self) -> None:
         """Initialize common project management emoji sequences."""
         # High priority task assignment
         self.add_common_sequence(EmojiSequence(
@@ -392,13 +393,13 @@ class ProjectManagementEmojiSet(DomainSpecificEmojiSet):
 class EducationalEmojiSet(DomainSpecificEmojiSet):
     """Emoji set for educational contexts and learning activities."""
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the educational emoji set."""
         super().__init__("Educational")
         self._initialize_mappings()
         self._initialize_sequences()
         
-    def _initialize_mappings(self):
+    def _initialize_mappings(self) -> None:
         """Initialize educational emoji mappings."""
         # Knowledge areas
         self.add_emoji_mapping(DomainEmojiMapping(
@@ -524,7 +525,7 @@ class EducationalEmojiSet(DomainSpecificEmojiSet):
             related_concepts=["Calendar", "Timetable", "Planning", "Dates"]
         ))
         
-    def _initialize_sequences(self):
+    def _initialize_sequences(self) -> None:
         """Initialize common educational emoji sequences."""
         # Assignment guidance sequence
         self.add_common_sequence(EmojiSequence(
@@ -570,13 +571,13 @@ class EducationalEmojiSet(DomainSpecificEmojiSet):
 class FinancialEmojiSet(DomainSpecificEmojiSet):
     """Emoji set for financial discussions and transactions."""
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the financial emoji set."""
         super().__init__("Financial")
         self._initialize_mappings()
         self._initialize_sequences()
         
-    def _initialize_mappings(self):
+    def _initialize_mappings(self) -> None:
         """Initialize financial emoji mappings."""
         # Currencies and money
         self.add_emoji_mapping(DomainEmojiMapping(
@@ -726,7 +727,7 @@ class FinancialEmojiSet(DomainSpecificEmojiSet):
             related_concepts=["Automatic Payment", "Subscription", "Recurring"]
         ))
         
-    def _initialize_sequences(self):
+    def _initialize_sequences(self) -> None:
         """Initialize common financial emoji sequences."""
         # Payment confirmation sequence
         self.add_common

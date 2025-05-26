@@ -14,7 +14,7 @@ import re
 from typing import Dict, Any, List, Tuple, Optional, Union, Set
 from enum import Enum, auto
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 import statistics
 from collections import Counter
 
@@ -70,7 +70,7 @@ class EmotionSignal:
     intensity: EmotionIntensity
     confidence: float  # 0.0 to 1.0
     context: Optional[str] = None
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert the emotion signal to a dictionary."""
@@ -90,7 +90,7 @@ class EmotionSignal:
             intensity=EmotionIntensity[data.get("intensity", "MODERATE")],
             confidence=data.get("confidence", 0.5),
             context=data.get("context"),
-            timestamp=data.get("timestamp", datetime.utcnow().isoformat())
+            timestamp=data.get("timestamp", datetime.now(timezone.utc).isoformat())
         )
 
 @dataclass
@@ -101,7 +101,7 @@ class EmotionalProfile:
     typical_intensity: Dict[EmotionCategory, EmotionIntensity] = field(default_factory=dict)
     emotional_volatility: float = 0.5  # 0.0 (stable) to 1.0 (volatile)
     emotional_expressiveness: float = 0.5  # 0.0 (reserved) to 1.0 (expressive)
-    last_updated: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    last_updated: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     sample_count: int = 0
     
     def to_dict(self) -> Dict[str, Any]:
@@ -137,7 +137,7 @@ class EmotionalProfile:
         
         profile.emotional_volatility = data.get("emotional_volatility", 0.5)
         profile.emotional_expressiveness = data.get("emotional_expressiveness", 0.5)
-        profile.last_updated = data.get("last_updated", datetime.utcnow().isoformat())
+        profile.last_updated = data.get("last_updated", datetime.now(timezone.utc).isoformat())
         profile.sample_count = data.get("sample_count", 0)
         
         return profile
@@ -896,17 +896,17 @@ class EmotionalIntelligence:
             profile = self.emotion_profiles[agent_id]
         else:
             profile = EmotionalProfile(agent_id=agent_id)
-            self.emotion_profiles[agent_id] = profile
+            self.emotion_profiles = {**self.emotion_profiles, agent_id: profile}
         
         # Update interaction history
         if agent_id not in self.interaction_history:
-            self.interaction_history[agent_id] = []
+            self.interaction_history = {**self.interaction_history, agent_id: []}
         
         self.interaction_history[agent_id].extend(emotion_signals)
         
         # Only keep the 100 most recent signals
         if len(self.interaction_history[agent_id]) > 100:
-            self.interaction_history[agent_id] = self.interaction_history[agent_id][-100:]
+            self.interaction_history = {**self.interaction_history, agent_id: self.interaction_history[agent_id][-100:]}
         
         # Update profile based on history
         history = self.interaction_history[agent_id]
@@ -968,7 +968,7 @@ class EmotionalIntelligence:
         
         # Update metadata
         profile.sample_count = len(history)
-        profile.last_updated = datetime.utcnow().isoformat()
+        profile.last_updated = datetime.now(timezone.utc).isoformat()
         
         return profile
     
@@ -1276,6 +1276,18 @@ class EmotionalIntelligence:
         return emotion_signals, interaction_type, response
 
 
+
+    async def __aenter__(self):
+        """Enter async context."""
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Exit async context and cleanup."""
+        if hasattr(self, 'cleanup'):
+            await self.cleanup()
+        elif hasattr(self, 'close'):
+            await self.close()
+        return False
 # Example usage
 if __name__ == "__main__":
     # Create an emotional intelligence module

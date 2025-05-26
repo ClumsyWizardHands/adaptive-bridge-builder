@@ -9,7 +9,7 @@ for processing tasks from other agents in the Adaptive Bridge Builder framework.
 import json
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional
 
 from a2a_task_handler import (
@@ -45,12 +45,12 @@ def create_example_message(
         "params": {
             "content": content,
             "sender": agent_id,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         },
         "id": message_id or f"msg-{uuid.uuid4().hex[:8]}"
     }
 
-def print_separator(title: str = None):
+def print_separator(title: str = None) -> None:
     """Print a separator line with optional title."""
     width = 80
     if title:
@@ -58,7 +58,7 @@ def print_separator(title: str = None):
     else:
         print("\n" + "=" * width + "\n")
 
-def main():
+def main() -> None:
     """Run the A2A Task Handler example."""
     print_separator("A2A Task Handler Example")
     

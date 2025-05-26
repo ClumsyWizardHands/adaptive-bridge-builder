@@ -9,7 +9,7 @@ management, scheduling, and error recovery.
 import logging
 import time
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional
 
 from collaborative_task_handler import Task, TaskStatus, TaskPriority, TaskCoordinator
@@ -143,7 +143,7 @@ def example_task_decomposition(orchestrator: OrchestratorEngine) -> str:
             "domain": "finance",
             "sector": "technology",
             "requested_by": "client-123",
-            "deadline": (datetime.utcnow() + timedelta(days=2)).isoformat()
+            "deadline": (datetime.now(timezone.utc) + timedelta(days=2)).isoformat()
         }
     )
     
@@ -437,7 +437,7 @@ def example_harmony_presence_implementation(orchestrator: OrchestratorEngine) ->
         "task_id": "task-123",
         "recovery_action": "retry",
         "reason": "Data source temporarily unavailable",
-        "next_attempt": datetime.utcnow().isoformat(),
+        "next_attempt": datetime.now(timezone.utc).isoformat(),
         "remaining_attempts": 2
     }
     logger.info(f"  Recovery notification: {recovery_message}")

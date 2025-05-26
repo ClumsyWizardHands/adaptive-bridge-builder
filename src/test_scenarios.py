@@ -23,7 +23,7 @@ from test_framework import (
 
 # Import necessary components for testing
 from principle_engine import PrincipleEngine
-from communication_style import CommunicationStyle
+from communication_style import CommunicationStyle, FormalityLevel, DirectnessLevel
 from communication_style_analyzer import CommunicationStyleAnalyzer
 from relationship_tracker import RelationshipTracker
 from conflict_resolver import ConflictResolver
@@ -34,7 +34,10 @@ AGENT_PERSONALITIES = {
     "formal": {
         "id": "formal-agent",
         "name": "Formal Agent",
-        "style": CommunicationStyle.FORMAL,
+        "style": CommunicationStyle(
+            agent_id="formal-agent",
+            formality=FormalityLevel.FORMAL
+        ),
         "messages": [
             "I request information regarding your capabilities.",
             "I would like to formally request assistance with a data analysis task.",
@@ -44,7 +47,10 @@ AGENT_PERSONALITIES = {
     "casual": {
         "id": "casual-agent",
         "name": "Casual Agent",
-        "style": CommunicationStyle.CASUAL,
+        "style": CommunicationStyle(
+            agent_id="casual-agent",
+            formality=FormalityLevel.CASUAL
+        ),
         "messages": [
             "Hey, what can you do?",
             "I need help with some data stuff.",
@@ -54,7 +60,11 @@ AGENT_PERSONALITIES = {
     "direct": {
         "id": "direct-agent",
         "name": "Direct Agent",
-        "style": CommunicationStyle.DIRECT,
+        "style": CommunicationStyle(
+            agent_id="direct-agent",
+            formality=FormalityLevel.NEUTRAL,
+            directness=DirectnessLevel.DIRECT
+        ),
         "messages": [
             "List your capabilities.",
             "Analyze this data set.",
@@ -250,7 +260,7 @@ def create_test_suite() -> TestSuite:
 
 
 # Main function to run the tests
-def main():
+def main() -> None:
     """Main function to run the test suite."""
     framework = TestFramework(output_dir="./test_results")
     suite = create_test_suite()

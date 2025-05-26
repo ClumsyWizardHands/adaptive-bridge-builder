@@ -1,0 +1,235 @@
+{
+  "summary": {
+    "total_files_checked": 238,
+    "unresolved_imports": 3,
+    "missing_type_stubs": 0,
+    "syntax_errors": 0,
+    "missing_init_files": 0,
+    "relative_import_issues": 23
+  },
+  "issues": {
+    "unresolved_imports": [
+      {
+        "file": "src\\fix_missing_imports.py",
+        "module": "llama_cpp",
+        "line": 8
+      },
+      {
+        "file": "src\\mistral_llm_adapter.py",
+        "module": "llama_cpp",
+        "line": 2
+      },
+      {
+        "file": "src\\mistral_llm_adapter.py",
+        "module": "llama_cpp",
+        "line": 115
+      }
+    ],
+    "missing_type_stubs": [],
+    "syntax_errors": [],
+    "missing_init_files": [],
+    "circular_dependencies": [],
+    "relative_import_issues": [
+      {
+        "file": "src\\api\\integration_assistant\\app.py",
+        "import": ".models",
+        "line": 18,
+        "error": "Cannot resolve to module: api.models"
+      },
+      {
+        "file": "src\\api\\integration_assistant\\app.py",
+        "import": ".websocket_manager",
+        "line": 29,
+        "error": "Cannot resolve to module: api.websocket_manager"
+      },
+      {
+        "file": "src\\api\\integration_assistant\\app.py",
+        "import": ".code_generator",
+        "line": 30,
+        "error": "Cannot resolve to module: api.code_generator"
+      },
+      {
+        "file": "src\\api\\integration_assistant\\code_generator.py",
+        "import": ".models",
+        "line": 9,
+        "error": "Cannot resolve to module: api.models"
+      },
+      {
+        "file": "src\\api\\integration_assistant\\websocket_manager.py",
+        "import": ".models",
+        "line": 13,
+        "error": "Cannot resolve to module: api.models"
+      },
+      {
+        "file": "src\\api\\integration_assistant\\__init__.py",
+        "import": ".app",
+        "line": 8,
+        "error": "Cannot resolve to module: api.app"
+      },
+      {
+        "file": "src\\api\\integration_assistant\\__init__.py",
+        "import": ".models",
+        "line": 9,
+        "error": "Cannot resolve to module: api.models"
+      },
+      {
+        "file": "src\\api\\integration_assistant\\__init__.py",
+        "import": ".websocket_manager",
+        "line": 15,
+        "error": "Cannot resolve to module: api.websocket_manager"
+      },
+      {
+        "file": "src\\empire_framework\\a2a\\component_task_handler.py",
+        "import": ".message_structures",
+        "line": 20,
+        "error": "Cannot resolve to module: empire_framework.message_structures"
+      },
+      {
+        "file": "src\\empire_framework\\a2a\\component_task_handler.py",
+        "import": "..registry.component_registry",
+        "line": 27,
+        "error": "Cannot resolve to module: registry.component_registry"
+      },
+      {
+        "file": "src\\empire_framework\\a2a\\component_task_handler.py",
+        "import": "..validation.schema_validator",
+        "line": 28,
+        "error": "Cannot resolve to module: validation.schema_validator"
+      },
+      {
+        "file": "src\\empire_framework\\a2a\\streaming_adapter.py",
+        "import": ".a2a_adapter",
+        "line": 17,
+        "error": "Cannot resolve to module: empire_framework.a2a_adapter"
+      },
+      {
+        "file": "src\\empire_framework\\adk\\example_usage.py",
+        "import": ".empire_adk_adapter",
+        "line": 14,
+        "error": "Cannot resolve to module: empire_framework.empire_adk_adapter"
+      },
+      {
+        "file": "src\\empire_framework\\registry\\test_component_registry.py",
+        "import": ".component_registry",
+        "line": 22,
+        "error": "Cannot resolve to module: empire_framework.component_registry"
+      },
+      {
+        "file": "src\\empire_framework\\registry\\test_component_registry.py",
+        "import": "..validation.schema_validator",
+        "line": 31,
+        "error": "Cannot resolve to module: validation.schema_validator"
+      },
+      {
+        "file": "src\\empire_framework\\registry\\test_component_registry.py",
+        "import": "..validation.validator_example",
+        "line": 32,
+        "error": "Cannot resolve to module: validation.validator_example"
+      },
+      {
+        "file": "src\\empire_framework\\registry\\__init__.py",
+        "import": ".component_registry",
+        "line": 8,
+        "error": "Cannot resolve to module: empire_framework.component_registry"
+      },
+      {
+        "file": "src\\empire_framework\\storage\\test_versioned_component_store.py",
+        "import": ".versioned_component_store",
+        "line": 13,
+        "error": "Cannot resolve to module: empire_framework.versioned_component_store"
+      },
+      {
+        "file": "src\\empire_framework\\storage\\__init__.py",
+        "import": ".versioned_component_store",
+        "line": 8,
+        "error": "Cannot resolve to module: empire_framework.versioned_component_store"
+      },
+      {
+        "file": "src\\empire_framework\\validation\\test_schema_validator.py",
+        "import": ".schema_validator",
+        "line": 22,
+        "error": "Cannot resolve to module: empire_framework.schema_validator"
+      },
+      {
+        "file": "src\\empire_framework\\validation\\test_schema_validator.py",
+        "import": ".validator_example",
+        "line": 37,
+        "error": "Cannot resolve to module: empire_framework.validator_example"
+      },
+      {
+        "file": "src\\empire_framework\\validation\\validator_example.py",
+        "import": ".schema_validator",
+        "line": 20,
+        "error": "Cannot resolve to module: empire_framework.schema_validator"
+      },
+      {
+        "file": "src\\empire_framework\\validation\\__init__.py",
+        "import": ".schema_validator",
+        "line": 8,
+        "error": "Cannot resolve to module: empire_framework.schema_validator"
+      }
+    ]
+  },
+  "third_party_packages": [
+    "PIL",
+    "aiohttp",
+    "anthropic",
+    "colorama",
+    "ctransformers",
+    "dateutil",
+    "dicttoxml",
+    "email.message",
+    "email.mime.base",
+    "email.mime.multipart",
+    "email.mime.text",
+    "email.utils",
+    "emoji",
+    "fastapi",
+    "fastapi.middleware.cors",
+    "fastapi.responses",
+    "flask",
+    "google.generativeai",
+    "importlib.util",
+    "jsonschema",
+    "langchain.agents",
+    "langchain.callbacks.base",
+    "langchain.callbacks.manager",
+    "langchain.chains",
+    "langchain.chat_models.base",
+    "langchain.llms.base",
+    "langchain.memory",
+    "langchain.prompts",
+    "langchain.schema",
+    "langchain.schema.agent",
+    "langchain.schema.output_parser",
+    "langchain_core.language_models.llms",
+    "llama_cpp",
+    "logging.handlers",
+    "markdown",
+    "matplotlib",
+    "matplotlib.pyplot",
+    "numpy",
+    "openai",
+    "pandas",
+    "pydantic",
+    "pytest",
+    "reportlab",
+    "reportlab.lib",
+    "reportlab.lib.pagesizes",
+    "reportlab.lib.styles",
+    "reportlab.pdfgen",
+    "reportlab.platypus",
+    "requests",
+    "semver",
+    "src.api.a2a.handlers",
+    "tiktoken",
+    "tqdm",
+    "unittest.mock",
+    "urllib.parse",
+    "uvicorn",
+    "websockets",
+    "xml.etree.ElementTree",
+    "xmltodict",
+    "yaml"
+  ]
+}

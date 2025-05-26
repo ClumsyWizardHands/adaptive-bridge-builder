@@ -1,3 +1,4 @@
+import emoji
 """
 Demonstration of the EmojiEmotionalAnalyzer functionality.
 
@@ -14,7 +15,7 @@ from emoji_emotional_analyzer import (
     ResponseTone
 )
 
-def run_demo():
+def run_demo() -> None:
     """Run a comprehensive demonstration of the EmojiEmotionalAnalyzer."""
     print("=" * 80)
     print("EmojiEmotionalAnalyzer Demonstration")

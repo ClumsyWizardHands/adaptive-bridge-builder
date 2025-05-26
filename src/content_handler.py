@@ -1,3 +1,6 @@
+import html
+import markdown
+import mimetypes
 """
 Content Handler Module
 
@@ -82,7 +85,7 @@ class ContentHandler:
     between agents and systems in various formats.
     """
     
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None) -> None:
         """
         Initialize the content handler.
         
@@ -856,3 +859,352 @@ class ContentHandler:
         has_lists = bool(re.search(r'^\s*[-*+]\s+\S+', content, re.MULTILINE))
         
         # Only flag as invalid if strict validation is requested and no Markdown
+        # elements are found
+        if strict and not has_headers and not has_lists:
+            result["valid"] = False
+            result["errors"].append("No Markdown elements found in content")
+        
+        return result
+    
+    # Content transformers
+    def _json_to_yaml(self, content: Union[str, Dict, List], options: Dict[str, Any]) -> str:
+        """Transform JSON to YAML format."""
+        import json
+        
+        # Parse JSON if it's a string
+        if isinstance(content, str):
+            data = json.loads(content)
+        else:
+            data = content
+        
+        # Convert to YAML-like format (simplified)
+        return self._dict_to_yaml(data)
+    
+    def _yaml_to_json(self, content: str, options: Dict[str, Any]) -> str:
+        """Transform YAML to JSON format."""
+        # This is a simplified implementation
+        # In production, you would use a proper YAML parser
+        import json
+        
+        # Basic YAML parsing (very simplified)
+        lines = content.strip().split('\n')
+        data = {}
+        current_key = None
+        
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            
+            if ':' in line:
+                parts = line.split(':', 1)
+                key = parts[0].strip()
+                value = parts[1].strip() if len(parts) > 1 else ''
+                
+                # Handle simple values
+                if value:
+                    # Try to parse as number
+                    try:
+                        if '.' in value:
+                            data[key] = float(value)
+                        else:
+                            data[key] = int(value)
+                    except ValueError:
+                        # String value
+                        if value.startswith('"') and value.endswith('"'):
+                            data[key] = value[1:-1]
+                        elif value.lower() == 'true':
+                            data[key] = True
+                        elif value.lower() == 'false':
+                            data[key] = False
+                        else:
+                            data[key] = value
+                else:
+                    data[key] = None
+                current_key = key
+        
+        return json.dumps(data, indent=2)
+    
+    def _json_to_xml(self, content: Union[str, Dict, List], options: Dict[str, Any]) -> str:
+        """Transform JSON to XML format."""
+        import json
+        
+        # Parse JSON if it's a string
+        if isinstance(content, str):
+            data = json.loads(content)
+        else:
+            data = content
+        
+        # Root element name
+        root_name = options.get('root', 'root')
+        
+        # Convert to XML
+        xml_parts = ['<?xml version="1.0" encoding="UTF-8"?>']
+        xml_parts.append(f'<{root_name}>')
+        xml_parts.extend(self._dict_to_xml_elements(data, indent=2))
+        xml_parts.append(f'</{root_name}>')
+        
+        return '\n'.join(xml_parts)
+    
+    def _xml_to_json(self, content: str, options: Dict[str, Any]) -> str:
+        """Transform XML to JSON format."""
+        import json
+        import re
+        
+        # Simple XML parsing (very basic)
+        # Remove XML declaration
+        content = re.sub(r'<\?xml[^>]+\?>', '', content).strip()
+        
+        # Extract root element
+        root_match = re.match(r'<([^>]+)>(.*)</\1>', content, re.DOTALL)
+        if not root_match:
+            return json.dumps({})
+        
+        root_name = root_match.group(1)
+        inner_content = root_match.group(2).strip()
+        
+        # Parse simple elements
+        data = {}
+        element_pattern = r'<([^>]+)>([^<]*)</\1>'
+        for match in re.finditer(element_pattern, inner_content):
+            key = match.group(1)
+            value = match.group(2).strip()
+            
+            # Try to parse value
+            try:
+                if '.' in value:
+                    data[key] = float(value)
+                else:
+                    data[key] = int(value)
+            except ValueError:
+                if value.lower() == 'true':
+                    data[key] = True
+                elif value.lower() == 'false':
+                    data[key] = False
+                else:
+                    data[key] = value
+        
+        return json.dumps({root_name: data}, indent=2)
+    
+    def _html_to_markdown(self, content: str, options: Dict[str, Any]) -> str:
+        """Transform HTML to Markdown format."""
+        import re
+        
+        # Basic HTML to Markdown conversion
+        markdown = content
+        
+        # Headers
+        for i in range(6, 0, -1):
+            markdown = re.sub(f'<h{i}[^>]*>(.*?)</h{i}>', r'#' * i + r' \1', markdown, flags=re.IGNORECASE | re.DOTALL)
+        
+        # Bold
+        markdown = re.sub(r'<strong[^>]*>(.*?)</strong>', r'**\1**', markdown, flags=re.IGNORECASE | re.DOTALL)
+        markdown = re.sub(r'<b[^>]*>(.*?)</b>', r'**\1**', markdown, flags=re.IGNORECASE | re.DOTALL)
+        
+        # Italic
+        markdown = re.sub(r'<em[^>]*>(.*?)</em>', r'*\1*', markdown, flags=re.IGNORECASE | re.DOTALL)
+        markdown = re.sub(r'<i[^>]*>(.*?)</i>', r'*\1*', markdown, flags=re.IGNORECASE | re.DOTALL)
+        
+        # Links
+        markdown = re.sub(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', r'[\2](\1)', markdown, flags=re.IGNORECASE | re.DOTALL)
+        
+        # Paragraphs
+        markdown = re.sub(r'<p[^>]*>(.*?)</p>', r'\1\n\n', markdown, flags=re.IGNORECASE | re.DOTALL)
+        
+        # Line breaks
+        markdown = re.sub(r'<br[^>]*>', '\n', markdown, flags=re.IGNORECASE)
+        
+        # Lists
+        markdown = re.sub(r'<li[^>]*>(.*?)</li>', r'- \1', markdown, flags=re.IGNORECASE | re.DOTALL)
+        
+        # Remove remaining tags
+        markdown = re.sub(r'<[^>]+>', '', markdown)
+        
+        # Clean up whitespace
+        markdown = re.sub(r'\n{3,}', '\n\n', markdown)
+        
+        return markdown.strip()
+    
+    def _markdown_to_html(self, content: str, options: Dict[str, Any]) -> str:
+        """Transform Markdown to HTML format."""
+        import re
+        
+        html_lines = []
+        lines = content.split('\n')
+        in_paragraph = False
+        
+        for line in lines:
+            line = line.strip()
+            
+            if not line:
+                if in_paragraph:
+                    html_lines.append('</p>')
+                    in_paragraph = False
+                continue
+            
+            # Headers
+            if line.startswith('#'):
+                header_match = re.match(r'^(#+)\s+(.+)$', line)
+                if header_match:
+                    level = len(header_match.group(1))
+                    text = header_match.group(2)
+                    html_lines.append(f'<h{level}>{text}</h{level}>')
+                    continue
+            
+            # Lists
+            if line.startswith('- ') or line.startswith('* '):
+                html_lines.append(f'<li>{line[2:]}</li>')
+                continue
+            
+            # Bold
+            line = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', line)
+            line = re.sub(r'__([^_]+)__', r'<strong>\1</strong>', line)
+            
+            # Italic
+            line = re.sub(r'\*([^*]+)\*', r'<em>\1</em>', line)
+            line = re.sub(r'_([^_]+)_', r'<em>\1</em>', line)
+            
+            # Links
+            line = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', line)
+            
+            # Paragraph
+            if not in_paragraph:
+                html_lines.append('<p>')
+                in_paragraph = True
+            html_lines.append(line)
+        
+        if in_paragraph:
+            html_lines.append('</p>')
+        
+        # Wrap lists
+        html_content = '\n'.join(html_lines)
+        html_content = re.sub(r'(<li>.*?</li>)', r'<ul>\1</ul>', html_content, flags=re.DOTALL)
+        
+        return f'<!DOCTYPE html>\n<html>\n<body>\n{html_content}\n</body>\n</html>'
+    
+    def _csv_to_json(self, content: str, options: Dict[str, Any]) -> str:
+        """Transform CSV to JSON format."""
+        import json
+        
+        lines = content.strip().split('\n')
+        if not lines:
+            return json.dumps([])
+        
+        # First line is header
+        headers = [h.strip() for h in lines[0].split(',')]
+        
+        # Parse data rows
+        data = []
+        for line in lines[1:]:
+            values = [v.strip() for v in line.split(',')]
+            row = {}
+            for i, header in enumerate(headers):
+                if i < len(values):
+                    # Try to parse value
+                    value = values[i]
+                    try:
+                        if '.' in value:
+                            row[header] = float(value)
+                        else:
+                            row[header] = int(value)
+                    except ValueError:
+                        row[header] = value
+                else:
+                    row[header] = None
+            data.append(row)
+        
+        return json.dumps(data, indent=2)
+    
+    def _json_to_csv(self, content: Union[str, Dict, List], options: Dict[str, Any]) -> str:
+        """Transform JSON to CSV format."""
+        import json
+        
+        # Parse JSON if it's a string
+        if isinstance(content, str):
+            data = json.loads(content)
+        else:
+            data = content
+        
+        # Handle different JSON structures
+        if isinstance(data, dict):
+            # Convert single dict to list
+            data = [data]
+        
+        if not data or not isinstance(data, list):
+            return ""
+        
+        # Extract headers from first item
+        headers = list(data[0].keys()) if data else []
+        
+        # Build CSV
+        csv_lines = [','.join(headers)]
+        
+        for row in data:
+            values = []
+            for header in headers:
+                value = row.get(header, '')
+                # Convert to string and escape if needed
+                if isinstance(value, str) and ',' in value:
+                    value = f'"{value}"'
+                else:
+                    value = str(value)
+                values.append(value)
+            csv_lines.append(','.join(values))
+        
+        return '\n'.join(csv_lines)
+    
+    # Helper methods
+    def _dict_to_yaml(self, data: Any, indent: int = 0) -> str:
+        """Convert dictionary to YAML-like format."""
+        lines = []
+        indent_str = ' ' * indent
+        
+        if isinstance(data, dict):
+            for key, value in data.items():
+                if isinstance(value, dict):
+                    lines.append(f'{indent_str}{key}:')
+                    lines.append(self._dict_to_yaml(value, indent + 2))
+                elif isinstance(value, list):
+                    lines.append(f'{indent_str}{key}:')
+                    for item in value:
+                        lines.append(f'{indent_str}- {item}')
+                else:
+                    lines.append(f'{indent_str}{key}: {value}')
+        elif isinstance(data, list):
+            for item in data:
+                if isinstance(item, dict):
+                    lines.append(f'{indent_str}-')
+                    lines.append(self._dict_to_yaml(item, indent + 2))
+                else:
+                    lines.append(f'{indent_str}- {item}')
+        else:
+            lines.append(f'{indent_str}{data}')
+        
+        return '\n'.join(lines)
+    
+    def _dict_to_xml_elements(self, data: Any, indent: int = 0) -> List[str]:
+        """Convert dictionary to XML elements."""
+        elements = []
+        indent_str = ' ' * indent
+        
+        if isinstance(data, dict):
+            for key, value in data.items():
+                if isinstance(value, dict):
+                    elements.append(f'{indent_str}<{key}>')
+                    elements.extend(self._dict_to_xml_elements(value, indent + 2))
+                    elements.append(f'{indent_str}</{key}>')
+                elif isinstance(value, list):
+                    for item in value:
+                        elements.append(f'{indent_str}<{key}>{item}</{key}>')
+                else:
+                    elements.append(f'{indent_str}<{key}>{value}</{key}>')
+        elif isinstance(data, list):
+            for item in data:
+                if isinstance(item, dict):
+                    elements.append(f'{indent_str}<item>')
+                    elements.extend(self._dict_to_xml_elements(item, indent + 2))
+                    elements.append(f'{indent_str}</item>')
+                else:
+                    elements.append(f'{indent_str}<item>{item}</item>')
+        
+        return elements

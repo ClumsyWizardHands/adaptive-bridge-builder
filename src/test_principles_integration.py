@@ -11,7 +11,7 @@ import json
 import logging
 import sys
 import textwrap
-from typing import Dict, Any
+from typing import Any, Dict
 
 from principles_integration import PrinciplesIntegration
 
@@ -23,7 +23,7 @@ logging.basicConfig(
 logger = logging.getLogger("TestPrinciplesIntegration")
 
 
-def print_separator(title=None):
+def print_separator(title=None) -> None:
     """Print a separator line with optional title."""
     print("\n" + "=" * 80)
     if title:
@@ -31,7 +31,7 @@ def print_separator(title=None):
         print("-" * 80)
 
 
-def evaluate_action(integration: PrinciplesIntegration, action: str, context: Dict[str, Any] = None):
+def evaluate_action(integration: PrinciplesIntegration, action: str, context: Dict[str, Any] = None) -> None:
     """
     Evaluate an action and print results.
     
@@ -65,7 +65,7 @@ def evaluate_action(integration: PrinciplesIntegration, action: str, context: Di
     return result
 
 
-def simulate_agent_action(integration: PrinciplesIntegration, action: str):
+def simulate_agent_action(integration: PrinciplesIntegration, action: str) -> Dict[str, Any]:
     """
     Simulate an agent performing an action with principle checks.
     
@@ -74,7 +74,7 @@ def simulate_agent_action(integration: PrinciplesIntegration, action: str):
         action: The action to perform
     """
     # Define what would happen if the action were executed
-    def action_handler():
+    def action_handler() -> Dict[str, Any]:
         return {
             "status": "success",
             "message": f"Successfully performed: {action}"
@@ -97,7 +97,7 @@ def simulate_agent_action(integration: PrinciplesIntegration, action: str):
                 print(f"{i}. {textwrap.fill(alt, width=74, initial_indent='   ', subsequent_indent='      ')}")
 
 
-def main():
+def main() -> int:
     """Run integration tests."""
     principles_file = "custom_principles_fixed.json"
     

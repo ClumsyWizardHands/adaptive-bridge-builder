@@ -1,0 +1,30 @@
+{
+  "timestamp": 1748272329,
+  "summary": {
+    "total": 2,
+    "passed": 0,
+    "failed": 0,
+    "errors": 2,
+    "skipped": 0,
+    "pass_rate": 0.0
+  },
+  "suites": {
+    "Adaptive Bridge Builder Core Tests": {
+      "summary": {
+        "total": 2,
+        "passed": 0,
+        "failed": 0,
+        "errors": 2,
+        "skipped": 0,
+        "pass_rate": 0.0
+      },
+      "test_cases": [
+        {
+          "test_id": "01c2973d-25f7-4bc0-a780-2e59f63be1b7",
+          "name": "Communication Style Adaptation Test",
+          "status": "ERROR",
+          "duration_ms": 2.000093460083008,
+          "metrics": [],
+          "error": "Traceback (most recent call last):\n  File \"C:\\Users\\every\\Desktop\\Alex Familiar\\src\\test_framework.py\", line 128, in run\n    result_data = self.execute(test_data)\n                  ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\every\\Desktop\\Alex Familiar\\src\\test_scenarios.py\", line 97, in execute\n    detected_style = analyzer.analyze_message(message)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'CommunicationStyleAnalyzer' object has no attribute 'analyze_message'\n",
+          "test_data": {
+            "analyzer": 

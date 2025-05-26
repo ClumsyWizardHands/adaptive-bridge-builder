@@ -31,7 +31,7 @@ class EmpireA2AHandlers:
     enabling agent-to-agent communication around Empire Framework concepts.
     """
     
-    def __init__(self, registry: Optional[ComponentRegistry] = None):
+    def __init__(self, registry: Optional[ComponentRegistry] = None) -> None:
         """
         Initialize the A2A handlers.
         

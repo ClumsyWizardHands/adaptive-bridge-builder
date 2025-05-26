@@ -11,7 +11,7 @@ import json
 import time
 import os
 import shutil
-from datetime import datetime
+from datetime import datetime, timezone
 
 from relationship_tracker import (
     RelationshipTracker,
@@ -29,13 +29,13 @@ if os.path.exists(DATA_DIR):
     shutil.rmtree(DATA_DIR)
 os.makedirs(DATA_DIR, exist_ok=True)
 
-def print_separator(title):
+def print_separator(title) -> None:
     """Print a separator with a title."""
     print("\n" + "=" * 40)
     print(f" {title} ")
     print("=" * 40 + "\n")
 
-def main():
+def main() -> None:
     """Run the relationship tracker example."""
     # Initialize the relationship tracker for our agent
     print_separator("1. Initializing Relationship Tracker")

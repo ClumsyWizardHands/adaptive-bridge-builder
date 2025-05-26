@@ -11,7 +11,7 @@ type, and applying appropriate resolution strategies.
 import json
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional, Tuple, Set
 from enum import Enum, auto
 import re
@@ -272,8 +272,8 @@ class ConflictResolutionStep:
         """
         self.status = "completed"
         if notes:
-            self.notes += f"\n{notes}"
-        self.completed_at = datetime.utcnow().isoformat()
+            self.notes = self.notes + f"\n{notes}"
+        self.completed_at = datetime.now(timezone.utc).isoformat()
 
 class ConflictRecord:
     """A record of a conflict and its resolution process."""
@@ -311,7 +311,7 @@ class ConflictRecord:
         self.resolution_plan = resolution_plan or []
         self.metadata = metadata or {}
         self.conflict_id = str(uuid.uuid4())
-        self.created_at = datetime.utcnow().isoformat()
+        self.created_at = datetime.now(timezone.utc).isoformat()
         self.updated_at = self.created_at
         self.status = "detected"
         self.outcome = None
@@ -461,9 +461,9 @@ class ConflictRecord:
             notes: Optional notes about the status change.
         """
         self.status = status
-        self.updated_at = datetime.utcnow().isoformat()
+        self.updated_at = datetime.now(timezone.utc).isoformat()
         if notes:
-            self.resolution_notes += f"\n[{self.updated_at}] {notes}"
+            self.resolution_notes = self.resolution_notes + f"\n[{self.updated_at}] {notes}"
     
     def complete_resolution(
         self,
@@ -483,11 +483,11 @@ class ConflictRecord:
         """
         self.status = "resolved"
         self.outcome = outcome
-        self.resolution_notes += f"\n[{datetime.utcnow().isoformat()}] {notes}"
-        self.resolution_timestamp = datetime.utcnow().isoformat()
+        self.resolution_notes = self.resolution_notes + f"\n[{datetime.now(timezone.utc).isoformat()}] {notes}"
+        self.resolution_timestamp = datetime.now(timezone.utc).isoformat()
         self.principle_alignment = principle_alignment
         self.resolution_metrics = metrics or {}
-        self.updated_at = datetime.utcnow().isoformat()
+        self.updated_at = datetime.now(timezone.utc).isoformat()
     
     def add_resolution_step(self, step: ConflictResolutionStep) -> None:
         """
@@ -496,8 +496,8 @@ class ConflictRecord:
         Args:
             step: The resolution step to add.
         """
-        self.resolution_plan.append(step)
-        self.updated_at = datetime.utcnow().isoformat()
+        self.resolution_plan = [*self.resolution_plan, step]
+        self.updated_at = datetime.now(timezone.utc).isoformat()
     
     def get_pending_steps(self) -> List[ConflictResolutionStep]:
         """
@@ -760,7 +760,7 @@ class ConflictResolver:
         if not content or not isinstance(content, str):
             return []
             
-        timestamp = datetime.utcnow().isoformat()
+        timestamp = datetime.now(timezone.utc).isoformat()
         message_id = message.get("id", str(uuid.uuid4()))
         
         # Check each trigger pattern against the message content
@@ -936,7 +936,7 @@ class ConflictResolver:
         )
         
         # Add to active conflicts
-        self.active_conflicts[conflict.conflict_id] = conflict
+        self.active_conflicts = {**self.active_conflicts, conflict.conflict_id: conflict}
         
         # If using relationship tracker, record this conflict
         if self.relationship_tracker:

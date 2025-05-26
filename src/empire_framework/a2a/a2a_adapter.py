@@ -26,7 +26,7 @@ class A2AAdapter:
     allowing components to be exchanged between agents that understand the A2A specification.
     """
     
-    def __init__(self, validation_enabled: bool = True):
+    def __init__(self, validation_enabled: bool = True) -> None:
         """
         Initialize the A2A adapter.
         

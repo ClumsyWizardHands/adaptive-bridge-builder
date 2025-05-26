@@ -14,7 +14,7 @@ import json
 import uuid
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Set, Tuple, Union, Callable
 from enum import Enum, auto
 import threading
@@ -103,7 +103,7 @@ class Resource:
         if not self.can_allocate(amount):
             return False
             
-        self.allocated += amount
+        self.allocated = self.allocated + amount
         return True
     
     def release(self, amount: float) -> bool:
@@ -119,7 +119,7 @@ class Resource:
         if amount > self.allocated:
             return False
             
-        self.allocated -= amount
+        self.allocated = self.allocated - amount
         return True
     
     def to_dict(self) -> Dict[str, Any]:
@@ -381,8 +381,8 @@ class Project:
     
     def add_milestone(self, milestone: Milestone) -> None:
         """Add a milestone to the project."""
-        self.milestones[milestone.milestone_id] = milestone
-        self.updated_at = datetime.utcnow().isoformat()
+        self.milestones = {**self.milestones, milestone.milestone_id: milestone}
+        self.updated_at = datetime.now(timezone.utc).isoformat()
     
     def update_progress(self) -> float:
         """
@@ -405,7 +405,7 @@ class Project:
             total_progress += milestone.progress
         
         self.completion_percentage = total_progress / num_milestones
-        self.updated_at = datetime.utcnow().isoformat()
+        self.updated_at = datetime.now(timezone.utc).isoformat()
         
         return self.completion_percentage
     
@@ -609,7 +609,7 @@ class ProjectOrchestrator:
             The created project
         """
         project_id = f"project-{str(uuid.uuid4())}"
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
         
         with self.project_lock:
             project = Project(
@@ -627,10 +627,10 @@ class ProjectOrchestrator:
                 metadata=metadata or {}
             )
             
-            self.projects[project_id] = project
+            self.projects = {**self.projects, project_id: project}
             
             # Initialize project metrics
-            self.project_metrics[project_id] = {
+            self.project_metrics = {**self.project_metrics, project_id: {}
                 "created_at": now,
                 "milestone_completion_rate": 0.0,
                 "resource_utilization": 0.0,
@@ -757,7 +757,7 @@ class ProjectOrchestrator:
             
             # Add task to milestone
             milestone.task_ids.append(task.task_id)
-            project.updated_at = datetime.utcnow().isoformat()
+            project.updated_at = datetime.now(timezone.utc).isoformat()
             
             logger.info(f"Created task '{title}' in milestone {milestone_id} of project {project_id}")
             

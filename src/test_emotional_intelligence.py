@@ -12,7 +12,7 @@ of the Adaptive Bridge Builder system, particularly focusing on:
 
 import unittest
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 from principle_engine import PrincipleEngine
 from communication_style import CommunicationStyle, EmotionalTone, FormalityLevel
@@ -29,7 +29,7 @@ from emotional_intelligence import (
 class TestAgent:
     """Simplified test agent that produces messages with specific emotional content."""
     
-    def __init__(self, agent_id: str, emotional_profile: Dict[str, float] = None):
+    def __init__(self, agent_id: str, emotional_profile: Dict[str, float] = None) -> None:
         """
         Initialize a test agent.
         
@@ -150,7 +150,7 @@ class TestAgent:
 class TestEmotionalIntelligence(unittest.TestCase):
     """Test cases for EmotionalIntelligence module integration."""
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment before each test."""
         self.principle_engine = PrincipleEngine()
         self.style_analyzer = CommunicationStyleAnalyzer(principle_engine=self.principle_engine)
@@ -169,7 +169,7 @@ class TestEmotionalIntelligence(unittest.TestCase):
             "NEUTRAL": 0.8, "JOY": 0.1, "TRUST": 0.1
         })
     
-    def test_emotion_detection_accuracy(self):
+    def test_emotion_detection_accuracy(self) -> None:
         """Test that emotions are correctly detected in messages."""
         # Test joy detection
         joy_message = self.joyful_agent.generate_message("JOY", "HIGH", "the new project results")
@@ -192,7 +192,7 @@ class TestEmotionalIntelligence(unittest.TestCase):
         # Verify that neutral is detected
         self.assertTrue(any(e.category == EmotionCategory.NEUTRAL for e in neutral_emotions))
     
-    def test_interaction_type_detection(self):
+    def test_interaction_type_detection(self) -> None:
         """Test that interaction types are correctly categorized."""
         # Test conflict detection
         conflict_message = "I strongly disagree with your approach to this problem. Your solution is flawed."
@@ -222,7 +222,7 @@ class TestEmotionalIntelligence(unittest.TestCase):
             InteractionType.ROUTINE
         )
     
-    def test_emotional_profile_building(self):
+    def test_emotional_profile_building(self) -> None:
         """Test that emotional profiles are built correctly over multiple interactions."""
         agent_id = "profile-test-agent"
         
@@ -249,7 +249,7 @@ class TestEmotionalIntelligence(unittest.TestCase):
         # Check sample count
         self.assertEqual(profile.sample_count, 4)
     
-    def test_emotional_distance_principle(self):
+    def test_emotional_distance_principle(self) -> None:
         """Test that the 'Emotional Distance as Preservation' principle is applied correctly."""
         # Generate a high-intensity anger message
         anger_message = self.angry_agent.generate_message("ANGER", "HIGH", "the project failure")
@@ -275,7 +275,7 @@ class TestEmotionalIntelligence(unittest.TestCase):
         # Verify that the response uses neutral tone
         self.assertEqual(response.expression_style["emotional_tone"], EmotionalTone.NEUTRAL.name)
     
-    def test_integration_with_communication_style(self):
+    def test_integration_with_communication_style(self) -> None:
         """Test integration between EmotionalIntelligence and CommunicationStyleAnalyzer."""
         agent_id = "integration-test-agent"
         
@@ -292,7 +292,7 @@ class TestEmotionalIntelligence(unittest.TestCase):
         for content in messages:
             msg = Message(
                 content=content,
-                timestamp=datetime.utcnow().isoformat(),
+                timestamp=datetime.now(timezone.utc).isoformat(),
                 direction=MessageDirection.RECEIVED
             )
             history.add_message(msg)
@@ -319,7 +319,7 @@ class TestEmotionalIntelligence(unittest.TestCase):
             if anger_frequency > 0.3:
                 self.assertIn(style.emotional_tone.name, ["NEGATIVE", "VERY_NEGATIVE"])
     
-    def test_principled_emotional_responses(self):
+    def test_principled_emotional_responses(self) -> None:
         """Test that emotional responses align with principles."""
         # Generate a crisis message
         crisis_message = "URGENT: Our system has been compromised! Customer data may be at risk!"
@@ -354,12 +354,12 @@ class TestEmotionalIntelligence(unittest.TestCase):
 class TestEmotionalResponseScenarios(unittest.TestCase):
     """Test specific response scenarios for different emotional contexts."""
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment before each test."""
         self.principle_engine = PrincipleEngine()
         self.emotional_intelligence = EmotionalIntelligence(principle_engine=self.principle_engine)
     
-    def test_response_to_joy(self):
+    def test_response_to_joy(self) -> None:
         """Test appropriate responses to joyful messages."""
         joy_message = "I'm thrilled about our new partnership! This is going to be amazing!"
         
@@ -383,7 +383,7 @@ class TestEmotionalResponseScenarios(unittest.TestCase):
         # Verify appropriate content
         self.assertIn("our new partnership", formatted_response)
     
-    def test_response_to_anger_in_conflict(self):
+    def test_response_to_anger_in_conflict(self) -> None:
         """Test appropriate responses to angry messages in conflict situations."""
         anger_message = "Your team completely messed up this implementation! This is totally unacceptable!"
         
@@ -409,7 +409,7 @@ class TestEmotionalResponseScenarios(unittest.TestCase):
         # Verify formal style
         self.assertEqual(response.expression_style["formality"], FormalityLevel.FORMAL.name)
     
-    def test_response_to_fear_in_crisis(self):
+    def test_response_to_fear_in_crisis(self) -> None:
         """Test appropriate responses to fearful messages in crisis situations."""
         fear_message = "I'm extremely worried about the security breach! Our customer data might be exposed!"
         
@@ -435,7 +435,7 @@ class TestEmotionalResponseScenarios(unittest.TestCase):
         # Verify contains action items
         self.assertIn("Isolate affected systems", formatted_response)
     
-    def test_response_to_sensitive_topic(self):
+    def test_response_to_sensitive_topic(self) -> None:
         """Test appropriate responses to sensitive topics."""
         sensitive_message = "We need to discuss the upcoming team restructuring and potential role changes."
         

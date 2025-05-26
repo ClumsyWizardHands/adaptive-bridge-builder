@@ -12,7 +12,7 @@ and respecting each agent's contributions while creating a cohesive final produc
 import json
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional, Union, Set, Tuple, Callable
 from enum import Enum, auto
 import difflib
@@ -279,7 +279,7 @@ class ResultSynthesizer:
         
         # Ensure task exists in contributions dict
         if task_id not in self.contributions:
-            self.contributions[task_id] = []
+            self.contributions = {**self.contributions, task_id: []}
             
         # Add contribution
         self.contributions[task_id].append(contribution)
@@ -428,7 +428,7 @@ class ResultSynthesizer:
         
         # Store result
         synthesis_id = str(uuid.uuid4())
-        self.synthesis_results[synthesis_id] = result
+        self.synthesis_results = {**self.synthesis_results, synthesis_id: result}
         
         logger.info(f"Synthesized results for task {task_id} with strategy {strategy.value}")
         return result

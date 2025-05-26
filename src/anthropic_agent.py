@@ -9,7 +9,7 @@ Anthropic's Claude API using the A2A Protocol.
 import os
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional
 
 # Import Anthropic library
@@ -26,7 +26,7 @@ class AnthropicAgent:
     An agent that connects to Anthropic's Claude API and
     interfaces with the Adaptive Bridge Builder.
     """
-    def __init__(self, api_key: Optional[str] = None, agent_id: Optional[str] = None):
+    def __init__(self, api_key: Optional[str] = None, agent_id: Optional[str] = None) -> None:
         """Initialize the Anthropic agent with API key."""
         self.agent_id = agent_id or f"claude-agent-{str(uuid.uuid4())[:8]}"
         
@@ -38,9 +38,9 @@ class AnthropicAgent:
         
         # Initialize Anthropic client
         self.client = anthropic.Anthropic(api_key=self.api_key)
-        self.model = "claude-3-opus-20240229"  # You can change this to other models
+        self.model = "claude-3-haiku-20240307"  # Latest Claude model with better compatibility
         
-        self.created_at = datetime.utcnow().isoformat()
+        self.created_at = datetime.now(timezone.utc).isoformat()
         print(f"Claude Agent initialized with ID: {self.agent_id}")
         print(f"Using model: {self.model}")
     
@@ -106,7 +106,7 @@ class AnthropicAgent:
                 "result": {
                     "conversation_id": message.get('params', {}).get('conversation_id', ''),
                     "content": message.get('params', {}).get('content', ''),
-                    "timestamp": datetime.utcnow().isoformat()
+                    "timestamp": datetime.now(timezone.utc).isoformat()
                 }
             }
         
@@ -151,7 +151,7 @@ class AnthropicAgent:
                 "result": {
                     "conversation_id": conversation_id,
                     "content": claude_response,
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                     "agent_id": self.agent_id
                 }
             }

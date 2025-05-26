@@ -9,7 +9,7 @@ for different subjects and learning styles.
 
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional
 
 from learning_journey_orchestrator import (
@@ -267,8 +267,8 @@ def create_multidisciplinary_journey(orchestrator: LearningJourneyOrchestrator) 
         name="Data Science Career Transition",
         description="A comprehensive learning journey to transition from a software developer role to a data science position, covering mathematics, programming, data analysis, and communication skills.",
         learner_id=learner_profile.learner_id,
-        start_date=datetime.utcnow().strftime("%Y-%m-%d"),
-        end_date=(datetime.utcnow() + timedelta(days=180)).strftime("%Y-%m-%d"),  # 6-month program
+        start_date=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        end_date=(datetime.now(timezone.utc) + timedelta(days=180)).strftime("%Y-%m-%d"),  # 6-month program
         tags=["data_science", "career_transition", "multidisciplinary"]
     )
     
@@ -591,7 +591,7 @@ def create_multidisciplinary_journey(orchestrator: LearningJourneyOrchestrator) 
     return journey
 
 
-def demonstrate_adaptive_learning(orchestrator: LearningJourneyOrchestrator, journey: LearningJourney):
+def demonstrate_adaptive_learning(orchestrator: LearningJourneyOrchestrator, journey: LearningJourney) -> None:
     """
     Demonstrate how the orchestrator adapts the learning journey based on progress and feedback.
     
@@ -678,7 +678,7 @@ def demonstrate_adaptive_learning(orchestrator: LearningJourneyOrchestrator, jou
     logger.info(f"Recommendations: {len(report.recommendations)} items")
 
 
-def coordinate_multi_agent_learning(orchestrator: LearningJourneyOrchestrator, journey: LearningJourney):
+def coordinate_multi_agent_learning(orchestrator: LearningJourneyOrchestrator, journey: LearningJourney) -> None:
     """
     Demonstrate how the orchestrator coordinates multiple educational agents
     for a cohesive learning experience.

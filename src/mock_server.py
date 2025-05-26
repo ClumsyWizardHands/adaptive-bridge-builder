@@ -10,6 +10,7 @@ import json
 import logging
 import os
 from flask import Flask, request, jsonify
+from typing import Any, Tuple
 
 # Configure logging
 logging.basicConfig(
@@ -48,7 +49,7 @@ except Exception as e:
     }
 
 @app.route("/", methods=["GET"])
-def home():
+def home() -> None:
     """Root endpoint with basic information."""
     return jsonify({
         "name": "Adaptive Bridge Builder Agent (Mock)",
@@ -63,12 +64,12 @@ def home():
     })
 
 @app.route("/agent-card", methods=["GET"])
-def get_agent_card():
+def get_agent_card() -> None:
     """Endpoint to get the agent card."""
     return jsonify(AGENT_CARD)
 
 @app.route("/process", methods=["GET", "POST"])
-def process_message():
+def process_message() -> Tuple[Any, ...]:
     """Endpoint to process JSON-RPC messages."""
     # Handle GET requests (for browser testing)
     if request.method == "GET":
@@ -117,17 +118,17 @@ def process_message():
         return jsonify(error_response), 500
 
 @app.route("/health", methods=["GET"])
-def health_check():
+def health_check() -> None:
     """Health check endpoint."""
     return jsonify({"status": "healthy", "agent": "mock mode"})
 
 @app.errorhandler(404)
-def not_found(e):
+def not_found(e) -> Tuple[Any, ...]:
     """Handle 404 errors."""
     return jsonify({"error": "Endpoint not found", "message": str(e)}), 404
 
 @app.errorhandler(500)
-def server_error(e):
+def server_error(e) -> Tuple[Any, ...]:
     """Handle 500 errors."""
     return jsonify({"error": "Internal server error", "message": str(e)}), 500
 

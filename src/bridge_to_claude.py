@@ -1,3 +1,4 @@
+import cmd
 #!/usr/bin/env python3
 """
 Bridge to Claude Interactive Terminal
@@ -11,7 +12,7 @@ import json
 import uuid
 import cmd
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Any, Optional
 
@@ -36,7 +37,7 @@ class BridgeToClaudeTerminal(cmd.Cmd):
 """
     prompt = '(bridge-claude) '
     
-    def __init__(self, anthropic_api_key: str):
+    def __init__(self, anthropic_api_key: str) -> None:
         """Initialize the terminal and both agents."""
         super().__init__()
         
@@ -58,9 +59,9 @@ class BridgeToClaudeTerminal(cmd.Cmd):
         print(f"Claude Agent initialized with ID: {self.claude_agent.agent_id}")
         print(f"Active conversation ID: {self.conversation_id}\n")
     
-    def do_bridge_card(self, arg):
+    def do_bridge_card(self, arg) -> None:
         """Display the bridge agent's card."""
-        self.message_count += 1
+        self.message_count = self.message_count + 1
         msg_id = f"msg-{self.message_count}-{str(uuid.uuid4())}"
         
         message = {
@@ -77,9 +78,9 @@ class BridgeToClaudeTerminal(cmd.Cmd):
         print("\nBridge Agent Card:")
         print(json.dumps(response.get('result', {}), indent=2))
     
-    def do_claude_card(self, arg):
+    def do_claude_card(self, arg) -> None:
         """Display Claude's agent card."""
-        self.message_count += 1
+        self.message_count = self.message_count + 1
         msg_id = f"msg-{self.message_count}-{str(uuid.uuid4())}"
         
         message = {
@@ -96,13 +97,13 @@ class BridgeToClaudeTerminal(cmd.Cmd):
         print("\nClaude Agent Card:")
         print(json.dumps(response.get('result', {}), indent=2))
     
-    def do_ask(self, arg):
+    def do_ask(self, arg) -> None:
         """Ask Claude a question through the Bridge."""
         if not arg:
             print("Error: Please provide a message to send to Claude.")
             return
             
-        self.message_count += 1
+        self.message_count = self.message_count + 1
         msg_id = f"msg-{self.message_count}-{str(uuid.uuid4())}"
         
         # Step 1: Create message to route through Bridge
@@ -113,7 +114,7 @@ class BridgeToClaudeTerminal(cmd.Cmd):
                 "conversation_id": self.conversation_id,
                 "destination": self.claude_agent.agent_id,
                 "content": arg,
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             },
             "id": msg_id
         }
@@ -124,7 +125,7 @@ class BridgeToClaudeTerminal(cmd.Cmd):
         print(json.dumps(bridge_response, indent=2))
         
         # Step 2: Create message for Claude to generate content
-        self.message_count += 1
+        self.message_count = self.message_count + 1
         claude_msg_id = f"msg-{self.message_count}-{str(uuid.uuid4())}"
         
         claude_message = {
@@ -133,7 +134,7 @@ class BridgeToClaudeTerminal(cmd.Cmd):
             "params": {
                 "conversation_id": self.conversation_id,
                 "content": arg,
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             },
             "id": claude_msg_id
         }
@@ -152,17 +153,17 @@ class BridgeToClaudeTerminal(cmd.Cmd):
             print(content)
             print("=" * 80)
     
-    def do_exit(self, arg):
+    def do_exit(self, arg) -> int:
         """Exit the terminal."""
         print("\nExiting Bridge to Claude terminal. Goodbye!")
         return True
         
-    def do_EOF(self, arg):
+    def do_EOF(self, arg) -> int:
         """Exit on Ctrl-D."""
         print("\nExiting Bridge to Claude terminal. Goodbye!")
         return True
 
-def main():
+def main() -> None:
     """Main function to run the Bridge to Claude terminal."""
     # Get Anthropic API key
     api_key = os.environ.get("ANTHROPIC_API_KEY")

@@ -8,7 +8,7 @@ a business strategy development project, coordinating research, analysis, and cr
 
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional
 
 from project_orchestrator import (
@@ -157,7 +157,7 @@ def create_business_strategy_project(project_orchestrator: ProjectOrchestrator) 
         The created Project instance
     """
     # Create project
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     start_date = now.strftime("%Y-%m-%d")
     end_date = (now + timedelta(days=90)).strftime("%Y-%m-%d")
     

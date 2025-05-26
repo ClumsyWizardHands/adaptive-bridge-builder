@@ -8,7 +8,7 @@ the Adaptive Bridge Builder agent and an external AI agent using A2A Protocol.
 
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional, List, Union
 
 # Import our Adaptive Bridge Builder (using relative import from current directory)
@@ -20,10 +20,10 @@ class ExternalAIAgent:
     Placeholder class for the external AI agent.
     Replace this with your actual AI agent implementation.
     """
-    def __init__(self, agent_id: Optional[str] = None):
+    def __init__(self, agent_id: Optional[str] = None) -> None:
         """Initialize the external AI agent."""
         self.agent_id = agent_id or str(uuid.uuid4())
-        self.created_at = datetime.utcnow().isoformat()
+        self.created_at = datetime.now(timezone.utc).isoformat()
         print(f"External AI Agent initialized with ID: {self.agent_id}")
     
     def process_message(self, message: Dict[str, Any]) -> Dict[str, Any]:
@@ -40,7 +40,7 @@ class ExternalAIAgent:
                 "id": message.get('id'),
                 "result": {
                     "status": "success",
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                     "content": message.get('params', {}).get('content', "No content provided"),
                     "agent_id": self.agent_id
                 }
@@ -52,7 +52,7 @@ class ExternalAIAgent:
             "id": message.get('id'),
             "result": {
                 "status": "acknowledged",
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "message": "Message received by external agent"
             }
         }
@@ -91,7 +91,7 @@ def send_a2a_message(
         "params": {
             "conversation_id": conversation_id,
             "content": content,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         },
         "id": msg_id
     }
@@ -100,7 +100,7 @@ def send_a2a_message(
     response = receiver.process_message(a2a_message)
     return response
 
-def main():
+def main() -> None:
     # Step 1: Initialize the Adaptive Bridge Builder with explicit path to agent_card.json
     bridge_agent = AdaptiveBridgeBuilder(agent_card_path="agent_card.json")
     agent_card = bridge_agent.get_agent_card()

@@ -1,3 +1,7 @@
+from PIL import Image
+import html
+import markdown
+import reportlab
 #!/usr/bin/env python3
 """
 Media Content Processor for Adaptive Bridge Builder
@@ -16,7 +20,7 @@ import os
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Any, Optional, Union, Tuple, Set, Callable, BinaryIO
+from typing import Any, BinaryIO, Callable, Dict, List, Optional, Set, Tuple, Union
 
 # Optional imports - will be dynamically loaded when needed
 # Import placeholders for type hints
@@ -153,14 +157,14 @@ class MediaContent:
 @dataclass
 class ImageContent(MediaContent):
     """Image content data."""
-    format: ImageFormat
-    width: int
-    height: int
-    color_mode: str  # e.g., "RGB", "RGBA", "grayscale"
-    data: Union[str, bytes] = field(repr=False)  # Base64 string or raw bytes
+    format: ImageFormat = ImageFormat.PNG
+    width: int = 0
+    height: int = 0
+    color_mode: str = "RGB"  # e.g., "RGB", "RGBA", "grayscale"
+    data: Union[str, bytes] = field(default="", repr=False)  # Base64 string or raw bytes
     thumbnail_data: Optional[Union[str, bytes]] = field(default=None, repr=False)
     
-    def __post_init__(self):
+    def __post_init__(self) -> Any:
         """Ensure media_type is set to IMAGE."""
         self.media_type = MediaType.IMAGE
         
@@ -207,13 +211,13 @@ class ImageContent(MediaContent):
 @dataclass
 class ChartContent(MediaContent):
     """Chart or visualization content."""
-    chart_type: ChartType
-    data: Dict[str, Any]  # The data used to generate the chart
+    chart_type: ChartType = ChartType.BAR
+    data: Dict[str, Any] = field(default_factory=dict)  # The data used to generate the chart
     rendered_image: Optional[Union[str, bytes]] = field(default=None, repr=False)
     config: Dict[str, Any] = field(default_factory=dict)  # Chart configuration
     interactive: bool = False
     
-    def __post_init__(self):
+    def __post_init__(self) -> Any:
         """Ensure media_type is set to CHART."""
         self.media_type = MediaType.CHART
         
@@ -254,13 +258,13 @@ class ChartContent(MediaContent):
 @dataclass
 class DocumentContent(MediaContent):
     """Document content (PDF, HTML, etc.)."""
-    format: DocumentFormat
-    title: str
-    content: Union[str, bytes]  # Text content or binary data for PDFs
+    format: DocumentFormat = DocumentFormat.PLAIN_TEXT
+    title: str = ""
+    content: Union[str, bytes] = ""  # Text content or binary data for PDFs
     page_count: Optional[int] = None
     table_of_contents: Optional[List[Dict[str, Any]]] = None
     
-    def __post_init__(self):
+    def __post_init__(self) -> Any:
         """Ensure media_type is set to DOCUMENT."""
         self.media_type = MediaType.DOCUMENT
         
@@ -307,12 +311,12 @@ class DocumentContent(MediaContent):
 @dataclass
 class TableContent(MediaContent):
     """Structured tabular data."""
-    headers: List[str]
-    rows: List[List[Any]]
+    headers: List[str] = field(default_factory=list)
+    rows: List[List[Any]] = field(default_factory=list)
     column_types: Optional[List[str]] = None  # e.g., "text", "number", "date"
     summary: Optional[str] = None  # Text summary of table content
     
-    def __post_init__(self):
+    def __post_init__(self) -> Any:
         """Ensure media_type is set to TABLE."""
         self.media_type = MediaType.TABLE
         
@@ -624,7 +628,7 @@ class MediaContentProcessor:
         
     def _save_content(self, content: MediaContent) -> None:
         """Save content to the content store."""
-        self.content_store[content.content_id] = content
+        self.content_store = {**self.content_store, content.content_id: content}
         
         # If storage path is configured, save to disk
         if self.media_storage_path:
@@ -665,7 +669,7 @@ class MediaContentProcessor:
                         content = MediaContent.from_dict(data)
                         
                     # Add to in-memory store and return
-                    self.content_store[content_id] = content
+                    self.content_store = {**self.content_store, content_id: content}
                     return content
             except Exception as e:
                 logger.error(f"Failed to load content {content_id} from disk: {str(e)}")

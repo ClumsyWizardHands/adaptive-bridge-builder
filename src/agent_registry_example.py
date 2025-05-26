@@ -7,7 +7,7 @@ discover capabilities, match tasks to agents, and implement fair task distributi
 
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Any, Optional
 
 from agent_registry import (
@@ -432,7 +432,7 @@ def demonstrate_capability_negotiation(registry: AgentRegistry) -> None:
             "analysis_depth": "comprehensive",
             "include_recommendations": True
         },
-        response_by=datetime.utcnow() + timedelta(seconds=30),
+        response_by=datetime.now(timezone.utc) + timedelta(seconds=30),
         priority=3
     )
     

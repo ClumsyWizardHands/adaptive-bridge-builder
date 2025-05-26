@@ -19,6 +19,7 @@ The examples include connecting to:
 """
 import asyncio
 import datetime
+from datetime import timezone
 import json
 import logging
 import os

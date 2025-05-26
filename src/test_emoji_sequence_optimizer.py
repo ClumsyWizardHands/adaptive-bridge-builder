@@ -1,4 +1,5 @@
 import unittest
+import emoji
 from emoji_sequence_optimizer import (
     EmojiSequenceOptimizer,
     OptimizationContext,
@@ -18,7 +19,7 @@ from emoji_knowledge_base import (
 class TestEmojiSequenceOptimizer(unittest.TestCase):
     """Test cases for the EmojiSequenceOptimizer."""
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Setup for each test case."""
         # Create a knowledge base with default data
         self.knowledge_base = EmojiKnowledgeBase(load_default=True)
@@ -32,7 +33,7 @@ class TestEmojiSequenceOptimizer(unittest.TestCase):
         self.social_sequence = "😀👋🎉👍❤️"  # Happy, hello, celebrate, like, love
         self.complex_sequence = "🚀📈💻🐛🔥👀✅📊🤔😊🎉💯👍"  # Mixed contexts
     
-    def test_basic_optimization(self):
+    def test_basic_optimization(self) -> None:
         """Test basic sequence optimization with default context."""
         # Test with default context
         result = self.optimizer.optimize_sequence(self.technical_sequence)
@@ -48,7 +49,7 @@ class TestEmojiSequenceOptimizer(unittest.TestCase):
         self.assertEqual(result.profile_used, OptimizationProfile.PRECISE)
         self.assertEqual(result.context.domain, EmojiDomain.GENERAL)
     
-    def test_optimization_profiles(self):
+    def test_optimization_profiles(self) -> None:
         """Test different optimization profiles."""
         # Test PRECISE profile (focused on clarity)
         precise_context = OptimizationContext(profile=OptimizationProfile.PRECISE)
@@ -80,7 +81,7 @@ class TestEmojiSequenceOptimizer(unittest.TestCase):
             expressive_result.scores[OptimizationWeight.CLARITY]
         )
     
-    def test_domain_specific_optimization(self):
+    def test_domain_specific_optimization(self) -> None:
         """Test domain-specific optimization."""
         # Test technical domain
         tech_context = OptimizationContext(
@@ -108,7 +109,7 @@ class TestEmojiSequenceOptimizer(unittest.TestCase):
         self.assertEqual(business_result.context.domain, EmojiDomain.BUSINESS)
         self.assertEqual(social_result.context.domain, EmojiDomain.SOCIAL)
     
-    def test_cultural_context_adaptation(self):
+    def test_cultural_context_adaptation(self) -> None:
         """Test cultural context adaptation."""
         # Test global context
         global_context = OptimizationContext(
@@ -136,7 +137,7 @@ class TestEmojiSequenceOptimizer(unittest.TestCase):
         self.assertEqual(western_result.context.cultural_context, CulturalContext.WESTERN)
         self.assertEqual(eastern_result.context.cultural_context, CulturalContext.EASTERN_ASIAN)
     
-    def test_grouping_strategies(self):
+    def test_grouping_strategies(self) -> None:
         """Test different grouping strategies."""
         # Test semantic grouping
         semantic_context = OptimizationContext(
@@ -178,7 +179,7 @@ class TestEmojiSequenceOptimizer(unittest.TestCase):
         self.assertGreater(len(syntactic_result.groups), 1)
         self.assertEqual(len(no_group_result.groups), 1)
     
-    def test_custom_optimization_profile(self):
+    def test_custom_optimization_profile(self) -> None:
         """Test creating and using custom optimization profiles."""
         # Create custom weights
         custom_weights = {
@@ -203,7 +204,7 @@ class TestEmojiSequenceOptimizer(unittest.TestCase):
         for weight, value in custom_weights.items():
             self.assertEqual(custom_context.weights[weight], value)
     
-    def test_sequence_analysis(self):
+    def test_sequence_analysis(self) -> None:
         """Test analyzing emoji sequences without optimizing."""
         # Analyze a simple sequence
         analysis = self.optimizer.analyze_sequence(self.technical_sequence)
@@ -227,7 +228,7 @@ class TestEmojiSequenceOptimizer(unittest.TestCase):
         self.assertIsNotNone(tech_analysis["most_ambiguous"])
         self.assertIsNotNone(tech_analysis["least_familiar"])
     
-    def test_optimization_with_constraints(self):
+    def test_optimization_with_constraints(self) -> None:
         """Test optimization with various constraints."""
         # Test length constraints
         length_context = OptimizationContext(
@@ -275,7 +276,7 @@ class TestEmojiSequenceOptimizer(unittest.TestCase):
         self.assertIsInstance(familiarity_result.additions, list)
         self.assertIsInstance(familiarity_result.rearrangements, list)
     
-    def test_batch_optimization(self):
+    def test_batch_optimization(self) -> None:
         """Test optimizing multiple sequences in batch."""
         # Create test sequences
         sequences = [
@@ -301,7 +302,7 @@ class TestEmojiSequenceOptimizer(unittest.TestCase):
         self.assertEqual(results[1].original_sequence, self.business_sequence)
         self.assertEqual(results[2].original_sequence, self.social_sequence)
     
-    def test_edge_cases(self):
+    def test_edge_cases(self) -> None:
         """Test edge cases like empty sequences and invalid inputs."""
         # Test empty sequence
         empty_result = self.optimizer.optimize_sequence("")
@@ -323,7 +324,7 @@ class TestEmojiSequenceOptimizer(unittest.TestCase):
         self.assertIsNotNone(empty_weights_context.weights)
         self.assertGreater(len(empty_weights_context.weights), 0)
     
-    def test_weight_calculations(self):
+    def test_weight_calculations(self) -> None:
         """Test calculations of various weighted scores."""
         # Use a specific profile to verify score calculation
         context = OptimizationContext(profile=OptimizationProfile.PRECISE)

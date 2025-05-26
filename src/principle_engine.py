@@ -9,8 +9,9 @@ The engine ensures that all agent communications align with these principles.
 
 import json
 import logging
-from typing import Dict, Any, List, Tuple, Optional
-from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
+from datetime import datetime, timezone
+from dataclasses import dataclass
 import copy
 
 # Configure logging
@@ -20,6 +21,86 @@ logging.basicConfig(
 )
 logger = logging.getLogger("PrincipleEngine")
 
+
+@dataclass
+class Principle:
+    """Represents a principle that guides agent behavior."""
+    name: str
+    description: str
+    weight: float = 1.0
+    category: str = "general"
+    
+    def __post_init__(self) -> Any:
+        """Validate principle data."""
+        if not 0 <= self.weight <= 1:
+            raise ValueError(f"Principle weight must be between 0 and 1, got {self.weight}")
+
+class PrincipleEvaluator:
+    """
+    Base class for principle evaluators.
+    
+    This class provides the interface and basic functionality for evaluating
+    actions, messages, or decisions against a set of principles.
+    """
+    
+    def __init__(self, principles: Optional[List[Dict[str, Any]]] = None) -> None:
+        """
+        Initialize the PrincipleEvaluator.
+        
+        Args:
+            principles: Optional list of principle dictionaries.
+        """
+        self.principles = principles or []
+    
+    def evaluate(self, content: Any, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Evaluate content against principles.
+        
+        Args:
+            content: The content to evaluate.
+            context: Optional context for the evaluation.
+            
+        Returns:
+            Evaluation results dictionary.
+        """
+        # Base implementation - should be overridden by subclasses
+        return {
+            "score": 0.0,
+            "principles": [],
+            "recommendations": [],
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    
+    def get_principle_score(self, principle_id: str, content: Any, context: Optional[Dict[str, Any]] = None) -> float:
+        """
+        Get the score for a specific principle.
+        
+        Args:
+            principle_id: ID of the principle to evaluate against.
+            content: The content to evaluate.
+            context: Optional context for the evaluation.
+            
+        Returns:
+            Score between 0.0 and 1.0.
+        """
+        # Base implementation
+        return 0.5
+    
+    def get_recommendations(self, evaluation_results: Dict[str, Any]) -> List[str]:
+        """
+        Get recommendations based on evaluation results.
+        
+        Args:
+            evaluation_results: Results from an evaluation.
+            
+        Returns:
+            List of recommendation strings.
+        """
+        recommendations = []
+        if evaluation_results.get("score", 0) < 0.5:
+            recommendations.append("Consider reviewing principle alignment")
+        return recommendations
+
 class PrincipleEngine:
     """
     Engine that manages and enforces the core principles of the "Empire of the Adaptive Hero".
@@ -28,7 +109,7 @@ class PrincipleEngine:
     determine appropriate responses, and maintain a principle consistency score.
     """
     
-    def __init__(self, principles_file: Optional[str] = None):
+    def __init__(self, principles_file: Optional[str] = None) -> None:
         """
         Initialize the PrincipleEngine with the core principles.
         
@@ -209,7 +290,7 @@ class PrincipleEngine:
             Evaluation results containing scores for each principle and overall consistency.
         """
         evaluation = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "message_id": message.get("id", "unknown"),
             "method": message.get("method", "unknown"),
             "principle_scores": {},
@@ -249,7 +330,7 @@ class PrincipleEngine:
         self._update_consistency_scores(evaluation)
         
         # Add to history
-        self.evaluation_history.append(evaluation)
+        self.evaluation_history = [*self.evaluation_history, evaluation]
         
         logger.info(f"Message {evaluation['message_id']} evaluated with overall score: {evaluation['overall_score']:.2f}")
         return evaluation
@@ -369,7 +450,7 @@ class PrincipleEngine:
             # Apply exponential moving average (EMA) with alpha=0.1
             alpha = 0.1
             updated_score = (alpha * new_score) + ((1 - alpha) * current_score)
-            self.consistency_scores[principle_id] = updated_score
+            self.consistency_scores = {**self.consistency_scores, principle_id: updated_score}
         
         # Update overall consistency score
         total_weighted_score = 0.0
@@ -434,7 +515,7 @@ class PrincipleEngine:
         if "result" in response and isinstance(response["result"], dict):
             # Add timestamp if not present
             if "timestamp" not in response["result"]:
-                response["result"]["timestamp"] = datetime.utcnow().isoformat()
+                response["result"]["timestamp"] = datetime.now(timezone.utc).isoformat()
             
             # Include conversation ID if present in the request
             conversation_id = message.get("params", {}).get("conversation_id")
@@ -599,7 +680,7 @@ class PrincipleEngine:
         return {
             "overall_consistency": self.overall_consistency,
             "principle_scores": self.consistency_scores,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "evaluation_count": len(self.evaluation_history)
         }
     
@@ -610,6 +691,18 @@ class PrincipleEngine:
         logger.info("Principle consistency scores have been reset")
 
 
+
+    async def __aenter__(self):
+        """Enter async context."""
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Exit async context and cleanup."""
+        if hasattr(self, 'cleanup'):
+            await self.cleanup()
+        elif hasattr(self, 'close'):
+            await self.close()
+        return False
 # Example usage
 if __name__ == "__main__":
     # Create a principle engine

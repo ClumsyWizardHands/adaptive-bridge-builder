@@ -8,6 +8,7 @@ and embody the "Trust as the Foundation of Leadership" principle.
 """
 import asyncio
 import datetime
+from datetime import timezone
 from typing import Dict, List, Any, Set
 import uuid
 
@@ -29,7 +30,7 @@ from agent_registry import AgentRegistry
 from orchestrator_engine import OrchestratorEngine
 
 
-async def demonstrate_security_privacy_manager():
+async def demonstrate_security_privacy_manager() -> None:
     """Demonstrate the key features of the SecurityPrivacyManager."""
     
     # Set up dependencies
@@ -417,7 +418,7 @@ async def demonstrate_security_privacy_manager():
     )
     
     # Simulate a secure multi-agent task
-    async def secure_multi_agent_task():
+    async def secure_multi_agent_task() -> None:
         """Example of a secure multi-agent task with orchestration."""
         
         # Define task with sensitive information

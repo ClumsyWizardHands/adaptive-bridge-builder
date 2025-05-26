@@ -1,0 +1,141 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Empire End Component Schema",
+  "description": "Schema for defining End components in the Empire Framework, representing goals, objectives or desired outcomes",
+  "allOf": [
+    {
+      "$ref": "core_empire_component_schema.json"
+    },
+    {
+      "properties": {
+        "component_type": {
+          "const": "End",
+          "description": "Specifies this component is an End (goal/objective)"
+        },
+        "target_outcome_description": {
+          "type": "string",
+          "description": "Detailed description of the desired outcome for this End",
+          "minLength": 10,
+          "examples": [
+            "Create a seamless communication system between agent systems with 99.9% uptime and universal protocol support"
+          ]
+        },
+        "time_horizon": {
+          "type": "string",
+          "description": "Optional timeframe for achieving this End",
+          "examples": [
+            "Short-term",
+            "Long-term",
+            "Q3 2025",
+            "1-3 years"
+          ]
+        },
+        "impact_areas": {
+          "type": "array",
+          "description": "Optional areas that will be affected by achieving this End",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            ["PersonalGrowth", "Career", "Relationships"],
+            ["SystemPerformance", "UserExperience", "DataSecurity"]
+          ]
+        },
+        "success_metrics": {
+          "type": "array",
+          "description": "Optional quantifiable measures to evaluate progress toward this End",
+          "items": {
+            "type": "object",
+            "required": ["metric_id", "name", "description", "target_value"],
+            "properties": {
+              "metric_id": {
+                "type": "string",
+                "description": "Unique identifier for this metric"
+              },
+              "name": {
+                "type": "string",
+                "description": "Human-readable name of the metric"
+              },
+              "description": {
+                "type": "string",
+                "description": "Details about what this metric measures and why it's relevant"
+              },
+              "target_value": {
+                "description": "Goal value for this metric",
+                "oneOf": [
+                  { "type": "string" },
+                  { "type": "number" }
+                ]
+              },
+              "current_value": {
+                "description": "Current progress toward the target value",
+                "oneOf": [
+                  { "type": "string" },
+                  { "type": "number" }
+                ]
+              },
+              "unit": {
+                "type": "string",
+                "description": "Optional unit of measurement",
+                "examples": [
+                  "%",
+                  "count",
+                  "USD",
+                  "seconds",
+                  "transactions/second"
+                ]
+              },
+              "last_updated": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When this metric was last evaluated"
+              }
+            }
+          },
+          "examples": [
+            [
+              {
+                "metric_id": "communication_coverage",
+                "name": "Agent Protocol Coverage",
+                "description": "Percentage of target agent protocols supported",
+                "target_value": 100,
+                "current_value": 85,
+                "unit": "%",
+                "last_updated": "2025-05-01T14:30:00Z"
+              }
+            ]
+          ]
+        },
+        "priority_level": {
+          "type": "integer",
+          "description": "Optional importance level of this End relative to others (lower number = higher priority)",
+          "minimum": 1,
+          "examples": [1, 3, 5]
+        },
+        "status": {
+          "type": "string",
+          "description": "Optional current state of progress toward this End",
+          "enum": [
+            "PLANNED",
+            "ACTIVE",
+            "ON_HOLD",
+            "ACHIEVED",
+            "ABANDONED",
+            "BLOCKED"
+          ]
+        },
+        "progress_percentage": {
+          "type": "integer",
+          "description": "Optional estimated percentage of completion toward this End",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "progress_description": {
+          "type": "string",
+          "description": "Optional qualitative assessment of current progress"
+        }
+      },
+      "required": ["target_outcome_description"]
+    }
+  ]
+}

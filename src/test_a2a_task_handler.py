@@ -9,7 +9,7 @@ conversation context across multiple exchanges.
 
 import unittest
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 from a2a_task_handler import (
@@ -24,7 +24,7 @@ from a2a_task_handler import (
 class TestA2ATaskHandler(unittest.TestCase):
     """Tests for the A2ATaskHandler class."""
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test cases."""
         # Create mock components
         self.mock_principle_engine = MagicMock()
@@ -81,7 +81,7 @@ class TestA2ATaskHandler(unittest.TestCase):
             "id": "test-msg-003"
         }
     
-    def test_normalize_message(self):
+    def test_normalize_message(self) -> None:
         """Test normalizing message to JSON-RPC format."""
         # Test with non-JSON-RPC message
         non_jsonrpc = {
@@ -98,7 +98,7 @@ class TestA2ATaskHandler(unittest.TestCase):
         self.assertEqual(normalized["params"]["text"], "What can you do?")
         self.assertEqual(normalized["params"]["sender"], "test-agent-002")
     
-    def test_extract_content(self):
+    def test_extract_content(self) -> None:
         """Test content extraction and type determination."""
         # Text content
         text_message = {
@@ -120,7 +120,7 @@ class TestA2ATaskHandler(unittest.TestCase):
         self.assertEqual(content["key"], "value")
         self.assertEqual(content_type, ContentType.JSON)
     
-    def test_determine_intent(self):
+    def test_determine_intent(self) -> None:
         """Test intent determination from content."""
         # Query intent
         self.assertEqual(
@@ -140,7 +140,7 @@ class TestA2ATaskHandler(unittest.TestCase):
             MessageIntent.REQUEST
         )
     
-    def test_handle_task(self):
+    def test_handle_task(self) -> None:
         """Test the main handle_task method."""
         # Handle a query task
         query_response = self.task_handler.handle_task(
@@ -168,7 +168,7 @@ class TestA2ATaskHandler(unittest.TestCase):
         self.assertEqual(len(context.messages), 1)
         self.assertEqual(context.intent_history[0], MessageIntent.QUERY)
     
-    def test_conversation_context(self):
+    def test_conversation_context(self) -> None:
         """Test that conversation context is maintained across multiple tasks."""
         # First message in conversation
         self.task_handler.handle_task(
@@ -194,7 +194,7 @@ class TestA2ATaskHandler(unittest.TestCase):
         # Verify that context summary is in response
         self.assertEqual(response["result"]["context_summary"]["message_count"], 2)
     
-    def test_error_handling(self):
+    def test_error_handling(self) -> None:
         """Test error handling in task processing."""
         # Create a message that will cause an error
         error_message = {
@@ -226,7 +226,7 @@ class TestA2ATaskHandler(unittest.TestCase):
             "Test error"
         )
     
-    def test_principle_evaluation(self):
+    def test_principle_evaluation(self) -> None:
         """Test that principle evaluation is applied."""
         response = self.task_handler.handle_task(
             message=self.query_message,
@@ -240,7 +240,7 @@ class TestA2ATaskHandler(unittest.TestCase):
         self.assertTrue("principle_alignment" in response["result"])
         self.assertEqual(response["result"]["principle_alignment"]["score"], 0.8)
     
-    def test_conflict_detection(self):
+    def test_conflict_detection(self) -> None:
         """Test that conflicts are detected and recorded."""
         # Mock conflict detection
         conflict_record = MagicMock()

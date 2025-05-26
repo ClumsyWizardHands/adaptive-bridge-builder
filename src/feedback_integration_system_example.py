@@ -8,7 +8,7 @@ applying the "Fairness as a Fundamental Truth" principle.
 
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional
 
 from feedback_integration_system import (
@@ -34,7 +34,7 @@ from communication_adapter import CommunicationAdapter
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("FeedbackIntegrationSystemExample")
 
-def run_example():
+def run_example() -> None:
     """Run the example demonstration of FeedbackIntegrationSystem."""
     # Initialize needed components
     logger.info("Initializing components...")
@@ -148,8 +148,8 @@ def run_example():
         name="Q2 Agent Selection Optimization",
         description="Campaign to gather insights for improving agent selection in Q2",
         template_id=template.template_id,
-        start_date=(datetime.utcnow() + timedelta(days=1)).isoformat(),
-        end_date=(datetime.utcnow() + timedelta(days=8)).isoformat(),
+        start_date=(datetime.now(timezone.utc) + timedelta(days=1)).isoformat(),
+        end_date=(datetime.now(timezone.utc) + timedelta(days=8)).isoformat(),
         target_stakeholders=["stakeholder-002", "stakeholder-003"],
         distribution_channels=["email", "slack"],
         contextual_data={

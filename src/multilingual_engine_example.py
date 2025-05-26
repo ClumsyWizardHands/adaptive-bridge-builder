@@ -267,7 +267,7 @@ def setup_multilingual_engine() -> MultilingualEngine:
     return engine
 
 
-def demonstrate_language_detection():
+def demonstrate_language_detection() -> None:
     """Demonstrate language detection functionality."""
     engine = setup_multilingual_engine()
     
@@ -289,7 +289,7 @@ def demonstrate_language_detection():
         print("---")
 
 
-def demonstrate_translation_with_terminology_preservation():
+def demonstrate_translation_with_terminology_preservation() -> None:
     """Demonstrate translation with preservation of key terminology."""
     engine = setup_multilingual_engine()
     
@@ -326,7 +326,7 @@ def demonstrate_translation_with_terminology_preservation():
         print("---")
 
 
-def demonstrate_cultural_adaptation():
+def demonstrate_cultural_adaptation() -> None:
     """Demonstrate cultural adaptations based on language context."""
     engine = setup_multilingual_engine()
     
@@ -356,7 +356,7 @@ def demonstrate_cultural_adaptation():
         print("---")
 
 
-def demonstrate_communication_style_adaptation():
+def demonstrate_communication_style_adaptation() -> None:
     """Demonstrate communication style adaptation for different language contexts."""
     engine = setup_multilingual_engine()
     
@@ -391,7 +391,7 @@ def demonstrate_communication_style_adaptation():
         print("---")
 
 
-def demonstrate_principle_consistency():
+def demonstrate_principle_consistency() -> None:
     """Demonstrate maintaining principle consistency across languages."""
     engine = setup_multilingual_engine()
     
@@ -429,7 +429,7 @@ def demonstrate_principle_consistency():
         print(f"Principle-aligned response: {principle_response.get(lang_code, principle_response['en'])}")
 
 
-def demonstrate_complete_conversation():
+def demonstrate_complete_conversation() -> None:
     """Demonstrate a complete multilingual conversation flow."""
     engine = setup_multilingual_engine()
     
@@ -494,7 +494,7 @@ def demonstrate_complete_conversation():
             print("---")
 
 
-def main():
+def main() -> None:
     """Run all demonstrations."""
     print("MULTILINGUAL ENGINE EXAMPLE DEMONSTRATIONS")
     print("==========================================")

@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Principle Schema",
+  "description": "Schema for defining principles in the Empire Framework",
+  "type": "object",
+  "required": ["id", "name", "description", "weight"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the principle",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the principle"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the principle"
+    },
+    "weight": {
+      "type": "number",
+      "description": "Default weight/priority of the principle (0.0-1.0)",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "category": {
+      "type": "string",
+      "description": "Optional categorization of the principle",
+      "enum": ["core", "ethical", "operational", "relational", "adaptive", "domain-specific"]
+    },
+    "evaluation_criteria": {
+      "type": "array",
+      "description": "Criteria used to evaluate adherence to this principle",
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "weight"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the criterion"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of what this criterion evaluates"
+          },
+          "weight": {
+            "type": "number",
+            "description": "Weight of this criterion in the principle evaluation",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "evaluation_function": {
+            "type": "string",
+            "description": "Reference to a function that implements this evaluation"
+          }
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "description": "Relationships with other principles",
+      "items": {
+        "type": "object",
+        "required": ["principle_id", "relationship_type", "strength"],
+        "properties": {
+          "principle_id": {
+            "type": "string",
+            "description": "ID of the related principle"
+          },
+          "relationship_type": {
+            "type": "string",
+            "description": "Type of relationship",
+            "enum": ["supports", "conflicts_with", "prerequisite_for", "dependent_on"]
+          },
+          "strength": {
+            "type": "number",
+            "description": "Strength of the relationship (0.0-1.0)",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "context_dependent": {
+            "type": "boolean",
+            "description": "Whether this relationship is context-dependent",
+            "default": false
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes about this relationship"
+          }
+        }
+      }
+    },
+    "examples": {
+      "type": "array",
+      "description": "Examples of this principle in action",
+      "items": {
+        "type": "object",
+        "required": ["description", "alignment_score"],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Description of the example"
+          },
+          "alignment_score": {
+            "type": "number",
+            "description": "How well this example aligns with the principle (0.0-1.0)",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Explanation of why this example has this alignment score"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about this principle",
+      "additionalProperties": true
+    }
+  }
+}

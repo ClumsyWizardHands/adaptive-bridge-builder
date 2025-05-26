@@ -1,0 +1,166 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Empire Component Schema",
+  "description": "Schema for defining core components in the Empire Framework, including Ends, Means, Principles, Identities, Resentments, and Emotions",
+  "type": "object",
+  "required": [
+    "id",
+    "component_name",
+    "component_type",
+    "description_text",
+    "version",
+    "creation_date",
+    "last_modified_date",
+    "relationships"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the component, preferably a UUID",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+      "examples": [
+        "550e8400-e29b-41d4-a716-446655440000"
+      ]
+    },
+    "component_name": {
+      "type": "string",
+      "description": "Human-readable name of the component",
+      "minLength": 3,
+      "maxLength": 100,
+      "examples": [
+        "Fairness as a Fundamental Truth",
+        "Seamless Communication",
+        "Sense of Identity Loss"
+      ]
+    },
+    "component_type": {
+      "type": "string",
+      "description": "Type of Empire Framework component, defining its role and usage within the system",
+      "enum": [
+        "End",
+        "Mean",
+        "Principle",
+        "Identity",
+        "Resentment",
+        "Emotion"
+      ]
+    },
+    "description_text": {
+      "type": "string",
+      "description": "Detailed description of the component, explaining its purpose, context, and significance within the Empire Framework",
+      "minLength": 10,
+      "examples": [
+        "Every interaction must uphold equity, avoiding bias while acknowledging and accommodating differences.",
+        "Enable seamless communication between diverse agent systems through protocol translation and context preservation."
+      ]
+    },
+    "version": {
+      "type": "string",
+      "description": "Version number of the component definition in semver format (MAJOR.MINOR.PATCH)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": [
+        "1.0.0",
+        "2.3.5"
+      ]
+    },
+    "creation_date": {
+      "type": "string",
+      "description": "ISO 8601 date and time when the component was first created",
+      "format": "date-time",
+      "examples": [
+        "2025-04-01T14:30:00Z"
+      ]
+    },
+    "last_modified_date": {
+      "type": "string",
+      "description": "ISO 8601 date and time when the component was last modified",
+      "format": "date-time",
+      "examples": [
+        "2025-05-15T09:45:22Z"
+      ]
+    },
+    "relationships": {
+      "type": "array",
+      "description": "Connections between this component and other components in the Empire Framework",
+      "items": {
+        "type": "object",
+        "required": [
+          "target_component_id",
+          "relationship_type"
+        ],
+        "properties": {
+          "target_component_id": {
+            "type": "string",
+            "description": "ID of the related component",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "examples": [
+              "d2961c5a-36f4-47d0-b3c0-ff7957212361"
+            ]
+          },
+          "relationship_type": {
+            "type": "string",
+            "description": "Type of relationship between the components",
+            "enum": [
+              "SUPPORTS",
+              "CONFLICTS_WITH",
+              "INFORMS",
+              "GENERATES",
+              "ALLEVIATES",
+              "DERIVED_FROM",
+              "REFINES",
+              "TRIGGERS",
+              "ADDRESSES"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional explanation of the relationship's nature, context, or significance",
+            "examples": [
+              "The principle of fairness supports harmony by ensuring all parties are treated equitably."
+            ]
+          }
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "description": "Optional categorization labels for component organization, filtering, and retrieval",
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        ["ethical", "core", "high-priority"],
+        ["technical", "communication", "infrastructure"]
+      ]
+    },
+    "operational_status": {
+      "type": "string",
+      "description": "Current operational status of the component within the system",
+      "enum": [
+        "Active",
+        "Deprecated",
+        "Archived",
+        "Experimental",
+        "ReviewNeeded"
+      ],
+      "default": "Active"
+    },
+    "source_of_definition": {
+      "type": "string",
+      "description": "Origin of the component definition, indicating how it was introduced to the system",
+      "enum": [
+        "SYSTEM_DEFAULT",
+        "USER_DEFINED",
+        "AGENT_LEARNED",
+        "FRAMEWORK_CANONICAL"
+      ],
+      "default": "SYSTEM_DEFAULT"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional custom metadata for the component",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

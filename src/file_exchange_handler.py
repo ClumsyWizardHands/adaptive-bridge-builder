@@ -1,3 +1,4 @@
+import mimetypes
 """
 File Exchange Handler
 
@@ -16,7 +17,7 @@ import shutil
 import time
 from typing import Dict, List, Any, Optional, Union, BinaryIO, Tuple
 from enum import Enum
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import threading
 import mimetypes
 
@@ -157,8 +158,8 @@ class FileExchangeHandler:
             "metadata": metadata or {},
             "status": TransferStatus.PENDING.value,
             "transfer_type": TransferType.UPLOAD.value,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
             "progress": 0,
             "chunks": {
                 "total": 0,
@@ -176,8 +177,8 @@ class FileExchangeHandler:
             
         # Store transfer info
         with self.transfer_lock:
-            self.transfers[transfer_id] = transfer_info
-            self.transfer_queue.append(transfer_id)
+            self.transfers = {**self.transfers, transfer_id: transfer_info}
+            self.transfer_queue = [*self.transfer_queue, transfer_id]
             
         # Process transfer queue if capacity available
         self._process_transfer_queue()
@@ -226,7 +227,7 @@ class FileExchangeHandler:
         
         # Update transfer info
         transfer_info["output_path"] = output_path
-        transfer_info["updated_at"] = datetime.utcnow().isoformat()
+        transfer_info["updated_at"] = datetime.now(timezone.utc).isoformat()
         
         return output_path
     
@@ -274,8 +275,8 @@ class FileExchangeHandler:
                 "metadata": file_info.get("metadata", {}),
                 "status": TransferStatus.IN_PROGRESS.value,
                 "transfer_type": TransferType.DOWNLOAD.value,
-                "created_at": datetime.utcnow().isoformat(),
-                "updated_at": datetime.utcnow().isoformat(),
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "updated_at": datetime.now(timezone.utc).isoformat(),
                 "progress": 0,
                 "chunks": {
                     "total": total_chunks,
@@ -294,7 +295,7 @@ class FileExchangeHandler:
                 
             # Store transfer info
             with self.transfer_lock:
-                self.transfers[transfer_id] = transfer_info
+                self.transfers = {**self.transfers, transfer_id: transfer_info}
         else:
             # Update existing transfer
             transfer_info = self.transfers[transfer_id]
@@ -319,7 +320,7 @@ class FileExchangeHandler:
             error_msg = f"Failed to decode chunk data: {str(e)}"
             transfer_info["status"] = TransferStatus.FAILED.value
             transfer_info["error"] = error_msg
-            transfer_info["updated_at"] = datetime.utcnow().isoformat()
+            transfer_info["updated_at"] = datetime.now(timezone.utc).isoformat()
             return self._get_transfer_status(transfer_id)
         
         # Write chunk to file
@@ -331,7 +332,7 @@ class FileExchangeHandler:
             error_msg = f"Failed to write chunk data: {str(e)}"
             transfer_info["status"] = TransferStatus.FAILED.value
             transfer_info["error"] = error_msg
-            transfer_info["updated_at"] = datetime.utcnow().isoformat()
+            transfer_info["updated_at"] = datetime.now(timezone.utc).isoformat()
             return self._get_transfer_status(transfer_id)
         
         # Update chunks received and progress
@@ -339,7 +340,7 @@ class FileExchangeHandler:
         received_chunks = transfer_info["chunks"]["received"]
         total_chunks = transfer_info["chunks"]["total"]
         transfer_info["progress"] = int(100 * received_chunks / total_chunks)
-        transfer_info["updated_at"] = datetime.utcnow().isoformat()
+        transfer_info["updated_at"] = datetime.now(timezone.utc).isoformat()
         
         # Check if all chunks received
         if received_chunks == total_chunks:
@@ -411,7 +412,7 @@ class FileExchangeHandler:
             error_msg = f"Failed to read chunk data: {str(e)}"
             transfer_info["status"] = TransferStatus.FAILED.value
             transfer_info["error"] = error_msg
-            transfer_info["updated_at"] = datetime.utcnow().isoformat()
+            transfer_info["updated_at"] = datetime.now(timezone.utc).isoformat()
             raise ValueError(error_msg)
         
         # Encode chunk data
@@ -428,7 +429,7 @@ class FileExchangeHandler:
         if transfer_info["chunks"]["sent"] == total_chunks:
             transfer_info["status"] = TransferStatus.COMPLETED.value
             
-        transfer_info["updated_at"] = datetime.utcnow().isoformat()
+        transfer_info["updated_at"] = datetime.now(timezone.utc).isoformat()
         
         # Prepare response
         chunk_info = {
@@ -491,12 +492,12 @@ class FileExchangeHandler:
             
         # Update transfer info
         transfer_info["status"] = TransferStatus.CANCELLED.value
-        transfer_info["updated_at"] = datetime.utcnow().isoformat()
+        transfer_info["updated_at"] = datetime.now(timezone.utc).isoformat()
         
         # Remove from queue if present
         with self.transfer_lock:
             if transfer_id in self.transfer_queue:
-                self.transfer_queue.remove(transfer_id)
+                self.transfer_queue = [i for i in self.transfer_queue if i != transfer_id]
                 
         # Clean up temporary files
         self._cleanup_transfer(transfer_id)
@@ -569,12 +570,12 @@ class FileExchangeHandler:
             
         # Update transfer info
         transfer_info["status"] = TransferStatus.PENDING.value
-        transfer_info["updated_at"] = datetime.utcnow().isoformat()
+        transfer_info["updated_at"] = datetime.now(timezone.utc).isoformat()
         
         # Add to queue
         with self.transfer_lock:
             if transfer_id not in self.transfer_queue:
-                self.transfer_queue.append(transfer_id)
+                self.transfer_queue = [*self.transfer_queue, transfer_id]
                 
         # Process queue
         self._process_transfer_queue()
@@ -592,7 +593,7 @@ class FileExchangeHandler:
             Number of transfers cleaned up
         """
         cleanup_count = 0
-        cutoff_time = datetime.utcnow() - timedelta(hours=max_age_hours)
+        cutoff_time = datetime.now(timezone.utc) - timedelta(hours=max_age_hours)
         
         transfers_to_remove = []
         
@@ -615,7 +616,7 @@ class FileExchangeHandler:
             self._cleanup_transfer(transfer_id)
             with self.transfer_lock:
                 if transfer_id in self.transfers:
-                    del self.transfers[transfer_id]
+                    self.transfers = {k: v for k, v in self.transfers.items() if k != transfer_id}
             cleanup_count += 1
             
         return cleanup_count
@@ -662,7 +663,7 @@ class FileExchangeHandler:
             "manifest_id": manifest_id,
             "sender_id": self.agent_id,
             "recipient_id": recipient_id,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
             "files": file_infos,
             "total_size": sum(info["file_size"] for info in file_infos),
             "file_count": len(file_infos),
@@ -703,7 +704,7 @@ class FileExchangeHandler:
             
         # Update manifest status
         manifest["status"] = "accepted" if accept else "rejected"
-        manifest["processed_at"] = datetime.utcnow().isoformat()
+        manifest["processed_at"] = datetime.now(timezone.utc).isoformat()
         
         if not accept:
             # Save manifest
@@ -860,8 +861,8 @@ class FileExchangeHandler:
                 
                 # Update status and increment active count
                 transfer_info["status"] = TransferStatus.IN_PROGRESS.value
-                transfer_info["updated_at"] = datetime.utcnow().isoformat()
-                self.active_transfers += 1
+                transfer_info["updated_at"] = datetime.now(timezone.utc).isoformat()
+                self.active_transfers = self.active_transfers + 1
                 
                 # No actual threading needed for this implementation
                 # since we're relying on the agent to call methods

@@ -1,3 +1,4 @@
+import emoji
 """
 EmojiSequenceOptimizer Component for Adaptive Bridge Builder Agent
 
@@ -8,7 +9,7 @@ optimization profiles and communication contexts.
 
 import re
 from enum import Enum
-from typing import Dict, List, Tuple, Set, Optional, Union, Any, Callable
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 from dataclasses import dataclass, field
 
 from emoji_knowledge_base import (
@@ -70,7 +71,7 @@ class OptimizationContext:
     required_emojis: Optional[Set[str]] = None
     prior_sequences: List[str] = field(default_factory=list)
 
-    def __post_init__(self):
+    def __post_init__(self) -> Any:
         """Initialize default weights if not provided."""
         if not self.weights:
             # Default weights for each profile
@@ -176,6 +177,18 @@ class OptimizationContext:
                 }
 
 
+
+    async def __aenter__(self):
+        """Enter async context."""
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Exit async context and cleanup."""
+        if hasattr(self, 'cleanup'):
+            await self.cleanup()
+        elif hasattr(self, 'close'):
+            await self.close()
+        return False
 @dataclass
 class OptimizationResult:
     """Result of emoji sequence optimization."""
@@ -1459,7 +1472,7 @@ class EmojiSequenceOptimizer:
             score = 0.5
         
         # Cache the result
-        self._familiarity_cache[emoji] = score
+        self._familiarity_cache = {**self._familiarity_cache, emoji: score}
         
         return score
     
@@ -1486,7 +1499,7 @@ class EmojiSequenceOptimizer:
             score = 0.5
         
         # Cache the result
-        self._ambiguity_cache[emoji] = score
+        self._ambiguity_cache = {**self._ambiguity_cache, emoji: score}
         
         return score
     
@@ -1513,7 +1526,7 @@ class EmojiSequenceOptimizer:
             score = 0.3
         
         # Cache the result
-        self._frequency_cache[emoji] = score
+        self._frequency_cache = {**self._frequency_cache, emoji: score}
         
         return score
     

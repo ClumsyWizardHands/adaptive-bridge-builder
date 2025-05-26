@@ -10,7 +10,7 @@ import json
 import uuid
 import time
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional, Set, Tuple, Union, Callable
 from enum import Enum
 import threading
@@ -93,7 +93,7 @@ class Task:
         
         # Task state
         self.status = TaskStatus.CREATED
-        self.created_at = datetime.utcnow().isoformat()
+        self.created_at = datetime.now(timezone.utc).isoformat()
         self.updated_at = self.created_at
         self.started_at = None
         self.completed_at = None
@@ -128,9 +128,9 @@ class Task:
         if agent_id in self.assigned_agents:
             return False  # Already assigned
             
-        self.assigned_agents.append(agent_id)
+        self.assigned_agents = [*self.assigned_agents, agent_id]
         self.status = TaskStatus.ASSIGNED
-        self.updated_at = datetime.utcnow().isoformat()
+        self.updated_at = datetime.now(timezone.utc).isoformat()
         
         logger.info(f"Assigned agent {agent_id} to task {self.task_id}")
         return True
@@ -150,7 +150,7 @@ class Task:
         # Note: This would typically be checked externally by the TaskCoordinator
         
         self.status = TaskStatus.IN_PROGRESS
-        self.started_at = datetime.utcnow().isoformat()
+        self.started_at = datetime.now(timezone.utc).isoformat()
         self.updated_at = self.started_at
         
         logger.info(f"Started task {self.task_id}")
@@ -164,7 +164,7 @@ class Task:
             progress: Progress value between 0.0 and 1.0
         """
         self.progress = max(0.0, min(1.0, progress))
-        self.updated_at = datetime.utcnow().isoformat()
+        self.updated_at = datetime.now(timezone.utc).isoformat()
         
         logger.debug(f"Updated task {self.task_id} progress to {self.progress:.2f}")
     
@@ -176,11 +176,11 @@ class Task:
             agent_id: ID of the agent providing the result
             result: The result data
         """
-        self.results[agent_id] = {
+        self.results = {**self.results, agent_id: {
             "data": result,
-            "timestamp": datetime.utcnow().isoformat()
-        }
-        self.updated_at = datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }}
+        self.updated_at = datetime.now(timezone.utc).isoformat()
         
         logger.info(f"Added result from agent {agent_id} to task {self.task_id}")
     
@@ -195,7 +195,7 @@ class Task:
             return False
             
         self.status = TaskStatus.COMPLETED
-        self.completed_at = datetime.utcnow().isoformat()
+        self.completed_at = datetime.now(timezone.utc).isoformat()
         self.updated_at = self.completed_at
         self.progress = 1.0
         
@@ -210,13 +210,13 @@ class Task:
             error_message: Description of the error
         """
         self.status = TaskStatus.FAILED
-        self.updated_at = datetime.utcnow().isoformat()
+        self.updated_at = datetime.now(timezone.utc).isoformat()
         
         error = {
             "message": error_message,
             "timestamp": self.updated_at
         }
-        self.errors.append(error)
+        self.errors = [*self.errors, error]
         
         logger.error(f"Task {self.task_id} failed: {error_message}")
     
@@ -232,7 +232,7 @@ class Task:
             return False
             
         self.status = TaskStatus.CANCELLED
-        self.updated_at = datetime.utcnow().isoformat()
+        self.updated_at = datetime.now(timezone.utc).isoformat()
         
         logger.info(f"Cancelled task {self.task_id}")
         return True
@@ -245,8 +245,8 @@ class Task:
             subtask: The subtask to add
         """
         subtask.parent_task_id = self.task_id
-        self.subtasks[subtask.task_id] = subtask
-        self.updated_at = datetime.utcnow().isoformat()
+        self.subtasks = {**self.subtasks, subtask.task_id: subtask}
+        self.updated_at = datetime.now(timezone.utc).isoformat()
         
         logger.info(f"Added subtask {subtask.task_id} to task {self.task_id}")
     
@@ -262,11 +262,11 @@ class Task:
         message = {
             "sender_id": sender_id,
             "content": content,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "metadata": metadata or {}
         }
         
-        self.messages.append(message)
+        self.messages = [*self.messages, message]
         self.updated_at = message["timestamp"]
         
         logger.debug(f"Added message from {sender_id} to task {self.task_id}")
@@ -488,13 +488,13 @@ class TaskCoordinator:
         
         # Store task
         with self.task_lock:
-            self.tasks[task_id] = task
+            self.tasks = {**self.tasks, task_id: task}
             
             # Update dependency graph
             if dependencies:
                 for dep_id in dependencies:
                     if dep_id not in self.dependency_graph:
-                        self.dependency_graph[dep_id] = set()
+                        self.dependency_graph = {**self.dependency_graph, dep_id: set()}
                     self.dependency_graph[dep_id].add(task_id)
                     
         return task
@@ -849,7 +849,7 @@ class TaskCoordinator:
             task_id: ID of the task
             handler: Function to call with the completed task
         """
-        self.completion_handlers[task_id] = handler
+        self.completion_handlers = {**self.completion_handlers, task_id: handler}
     
     def suggest_agents_for_task(self, task_id: str) -> List[str]:
         """
@@ -881,7 +881,7 @@ class TaskCoordinator:
             agent_id: ID of the agent
             capabilities: List of capabilities the agent has
         """
-        self.agent_capabilities[agent_id] = capabilities
+        self.agent_capabilities = {**self.agent_capabilities, agent_id: capabilities}
     
     def get_task_dependency_chain(self, task_id: str) -> List[str]:
         """
@@ -901,7 +901,7 @@ class TaskCoordinator:
         chain = []
         visited = set()
         
-        def visit(t_id):
+        def visit(t_id) -> None:
             if t_id in visited:
                 return
             visited.add(t_id)
@@ -1000,9 +1000,9 @@ class TaskCoordinator:
             if dep_task.status == TaskStatus.BLOCKED and all_deps_satisfied:
                 if dep_task.assigned_agents:
                     dep_task.status = TaskStatus.ASSIGNED
-                    dep_task.updated_at = datetime.utcnow().isoformat()
+                    dep_task.updated_at = datetime.now(timezone.utc).isoformat()
                     logger.info(f"Task {dep_task.task_id} unblocked after dependency {task.task_id} completed")
                 else:
                     # No agents assigned yet, revert to CREATED
                     dep_task.status = TaskStatus.CREATED
-                    dep_task.updated_at = datetime.utcnow().isoformat()
+                    dep_task.updated_at = datetime.now(timezone.utc).isoformat()

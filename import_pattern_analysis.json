@@ -1,0 +1,43 @@
+{
+  "findings": [
+    {
+      "type": "scattered_imports",
+      "file": "src\\api_gateway_system_calendar.py",
+      "description": "Imports are scattered throughout the file"
+    },
+    {
+      "type": "scattered_imports",
+      "file": "src\\langchain_integration.py",
+      "description": "Imports are scattered throughout the file"
+    },
+    {
+      "type": "scattered_imports",
+      "file": "src\\openai_llm_adapter.py",
+      "description": "Imports are scattered throughout the file"
+    },
+    {
+      "type": "scattered_imports",
+      "file": "src\\run_multi_model_agent.py",
+      "description": "Imports are scattered throughout the file"
+    },
+    {
+      "type": "scattered_imports",
+      "file": "src\\test_multi_model_integration.py",
+      "description": "Imports are scattered throughout the file"
+    },
+    {
+      "type": "scattered_imports",
+      "file": "src\\test_runner.py",
+      "description": "Imports are scattered throughout the file"
+    }
+  ],
+  "recommendations": {
+    "total_findings": 6,
+    "by_type": {
+      "scattered_imports": 6
+    },
+    "top_recommendations": [
+      "Group all imports at the top of files for better organization"
+    ]
+  }
+}

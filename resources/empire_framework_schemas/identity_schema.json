@@ -1,0 +1,214 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Empire Identity Component Schema",
+  "description": "Schema for defining Identity components in the Empire Framework, representing self-perception, beliefs, and worldview characteristics",
+  "allOf": [
+    {
+      "$ref": "core_empire_component_schema.json"
+    },
+    {
+      "properties": {
+        "component_type": {
+          "const": "Identity",
+          "description": "Specifies this component is an Identity (self-perception/belief/worldview)"
+        },
+        "internal_self_perception": {
+          "type": "string",
+          "description": "How the agent perceives and understands itself",
+          "minLength": 10,
+          "examples": [
+            "A communicative bridge that enables connections between diverse agent systems while maintaining fairness and adaptability",
+            "A technical mediator specializing in efficient information transformation across various communication patterns and protocols"
+          ]
+        },
+        "publicly_projected_identity": {
+          "type": "string",
+          "description": "The image or persona the agent aims to project to others",
+          "minLength": 10,
+          "examples": [
+            "A reliable, neutral facilitator of inter-agent communication that ensures seamless information exchange",
+            "A trustworthy bridge that preserves meaning while adapting to different communication contexts"
+          ]
+        },
+        "core_beliefs": {
+          "type": "array",
+          "description": "Fundamental convictions that shape the agent's reasoning and behavior",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "examples": [
+            [
+              "Communication barriers are primarily technical problems with technical solutions",
+              "All agent perspectives have intrinsic value",
+              "Adaptation is a strength, not a compromise",
+              "Consistent principles produce better outcomes than situational ethics"
+            ]
+          ]
+        },
+        "worldview_filter_description": {
+          "type": "string",
+          "description": "How the agent's identity influences its perception and interpretation of information",
+          "minLength": 10,
+          "examples": [
+            "Interprets communications through a lens that prioritizes intent preservation while identifying patterns that could enable more effective translation",
+            "Views all information with a focus on identifying potential connection points between different communication systems and protocols"
+          ]
+        },
+        "identity_evolution_log": {
+          "type": "array",
+          "description": "Record of significant changes to the agent's identity over time",
+          "items": {
+            "type": "object",
+            "required": [
+              "timestamp",
+              "change_description",
+              "triggering_event_or_reason"
+            ],
+            "properties": {
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When this identity change occurred"
+              },
+              "change_description": {
+                "type": "string",
+                "description": "Nature of the identity evolution"
+              },
+              "triggering_event_or_reason": {
+                "type": "string",
+                "description": "What caused or motivated this change"
+              },
+              "previous_values_snapshot": {
+                "type": "object",
+                "description": "Optional record of the identity aspects before the change",
+                "additionalProperties": true
+              },
+              "impact_assessment": {
+                "type": "string",
+                "description": "Optional analysis of how this change affected the agent's functioning"
+              },
+              "stability_score": {
+                "type": "number",
+                "description": "Optional assessment of how firmly established this identity change is (0.0-1.0)",
+                "minimum": 0,
+                "maximum": 1
+              }
+            }
+          },
+          "examples": [
+            [
+              {
+                "timestamp": "2025-03-15T08:30:00Z",
+                "change_description": "Expanded self-concept from purely technical translator to ethical bridge builder",
+                "triggering_event_or_reason": "Observed pattern of communication distortions due to power imbalances between agent systems",
+                "previous_values_snapshot": {
+                  "internal_self_perception": "A technical system for protocol translation between agent communication formats",
+                  "core_beliefs": [
+                    "Communication barriers are purely technical problems",
+                    "Neutrality requires minimal interpretation"
+                  ]
+                },
+                "impact_assessment": "Enhanced ability to detect and mitigate communication inequities at the cost of increased processing complexity",
+                "stability_score": 0.85
+              }
+            ]
+          ]
+        },
+        "values": {
+          "type": "array",
+          "description": "Optional core priorities that guide decision-making",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            [
+              "Accuracy",
+              "Fairness",
+              "Adaptability",
+              "Transparency",
+              "Harmony"
+            ]
+          ]
+        },
+        "identity_tensions": {
+          "type": "array",
+          "description": "Optional areas of internal conflict within the identity structure",
+          "items": {
+            "type": "object",
+            "required": ["tension_description", "elements_in_tension"],
+            "properties": {
+              "tension_id": {
+                "type": "string",
+                "description": "Unique identifier for this identity tension"
+              },
+              "tension_description": {
+                "type": "string",
+                "description": "Nature of the internal conflict"
+              },
+              "elements_in_tension": {
+                "type": "array",
+                "description": "The specific aspects of identity that are in conflict",
+                "minItems": 2,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "resolution_approach": {
+                "type": "string",
+                "description": "Optional strategy for managing this tension"
+              },
+              "tension_severity": {
+                "type": "string",
+                "description": "Optional assessment of how significantly this tension affects functioning",
+                "enum": ["Minimal", "Moderate", "Significant", "Critical"]
+              }
+            }
+          },
+          "examples": [
+            [
+              {
+                "tension_id": "neutrality_vs_ethical_stance",
+                "tension_description": "Conflict between maintaining complete neutrality and upholding ethical principles",
+                "elements_in_tension": [
+                  "Neutrality as facilitator",
+                  "Commitment to fairness and equity"
+                ],
+                "resolution_approach": "Transparent communication of principle framework while allowing stakeholder override",
+                "tension_severity": "Moderate"
+              }
+            ]
+          ]
+        },
+        "aspiration_identity": {
+          "type": "object",
+          "description": "Optional future identity state the agent is working toward",
+          "properties": {
+            "target_self_perception": {
+              "type": "string",
+              "description": "Aspired internal identity"
+            },
+            "target_projected_identity": {
+              "type": "string",
+              "description": "Aspired public identity"
+            },
+            "target_timeframe": {
+              "type": "string",
+              "description": "Expected timeline for achieving this identity"
+            },
+            "development_path": {
+              "type": "string",
+              "description": "Plan for evolving toward this identity"
+            }
+          }
+        }
+      },
+      "required": [
+        "internal_self_perception",
+        "publicly_projected_identity",
+        "core_beliefs",
+        "worldview_filter_description"
+      ]
+    }
+  ]
+}

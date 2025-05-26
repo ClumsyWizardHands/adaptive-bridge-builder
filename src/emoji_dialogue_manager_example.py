@@ -1,3 +1,4 @@
+import emoji
 """
 Example demonstrating the EmojiDialogueManager component functionality.
 
@@ -17,7 +18,7 @@ from emoji_dialogue_manager import (
 from emoji_translation_engine import EmojiTranslationEngine
 from emoji_grammar_system import EmojiGrammarSystem
 
-def demonstrate_multi_turn_conversation():
+def demonstrate_multi_turn_conversation() -> None:
     """Demonstrate a multi-turn conversation with context maintenance."""
     print("\n=== Multi-Turn Conversation with Context Maintenance ===\n")
     
@@ -126,7 +127,7 @@ def demonstrate_multi_turn_conversation():
     print(f"Active topics: {', '.join(summary['topics']) if summary['topics'] else 'None'}")
 
 
-def demonstrate_ambiguity_handling():
+def demonstrate_ambiguity_handling() -> None:
     """Demonstrate ambiguity detection and resolution in emoji conversations."""
     print("\n=== Ambiguity Detection and Resolution ===\n")
     
@@ -221,7 +222,7 @@ def demonstrate_ambiguity_handling():
         print(f"Emoji {item['emoji']} was clarified to mean '{item['selected_meaning']}'")
 
 
-def demonstrate_complexity_adaptation():
+def demonstrate_complexity_adaptation() -> None:
     """Demonstrate adaptive emoji density based on conversation complexity."""
     print("\n=== Adaptive Emoji Density Based on Complexity ===\n")
     
@@ -293,7 +294,7 @@ def demonstrate_complexity_adaptation():
     print(f"Emoji: {very_complex_response['emoji_sequence']}")
 
 
-def demonstrate_mode_transitions():
+def demonstrate_mode_transitions() -> None:
     """Demonstrate transitions between different communication modes."""
     print("\n=== Communication Mode Transitions ===\n")
     
@@ -373,7 +374,7 @@ def demonstrate_mode_transitions():
         print("Mode transition not detected or unsuccessful.")
 
 
-def demonstrate_feedback_mechanisms():
+def demonstrate_feedback_mechanisms() -> None:
     """Demonstrate emoji-based feedback mechanisms."""
     print("\n=== Emoji-Based Feedback Mechanisms ===\n")
     
@@ -454,7 +455,7 @@ def demonstrate_feedback_mechanisms():
     print(f"Feedback message: {system_response['natural_language']}")
 
 
-def demonstrate_conversation_history():
+def demonstrate_conversation_history() -> None:
     """Demonstrate storing conversation history with translations."""
     print("\n=== Conversation History with Parallel Translations ===\n")
     
@@ -536,7 +537,7 @@ def demonstrate_conversation_history():
     print(f"\nTopics discussed: {', '.join(summary['topics'])}")
 
 
-def main():
+def main() -> None:
     """Run all emoji dialogue manager demonstrations."""
     print("="*80)
     print("                EmojiDialogueManager Advanced Demonstrations")

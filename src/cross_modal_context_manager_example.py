@@ -9,8 +9,8 @@ and preserves context when switching between modalities.
 
 import logging
 import asyncio
-from datetime import datetime, timedelta
-from typing import Dict, Any, List, Optional
+from datetime import datetime, timedelta, timezone
+from typing import Any, Dict, List, Optional
 
 from communication_channel_manager import (
     CommunicationChannelManager, 
@@ -41,73 +41,73 @@ logger = logging.getLogger("CrossModalContextManagerExample")
 
 # Create mock classes for demonstration
 class MockSession:
-    def __init__(self, session_id, participants):
+    def __init__(self, session_id, participants) -> None:
         self.session_id = session_id
         self.participants = participants
         self.messages = []
         
-    def add_message(self, message):
-        self.messages.append(message)
+    def add_message(self, message) -> None:
+        self.messages = [*self.messages, message]
         
 class MockSessionManager:
-    def __init__(self):
+    def __init__(self) -> None:
         self.sessions = {}
         
-    def create_session(self, participants):
+    def create_session(self, participants) -> None:
         session_id = f"session-{len(self.sessions) + 1}"
         session = MockSession(session_id, participants)
-        self.sessions[session_id] = session
+        self.sessions = {**self.sessions, session_id: session}
         return session
         
-    def get_session(self, session_id):
+    def get_session(self, session_id) -> None:
         return self.sessions.get(session_id)
         
-    def get_sessions_by_participant(self, participant_id):
+    def get_sessions_by_participant(self, participant_id) -> None:
         return [
             session for session in self.sessions.values()
             if participant_id in session.participants
         ]
         
-    def add_message_to_session(self, session_id, message_id, content, sender_id, metadata=None):
+    def add_message_to_session(self, session_id, message_id, content, sender_id, metadata=None) -> int:
         session = self.sessions.get(session_id)
         if session:
             message = {
                 "id": message_id,
                 "content": content,
                 "sender_id": sender_id,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "metadata": metadata or {}
             }
             session.add_message(message)
             return True
         return False
         
-    def get_session_messages(self, session_id):
+    def get_session_messages(self, session_id) -> List[Any]:
         session = self.sessions.get(session_id)
         if session:
             return session.messages
         return []
 
 class MockChannelManager:
-    def __init__(self):
+    def __init__(self) -> None:
         self.messages = []
         
-    async def send_message(self, recipient_id, content, channel_type, **kwargs):
+    async def send_message(self, recipient_id, content, channel_type, **kwargs) -> None:
         message_id = f"msg-{len(self.messages) + 1}"
         message = {
             "message_id": message_id,
             "recipient_id": recipient_id,
             "content": content,
             "channel_type": channel_type,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             **kwargs
         }
-        self.messages.append(message)
+        self.messages = [*self.messages, message]
         logger.info(f"Sent {channel_type.value} message to {recipient_id}")
         return message_id
 
 # Example usage functions
-async def demonstrate_identity_linking():
+async def demonstrate_identity_linking() -> None:
     """Demonstrate linking identities across different channels."""
     print("\n=== IDENTITY LINKING DEMONSTRATION ===\n")
     
@@ -171,7 +171,7 @@ async def demonstrate_identity_linking():
         if identity_link.last_verification:
             print(f"Last verified: {identity_link.last_verification.isoformat()}")
     
-async def demonstrate_context_tracking():
+async def demonstrate_context_tracking() -> None:
     """Demonstrate tracking context across channels."""
     print("\n=== CONTEXT TRACKING DEMONSTRATION ===\n")
     
@@ -268,7 +268,7 @@ async def demonstrate_context_tracking():
     print(f"- Message IDs: {context_link.message_ids}")
     print(f"- Last updated: {context_link.last_updated.isoformat()}")
 
-async def demonstrate_channel_transition():
+async def demonstrate_channel_transition() -> None:
     """Demonstrate transitioning between channels with context preservation."""
     print("\n=== CHANNEL TRANSITION DEMONSTRATION ===\n")
     
@@ -410,7 +410,7 @@ async def demonstrate_channel_transition():
     else:
         print("No related contexts found")
 
-async def demonstrate_trust_principle():
+async def demonstrate_trust_principle() -> None:
     """Demonstrate the 'Trust as the Foundation of Leadership' principle in action."""
     print("\n=== TRUST PRINCIPLE DEMONSTRATION ===\n")
     
@@ -534,7 +534,7 @@ async def demonstrate_trust_principle():
     print("3. The system respects confidentiality while maintaining conversation continuity")
     print("4. Trust is maintained by ensuring sensitive information is handled appropriately")
 
-async def main():
+async def main() -> None:
     """Run the example demonstrations."""
     print("\nCROSS-MODAL CONTEXT MANAGER EXAMPLE\n")
     print("This example demonstrates how the CrossModalContextManager:")

@@ -1,3 +1,4 @@
+import emoji
 """
 Demonstration of the Domain-Specific Emoji Sets.
 
@@ -12,7 +13,7 @@ from domain_specific_emoji_sets import (
     FinancialEmojiSet
 )
 
-def demonstrate_domain_specific_emoji_sets():
+def demonstrate_domain_specific_emoji_sets() -> None:
     """Demonstrate the usage of domain-specific emoji sets."""
     print("=" * 80)
     print("Domain-Specific Emoji Sets Demonstration")
@@ -30,7 +31,7 @@ def demonstrate_domain_specific_emoji_sets():
     # Financial Domain
     demonstrate_financial()
 
-def demonstrate_technical_support():
+def demonstrate_technical_support() -> None:
     """Demonstrate the technical support emoji set."""
     print("\n\n1. TECHNICAL SUPPORT EMOJI SET")
     print("-" * 40)
@@ -68,7 +69,7 @@ def demonstrate_technical_support():
     emoji = tech_support.get_emoji_for_concept(concept)
     print(f"\nEmoji for '{concept}': {emoji}")
 
-def demonstrate_project_management():
+def demonstrate_project_management() -> None:
     """Demonstrate the project management emoji set."""
     print("\n\n2. PROJECT MANAGEMENT EMOJI SET")
     print("-" * 40)
@@ -105,7 +106,7 @@ def demonstrate_project_management():
     print(f"Meaning: {meaning}")
     print(f"Team member responses: {', '.join(responses)}")
 
-def demonstrate_educational():
+def demonstrate_educational() -> None:
     """Demonstrate the educational emoji set."""
     print("\n\n3. EDUCATIONAL EMOJI SET")
     print("-" * 40)
@@ -139,7 +140,7 @@ def demonstrate_educational():
     print(f"Meaning: {meaning}")
     print(f"Student responses: {', '.join(responses)}")
 
-def demonstrate_financial():
+def demonstrate_financial() -> None:
     """Demonstrate the financial emoji set."""
     print("\n\n4. FINANCIAL EMOJI SET")
     print("-" * 40)

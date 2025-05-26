@@ -23,7 +23,7 @@ from communication_style import (
 class TestMultilingualEngine(unittest.TestCase):
     """Test cases for the MultilingualEngine class."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment before each test."""
         # Create a mock principle engine
         self.principle_engine = Mock(spec=PrincipleEngine)
@@ -41,7 +41,7 @@ class TestMultilingualEngine(unittest.TestCase):
         # Register some core principles and terminology
         self._setup_core_identity()
 
-    def _setup_test_language_profiles(self):
+    def _setup_test_language_profiles(self) -> None:
         """Set up test language profiles for testing."""
         # English profile
         english_profile = LanguageProfile(
@@ -107,7 +107,7 @@ class TestMultilingualEngine(unittest.TestCase):
         )
         self.engine.register_language_profile(spanish_profile)
 
-    def _setup_core_identity(self):
+    def _setup_core_identity(self) -> None:
         """Set up core identity elements for testing."""
         # Register core principles
         self.engine.register_core_principle({
@@ -133,7 +133,7 @@ class TestMultilingualEngine(unittest.TestCase):
             }
         })
 
-    def test_language_detection(self):
+    def test_language_detection(self) -> None:
         """Test language detection functionality."""
         # Test English detection
         self.assertEqual(
@@ -155,7 +155,7 @@ class TestMultilingualEngine(unittest.TestCase):
                 Language.SPANISH
             )
 
-    def test_get_language_profile(self):
+    def test_get_language_profile(self) -> None:
         """Test retrieving language profiles."""
         # Test retrieving existing profile
         profile = self.engine.get_language_profile(Language.JAPANESE)
@@ -167,7 +167,7 @@ class TestMultilingualEngine(unittest.TestCase):
         self.assertIsNotNone(profile)
         self.assertEqual(profile.language, Language.ENGLISH)
 
-    def test_agent_language_cache(self):
+    def test_agent_language_cache(self) -> None:
         """Test caching and retrieving agent languages."""
         # Test default language for unknown agent
         self.assertEqual(
@@ -182,7 +182,7 @@ class TestMultilingualEngine(unittest.TestCase):
             Language.JAPANESE
         )
 
-    def test_translate_message(self):
+    def test_translate_message(self) -> None:
         """Test message translation functionality."""
         # Simple test message
         message = "Hello, this is a test message about agent protocol."
@@ -228,7 +228,7 @@ class TestMultilingualEngine(unittest.TestCase):
         self.assertTrue(success)
         self.assertEqual(translated, original)
 
-    def test_adapt_communication_style(self):
+    def test_adapt_communication_style(self) -> None:
         """Test communication style adaptation for different languages."""
         # Create a base communication style
         base_style = CommunicationStyle(
@@ -248,7 +248,7 @@ class TestMultilingualEngine(unittest.TestCase):
         adapted_style = self.engine.adapt_communication_style(base_style, Language.SPANISH)
         self.assertEqual(adapted_style.formality, FormalityLevel.FORMAL)
 
-    def test_cultural_adaptations(self):
+    def test_cultural_adaptations(self) -> None:
         """Test cultural adaptations of messages."""
         # Test message with greeting and honorifics
         message = "Hello, Mr. Smith. I would like to discuss the project directly."
@@ -270,7 +270,7 @@ class TestMultilingualEngine(unittest.TestCase):
         # Test honorific adaptation
         self.assertTrue(any("honorific" in adaptation for adaptation in adaptations["applied_adaptations"]))
 
-    def test_process_incoming_message(self):
+    def test_process_incoming_message(self) -> None:
         """Test processing of incoming messages with language detection."""
         # Test with string message
         result = self.engine.process_incoming_message(
@@ -298,7 +298,7 @@ class TestMultilingualEngine(unittest.TestCase):
             Language.SPANISH
         )
 
-    def test_prepare_response(self):
+    def test_prepare_response(self) -> None:
         """Test preparation of responses with appropriate cultural adaptation."""
         # Test response preparation
         message = "Thank you for your message. I will address your concerns directly."
@@ -327,7 +327,7 @@ class TestMultilingualEngine(unittest.TestCase):
         
         self.assertEqual(result["target_language"], Language.SPANISH.value)
 
-    def test_support_new_language(self):
+    def test_support_new_language(self) -> None:
         """Test adding support for new languages."""
         # Test adding language that's in enum but not in profiles
         result = self.engine.support_new_language("it")  # Italian
@@ -354,7 +354,7 @@ class TestMultilingualEngine(unittest.TestCase):
             result = self.engine.support_new_language("xx")  # Invalid code
             self.assertEqual(result, Language.ENGLISH)
 
-    def test_get_cultural_guidance(self):
+    def test_get_cultural_guidance(self) -> None:
         """Test getting cultural guidance for a language."""
         # Get guidance for Japanese
         guidance = self.engine.get_cultural_guidance(Language.JAPANESE)

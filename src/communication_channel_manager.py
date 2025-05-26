@@ -1,3 +1,4 @@
+import mimetypes
 #!/usr/bin/env python3
 """
 Communication Channel Manager
@@ -245,7 +246,7 @@ class ChannelMessage:
     
     def add_attachment(self, attachment: Attachment) -> None:
         """Add an attachment to the message."""
-        self.attachments.append(attachment)
+        self.attachments = [*self.attachments, attachment]
     
     def get_content_as_text(self) -> str:
         """Get the content as a text string, regardless of original format."""
@@ -385,7 +386,7 @@ class ChannelAdapter:
     to integrate with the CommunicationChannelManager.
     """
     
-    def __init__(self, channel_type: ChannelType, channel_id: str):
+    def __init__(self, channel_type: ChannelType, channel_id: str) -> None:
         """
         Initialize the channel adapter.
         
@@ -475,7 +476,7 @@ class ChannelSecurityHandler:
     features for channel communications.
     """
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the channel security handler."""
         self.security_providers = {}
         
@@ -487,7 +488,7 @@ class ChannelSecurityHandler:
             channel_type: The channel type
             provider: Security provider implementation
         """
-        self.security_providers[channel_type] = provider
+        self.security_providers = {**self.security_providers, channel_type: provider}
         
     async def authenticate(
         self,
@@ -627,7 +628,7 @@ class CommunicationChannelManager:
         Args:
             adapter: The channel adapter to register
         """
-        self.channel_adapters[adapter.channel_id] = adapter
+        self.channel_adapters = {**self.channel_adapters, adapter.channel_id: adapter}
         logger.info(f"Registered {adapter.channel_type} adapter with ID {adapter.channel_id}")
     
     def get_channel_adapter(self, channel_id: str) -> Optional[ChannelAdapter]:
@@ -672,7 +673,7 @@ class CommunicationChannelManager:
             channel_id: ID of the specific channel adapter
         """
         if entity_id not in self.entity_channels:
-            self.entity_channels[entity_id] = {}
+            self.entity_channels = {**self.entity_channels, entity_id: {}}
             
         self.entity_channels[entity_id][channel_type] = channel_id
         logger.debug(f"Registered {channel_type} for entity {entity_id}")
@@ -721,7 +722,7 @@ class CommunicationChannelManager:
             channel_type: Type of communication channel
             style: Communication style to use
         """
-        self.channel_communication_styles[channel_type] = style
+        self.channel_communication_styles = {**self.channel_communication_styles, channel_type: style}
         logger.debug(f"Set communication style for {channel_type}")
     
     def get_channel_communication_style(
@@ -915,7 +916,7 @@ class CommunicationChannelManager:
         
         # Update message status and store
         message.status = status
-        self.message_store[message.message_id] = message
+        self.message_store = {**self.message_store, message.message_id: message}
         
         # Add to the session
         self.session_manager.add_message_to_session(
@@ -971,7 +972,7 @@ class CommunicationChannelManager:
             )
             
         # Store the message
-        self.message_store[message.message_id] = message
+        self.message_store = {**self.message_store, message.message_id: message}
         
         # Get or create session
         if message.session_id:
@@ -1044,7 +1045,7 @@ class CommunicationChannelManager:
             
             # Update the stored message
             message.status = status
-            self.message_store[message_id] = message
+            self.message_store = {**self.message_store, message_id: message}
             
             return status
         except Exception as e:

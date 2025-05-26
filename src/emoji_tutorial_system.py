@@ -1,3 +1,4 @@
+import emoji
 """
 Emoji Tutorial System for teaching emoji-based communication.
 
@@ -7,10 +8,11 @@ in emoji-only communication with intelligent agents.
 
 import random
 from enum import Enum, auto
-from typing import Dict, List, Tuple, Set, Optional, Any
+from typing import Any, Dict, List, Optional, Set, Tuple
 from dataclasses import dataclass, field
 import json
 import datetime
+from datetime import timezone
 import copy
 
 from emoji_emotional_analyzer import (
@@ -93,7 +95,7 @@ class UserProfile:
 class EmojiTutorialSystem:
     """System for teaching users to communicate with emoji."""
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the emoji tutorial system."""
         self.lessons: Dict[str, TutorialLesson] = {}
         self.exercises: Dict[str, TutorialExercise] = {}
@@ -109,7 +111,7 @@ class EmojiTutorialSystem:
         # Initialize lesson catalog
         self._initialize_tutorials()
     
-    def _initialize_tutorials(self):
+    def _initialize_tutorials(self) -> None:
         """Initialize the tutorial lessons and exercises."""
         self._create_basic_emoji_lessons()
         self._create_emotional_expression_lessons()
@@ -118,7 +120,7 @@ class EmojiTutorialSystem:
         self._create_cultural_adaptation_lessons()
         self._create_advanced_sequence_lessons()
     
-    def _create_basic_emoji_lessons(self):
+    def _create_basic_emoji_lessons(self) -> None:
         """Create lessons for basic emoji usage."""
         # Lesson 1: Introduction to Emoji Communication
         lesson = TutorialLesson(
@@ -168,9 +170,9 @@ class EmojiTutorialSystem:
         lesson.exercises = [ex.exercise_id for ex in exercises]
         lesson.completion_criteria = {"min_correct_exercises": 2}
         
-        self.lessons[lesson.title] = lesson
+        self.lessons = {**self.lessons, lesson.title: lesson}
         for exercise in exercises:
-            self.exercises[exercise.exercise_id] = exercise
+            self.exercises = {**self.exercises, exercise.exercise_id: exercise}
             
         # Lesson 2: Basic Emoji Combinations
         lesson = TutorialLesson(
@@ -221,11 +223,11 @@ class EmojiTutorialSystem:
         lesson.exercises = [ex.exercise_id for ex in exercises]
         lesson.completion_criteria = {"min_correct_exercises": 2}
         
-        self.lessons[lesson.title] = lesson
+        self.lessons = {**self.lessons, lesson.title: lesson}
         for exercise in exercises:
-            self.exercises[exercise.exercise_id] = exercise
+            self.exercises = {**self.exercises, exercise.exercise_id: exercise}
     
-    def _create_emotional_expression_lessons(self):
+    def _create_emotional_expression_lessons(self) -> None:
         """Create lessons for expressing emotions with emoji."""
         # Lesson: Basic Emotional Expression
         lesson = TutorialLesson(
@@ -286,9 +288,9 @@ class EmojiTutorialSystem:
         
         lesson.exercises = [ex.exercise_id for ex in exercises]
         
-        self.lessons[lesson.title] = lesson
+        self.lessons = {**self.lessons, lesson.title: lesson}
         for exercise in exercises:
-            self.exercises[exercise.exercise_id] = exercise
+            self.exercises = {**self.exercises, exercise.exercise_id: exercise}
             
         # Lesson: Emotional Intensity
         lesson = TutorialLesson(
@@ -342,11 +344,11 @@ class EmojiTutorialSystem:
         
         lesson.exercises = [ex.exercise_id for ex in exercises]
         
-        self.lessons[lesson.title] = lesson
+        self.lessons = {**self.lessons, lesson.title: lesson}
         for exercise in exercises:
-            self.exercises[exercise.exercise_id] = exercise
+            self.exercises = {**self.exercises, exercise.exercise_id: exercise}
     
-    def _create_conversation_structure_lessons(self):
+    def _create_conversation_structure_lessons(self) -> None:
         """Create lessons for conversation structure using emojis."""
         # Lesson: Emoji Conversation Flow
         lesson = TutorialLesson(
@@ -396,9 +398,9 @@ class EmojiTutorialSystem:
         
         lesson.exercises = [ex.exercise_id for ex in exercises]
         
-        self.lessons[lesson.title] = lesson
+        self.lessons = {**self.lessons, lesson.title: lesson}
         for exercise in exercises:
-            self.exercises[exercise.exercise_id] = exercise
+            self.exercises = {**self.exercises, exercise.exercise_id: exercise}
             
         # Lesson: Complex Discussions
         lesson = TutorialLesson(
@@ -452,11 +454,11 @@ class EmojiTutorialSystem:
         
         lesson.exercises = [ex.exercise_id for ex in exercises]
         
-        self.lessons[lesson.title] = lesson
+        self.lessons = {**self.lessons, lesson.title: lesson}
         for exercise in exercises:
-            self.exercises[exercise.exercise_id] = exercise
+            self.exercises = {**self.exercises, exercise.exercise_id: exercise}
     
-    def _create_domain_specific_lessons(self):
+    def _create_domain_specific_lessons(self) -> None:
         """Create lessons for domain-specific emoji communication."""
         # Technical Support Domain Lesson
         lesson = TutorialLesson(
@@ -511,9 +513,9 @@ class EmojiTutorialSystem:
         
         lesson.exercises = [ex.exercise_id for ex in exercises]
         
-        self.lessons[lesson.title] = lesson
+        self.lessons = {**self.lessons, lesson.title: lesson}
         for exercise in exercises:
-            self.exercises[exercise.exercise_id] = exercise
+            self.exercises = {**self.exercises, exercise.exercise_id: exercise}
         
         # Project Management Domain Lesson
         lesson = TutorialLesson(
@@ -568,11 +570,11 @@ class EmojiTutorialSystem:
         
         lesson.exercises = [ex.exercise_id for ex in exercises]
         
-        self.lessons[lesson.title] = lesson
+        self.lessons = {**self.lessons, lesson.title: lesson}
         for exercise in exercises:
-            self.exercises[exercise.exercise_id] = exercise
+            self.exercises = {**self.exercises, exercise.exercise_id: exercise}
     
-    def _create_cultural_adaptation_lessons(self):
+    def _create_cultural_adaptation_lessons(self) -> None:
         """Create lessons for cultural adaptation in emoji usage."""
         lesson = TutorialLesson(
             title="Cultural Variations in Emoji Usage",
@@ -629,11 +631,11 @@ class EmojiTutorialSystem:
         
         lesson.exercises = [ex.exercise_id for ex in exercises]
         
-        self.lessons[lesson.title] = lesson
+        self.lessons = {**self.lessons, lesson.title: lesson}
         for exercise in exercises:
-            self.exercises[exercise.exercise_id] = exercise
+            self.exercises = {**self.exercises, exercise.exercise_id: exercise}
     
-    def _create_advanced_sequence_lessons(self):
+    def _create_advanced_sequence_lessons(self) -> None:
         """Create lessons for advanced emoji sequences."""
         lesson = TutorialLesson(
             title="Advanced Emoji Sequence Construction",
@@ -690,31 +692,31 @@ class EmojiTutorialSystem:
         
         lesson.exercises = [ex.exercise_id for ex in exercises]
         
-        self.lessons[lesson.title] = lesson
+        self.lessons = {**self.lessons, lesson.title: lesson}
         for exercise in exercises:
-            self.exercises[exercise.exercise_id] = exercise
+            self.exercises = {**self.exercises, exercise.exercise_id: exercise}
     
-    def create_user_profile(self, user_id, name):
+    def create_user_profile(self, user_id, name) -> int:
         """Create a new user profile."""
         if user_id in self.user_profiles:
             return False
         
-        self.user_profiles[user_id] = UserProfile(user_id=user_id, name=name)
+        self.user_profiles = {**self.user_profiles, user_id: UserProfile(user_id=user_id, name=name)}
         return True
     
-    def get_lesson(self, lesson_title):
+    def get_lesson(self, lesson_title) -> None:
         """Get a lesson by title."""
         return self.lessons.get(lesson_title)
     
-    def get_exercise(self, exercise_id):
+    def get_exercise(self, exercise_id) -> None:
         """Get an exercise by ID."""
         return self.exercises.get(exercise_id)
     
-    def get_user_profile(self, user_id):
+    def get_user_profile(self, user_id) -> None:
         """Get a user profile by ID."""
         return self.user_profiles.get(user_id)
     
-    def get_lesson_progress(self, user_id, lesson_title):
+    def get_lesson_progress(self, user_id, lesson_title) -> Optional[Dict[str, Any]]:
         """Get a user's progress on a specific lesson."""
         user = self.get_user_profile(user_id)
         if not user:
@@ -725,7 +727,7 @@ class EmojiTutorialSystem:
             "score": user.lesson_scores.get(lesson_title, 0.0)
         }
     
-    def evaluate_exercise_response(self, exercise_id, user_response):
+    def evaluate_exercise_response(self, exercise_id, user_response) -> Dict[str, Any]:
         """Evaluate a user's response to an exercise."""
         exercise = self.get_exercise(exercise_id)
         if not exercise:
@@ -801,7 +803,7 @@ class EmojiTutorialSystem:
         else:
             return {"success": False, "message": "Unsupported exercise type"}
     
-    def complete_lesson(self, user_id, lesson_title, score=1.0):
+    def complete_lesson(self, user_id, lesson_title, score=1.0) -> int:
         """Mark a lesson as completed for a user."""
         user = self.get_user_profile(user_id)
         if not user:
@@ -820,7 +822,7 @@ class EmojiTutorialSystem:
         
         return True
     
-    def _update_user_difficulty(self, user):
+    def _update_user_difficulty(self, user) -> None:
         """Update a user's difficulty level based on their progress."""
         completed_count = len(user.completed_lessons)
         avg_score = sum(user.lesson_scores.values()) / max(1, len(user.lesson_scores))
@@ -842,7 +844,7 @@ class EmojiTutorialSystem:
         else:
             user.current_difficulty = DifficultyLevel.BEGINNER
     
-    def get_recommended_lessons(self, user_id, count=3):
+    def get_recommended_lessons(self, user_id, count=3) -> List[Any]:
         """Get recommended lessons for a user based on their progress and difficulty level."""
         user = self.get_user_profile(user_id)
         if not user:
@@ -881,7 +883,7 @@ class EmojiTutorialSystem:
         # Return top N recommendations
         return sorted_lessons[:count]
     
-    def record_emoji_usage(self, user_id, emoji):
+    def record_emoji_usage(self, user_id, emoji) -> int:
         """Record emoji usage for a user to track patterns."""
         user = self.get_user_profile(user_id)
         if not user:
@@ -894,7 +896,7 @@ class EmojiTutorialSystem:
         
         return True
     
-    def add_to_personal_dictionary(self, user_id, emoji, meaning):
+    def add_to_personal_dictionary(self, user_id, emoji, meaning) -> int:
         """Add an emoji to a user's personal dictionary."""
         user = self.get_user_profile(user_id)
         if not user:
@@ -903,7 +905,7 @@ class EmojiTutorialSystem:
         user.personal_emoji_dictionary[emoji] = meaning
         return True
     
-    def get_personal_dictionary(self, user_id):
+    def get_personal_dictionary(self, user_id) -> Dict[str, Any]:
         """Get a user's personal emoji dictionary."""
         user = self.get_user_profile(user_id)
         if not user:
@@ -911,7 +913,7 @@ class EmojiTutorialSystem:
         
         return user.personal_emoji_dictionary
     
-    def start_tutorial_session(self, user_id, lesson_title):
+    def start_tutorial_session(self, user_id, lesson_title) -> Dict[str, Any]:
         """Start a tutorial session for a user."""
         user = self.get_user_profile(user_id)
         lesson = self.get_lesson(lesson_title)
