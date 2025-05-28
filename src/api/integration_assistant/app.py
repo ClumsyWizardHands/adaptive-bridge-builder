@@ -88,7 +88,7 @@ app.add_middleware(
 
 # Health check endpoint
 @app.get("/health")
-async def health_check() -> Coroutine[Any, Any, Dict[str, Any]]:
+async def health_check() -> Dict[str, Any]:
     """Health check endpoint"""
     return {
         "status": "healthy",
@@ -348,7 +348,7 @@ async def test_connection(agent_id: str, request: ConnectionTestRequest) -> None
 
 # Detect framework from code
 @app.post("/api/detect-framework")
-async def detect_framework(code_snippet: str) -> Coroutine[Any, Any, Dict[str, Any]]:
+async def detect_framework(code_snippet: str) -> Dict[str, Any]:
     """Detect AI framework from code snippet"""
     try:
         detection_result = framework_detector.detect_framework(code_snippet)
@@ -385,7 +385,7 @@ async def get_connection_status(client_id: str) -> None:
 
 # Get all active connections
 @app.get("/api/connections")
-async def get_connections() -> Coroutine[Any, Any, Dict[str, Any]]:
+async def get_connections() -> Dict[str, Any]:
     """Get all active connections"""
     connections = []
     for client_id, status in connection_manager.connection_metadata.items():

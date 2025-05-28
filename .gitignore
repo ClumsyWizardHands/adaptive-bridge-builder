@@ -121,6 +121,8 @@ dmypy.json
 
 # API Keys and sensitive files
 .claude_config.json
+src/data/
+data/
 
 # IDE specific files
 .idea/
@@ -128,3 +130,6 @@ dmypy.json
 *.swp
 *.swo
 .DS_Store
+
+# Temporary files
+requirements_temp.txt

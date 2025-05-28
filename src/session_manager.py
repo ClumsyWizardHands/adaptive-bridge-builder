@@ -163,7 +163,7 @@ class Session:
                     self.topics = [*self.topics, topic]
                     # Initialize topic relevance if new
                     if topic not in self.topic_relevance:
-                        self.topic_relevance = {**self.topic_relevance, topic: 0.5  # Default mid-relevance}
+                        self.topic_relevance = {**self.topic_relevance, topic: 0.5}  # Default mid-relevance
                         
         # Manage message count if exceeded
         if len(self.messages) > self.max_message_count:
@@ -194,7 +194,7 @@ class Session:
             relevance_delta: Change in relevance (-1.0 to 1.0)
         """
         if topic not in self.topic_relevance:
-            self.topic_relevance = {**self.topic_relevance, topic: 0.5  # Default mid-relevance}
+            self.topic_relevance = {**self.topic_relevance, topic: 0.5}  # Default mid-relevance
             
         # Update relevance, keeping within 0.0-1.0 range
         current = self.topic_relevance[topic]
